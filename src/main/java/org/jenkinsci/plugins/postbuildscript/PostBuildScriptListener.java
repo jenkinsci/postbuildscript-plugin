@@ -13,12 +13,15 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 /**
  * @author Gregory Boissinot
  */
 @Extension
 public class PostBuildScriptListener extends RunListener<Run> implements Serializable {
+
+    private static Logger LOGGER = Logger.getLogger(PostBuildScriptListener.class.getName());
 
     @Override
     public void onStarted(Run run, TaskListener listener) {
@@ -40,14 +43,15 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
             }
             publishersField.set(jenkinsProject, publishers);
 
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoSuchFieldException nse) {
+            LOGGER.severe("[PostBuildScript] - Severe error to start" + nse.getMessage());
+            nse.printStackTrace();
+        } catch (IllegalAccessException ie) {
+            LOGGER.severe("[PostBuildScript] - Severe error to start" + ie.getMessage());
+            ie.printStackTrace();
+        } catch (IOException ioe) {
+            LOGGER.severe("[PostBuildScript] - Severe error to start" + ioe.getMessage());
+            ioe.printStackTrace();
         }
-
-
     }
 }
