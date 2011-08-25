@@ -1,7 +1,9 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
     <f:entry title="${%Batch or a shell scripts to execute}">
-        <f:repeatable var="genericScript" items="${instance.genericScriptList}">
+        <f:repeatable var="genericScript" items="${instance.genericScriptList}"
+                      add="${%Add Generic Script}">
             <table width="100%">
 
                 <f:entry field="filePath" title="${%File Path}">
@@ -11,7 +13,7 @@
 
                 <f:entry field="content" title="${%Content}">
                     <f:textarea name="postBuild.genericScript.content"
-                               value="${genericScript.content}"/>
+                                value="${genericScript.content}"/>
                 </f:entry>
 
                 <f:entry title="">
@@ -26,7 +28,8 @@
     </f:entry>
 
     <f:entry title="${%Groovy scripts to evaluate}">
-        <f:repeatable var="groovyScript" items="${instance.groovyScriptList}">
+        <f:repeatable var="groovyScript" items="${instance.groovyScriptList}"
+                      add="${%Add Groovy Script}">
             <table width="100%">
 
                 <f:entry field="filePath" title="${%File Path}">
@@ -36,7 +39,7 @@
 
                 <f:entry field="content" title="${%Content}">
                     <f:textarea name="postBuild.groovyScript.content"
-                               value="${groovyScript.content}"/>
+                                value="${groovyScript.content}"/>
                 </f:entry>
 
                 <f:entry title="">

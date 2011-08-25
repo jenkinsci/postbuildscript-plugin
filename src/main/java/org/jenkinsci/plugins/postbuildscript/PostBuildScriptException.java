@@ -5,9 +5,6 @@ package org.jenkinsci.plugins.postbuildscript;
  */
 public class PostBuildScriptException extends Exception {
 
-    public PostBuildScriptException() {
-    }
-
     public PostBuildScriptException(String s) {
         super(s);
     }

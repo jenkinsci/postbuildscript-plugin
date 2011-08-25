@@ -174,6 +174,11 @@ public class PostBuildScript extends Notifier {
         }
 
         @Override
+         public String getHelpFile() {
+             return "/plugin/postbuildscript/help.html";
+         }
+
+        @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
