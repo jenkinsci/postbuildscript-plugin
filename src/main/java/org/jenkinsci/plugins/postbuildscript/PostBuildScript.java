@@ -6,10 +6,9 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.matrix.MatrixProject;
+import hudson.maven.MavenModuleSet;
+import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
@@ -174,13 +173,15 @@ public class PostBuildScript extends Notifier {
         }
 
         @Override
-         public String getHelpFile() {
-             return "/plugin/postbuildscript/help.html";
-         }
+        public String getHelpFile() {
+            return "/plugin/postbuildscript/help.html";
+        }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
+            return Project.class.isAssignableFrom(jobType)
+                    || MatrixProject.class.isAssignableFrom(jobType)
+                    || MavenModuleSet.class.isAssignableFrom(jobType);
         }
     }
 }
