@@ -1,57 +1,94 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <f:entry title="${%Batch or a shell scripts to execute}">
-        <f:repeatable var="genericScript" items="${instance.genericScriptList}"
-                      add="${%Add Generic Script}">
-            <table width="100%">
+    <f:entry title="${%Batch or a shell script files to execute}">
+        <f:nested>
+            <div style="padding-left:2em">
+                <f:repeatable var="genericScript" items="${instance.genericScriptList}"
+                              add="${%Add a shell or a Windows batch file}">
+                    <table width="100%">
 
-                <f:entry field="filePath" title="${%File Path}">
-                    <f:textbox name="postBuild.genericScript.filePath"
-                               value="${genericScript.filePath}"/>
-                </f:entry>
+                        <f:entry field="filePath" title="${%File script path}">
+                            <f:textbox name="postBuild.genericScript.filePath"
+                                       value="${genericScript.filePath}"/>
+                        </f:entry>
 
-                <f:entry field="content" title="${%Content}">
-                    <f:textarea name="postBuild.genericScript.content"
-                                value="${genericScript.content}"/>
-                </f:entry>
+                        <f:entry title="">
+                            <div align="right">
+                                <f:repeatableDeleteButton/>
+                            </div>
+                        </f:entry>
 
-                <f:entry title="">
-                    <div align="right">
-                        <f:repeatableDeleteButton caption="Add a script (batch or shell)"/>
-                    </div>
-                </f:entry>
-
-            </table>
-        </f:repeatable>
-
-    </f:entry>
-
-    <f:entry title="${%Groovy scripts to evaluate}">
-        <f:repeatable var="groovyScript" items="${instance.groovyScriptList}"
-                      add="${%Add Groovy Script}">
-            <table width="100%">
-
-                <f:entry field="filePath" title="${%File Path}">
-                    <f:textbox name="postBuild.groovyScript.filePath"
-                               value="${groovyScript.filePath}"/>
-                </f:entry>
-
-                <f:entry field="content" title="${%Content}">
-                    <f:textarea name="postBuild.groovyScript.content"
-                                value="${groovyScript.content}"/>
-                </f:entry>
-
-                <f:entry title="">
-                    <div align="right">
-                        <f:repeatableDeleteButton/>
-                    </div>
-                </f:entry>
-
-            </table>
-        </f:repeatable>
+                    </table>
+                </f:repeatable>
+            </div>
+        </f:nested>
 
     </f:entry>
 
+    <f:entry title="${%Groovy script files to evaluate}">
+        <f:nested>
+            <div style="padding-left:2em">
+                <f:repeatable var="groovyScriptFile" items="${instance.groovyScriptFileList}"
+                              add="${%Add a Groovy script file to evaluate}">
+
+                    <table width="100%">
+
+                        <f:entry field="filePath" title="${%File Path}">
+                            <f:textbox name="postBuild.groovyScriptFile.filePath"
+                                       value="${groovyScriptFile.filePath}"/>
+                        </f:entry>
+
+                        <f:entry title="">
+                            <div align="right">
+                                <f:repeatableDeleteButton/>
+                            </div>
+                        </f:entry>
+
+                    </table>
+
+                </f:repeatable>
+            </div>
+        </f:nested>
+    </f:entry>
+
+    <f:entry title="${%Groovy script content to evaluate}">
+        <f:nested>
+            <div style="padding-left:2em">
+                <f:repeatable var="groovyScriptContent" items="${instance.groovyScriptContentList}"
+                              add="${%Add a Groovy script content to evaluate}">
+
+                    <table width="100%">
+
+                        <f:entry field="content" title="${%Content}">
+                            <f:textarea name="postBuild.groovyScriptContent.content"
+                                        value="${groovyScriptContent.content}"/>
+                        </f:entry>
+
+                        <f:entry title="">
+                            <div align="right">
+                                <f:repeatableDeleteButton/>
+                            </div>
+                        </f:entry>
+
+                    </table>
+
+                </f:repeatable>
+            </div>
+        </f:nested>
+    </f:entry>
+
+    <f:entry title="${%Build steps}">
+
+        <f:nested>
+            <div style="padding-left:2em">
+                <f:hetero-list name="buildStep" hasHeader="true"
+                               descriptors="${h.getBuilderDescriptors(it)}"
+                               items="${instance.buildSteps}"
+                               addCaption="${%Add build step}"/>
+            </div>
+        </f:nested>
+
+    </f:entry>
 
 </j:jelly>

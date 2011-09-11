@@ -10,12 +10,11 @@ public class GenericScript {
 
     private final String filePath;
 
-    private final String content;
+    private transient String content;
 
     @DataBoundConstructor
-    public GenericScript(String filePath, String content) {
+    public GenericScript(String filePath) {
         this.filePath = Util.fixEmpty(filePath);
-        this.content = Util.fixEmpty(content);
     }
 
     @SuppressWarnings("unused")
@@ -24,6 +23,7 @@ public class GenericScript {
     }
 
     @SuppressWarnings("unused")
+    @Deprecated
     public String getContent() {
         return content;
     }
