@@ -4,13 +4,13 @@
     <f:entry title="${%Batch or a shell script files to execute}">
         <f:nested>
             <div style="padding-left:2em">
-                <f:repeatable var="genericScript" items="${instance.genericScriptList}"
+                <f:repeatable var="genericScriptFile" items="${instance.genericScriptList}"
                               add="${%Add a shell or a Windows batch file}">
                     <table width="100%">
 
                         <f:entry field="filePath" title="${%File script path}">
                             <f:textbox name="postBuild.genericScript.filePath"
-                                       value="${genericScript.filePath}"/>
+                                       value="${genericScriptFile.filePath}"/>
                         </f:entry>
 
                         <f:entry title="">

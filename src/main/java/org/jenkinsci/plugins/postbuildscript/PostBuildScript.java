@@ -6,7 +6,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.matrix.MatrixProject;
+import hudson.matrix.*;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 import hudson.tasks.*;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author Gregory Boissinot
  */
-public class PostBuildScript extends Notifier {
+public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
@@ -49,8 +49,24 @@ public class PostBuildScript extends Notifier {
         this.buildSteps = buildStep;
     }
 
+    public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
+        return new MatrixAggregator(build, launcher, listener) {
+            @Override
+            public boolean endBuild() throws InterruptedException, IOException {
+                return _perform(build, launcher, listener);
+            }
+        };
+    }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
+        if (!(build.getProject() instanceof MatrixConfiguration)) {
+            return _perform(build, launcher, listener);
+        }
+        return true;
+    }
+
+    private boolean _perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
 
         listener.getLogger().println("[PostBuildScript] - Execution post build scripts.");
 

@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import hudson.Util;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -14,7 +13,7 @@ public class GenericScript {
 
     @DataBoundConstructor
     public GenericScript(String filePath) {
-        this.filePath = Util.fixEmpty(filePath);
+        this.filePath = filePath;
     }
 
     @SuppressWarnings("unused")
