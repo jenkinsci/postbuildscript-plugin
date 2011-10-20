@@ -38,15 +38,19 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     private List<GroovyScriptContent> groovyScriptContentList = new ArrayList<GroovyScriptContent>();
     private List<BuildStep> buildSteps;
 
+    private boolean scriptOnlyIfSuccess;
+
     @DataBoundConstructor
     public PostBuildScript(List<GenericScript> genericScriptFile,
                            List<GroovyScriptFile> groovyScriptFile,
                            List<GroovyScriptContent> groovyScriptContent,
+                           boolean scriptOnlyIfSuccess,
                            List<BuildStep> buildStep) {
         this.genericScriptFileList = genericScriptFile;
         this.groovyScriptFileList = groovyScriptFile;
         this.groovyScriptContentList = groovyScriptContent;
         this.buildSteps = buildStep;
+        this.scriptOnlyIfSuccess = scriptOnlyIfSuccess;
     }
 
     public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
@@ -82,7 +86,12 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         ).getInstance(ScriptExecutor.class);
 
         try {
-            return processScripts(executor, build, launcher, listener);
+            if(scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)){
+                listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
+                return false;
+            } else {
+                return processScripts(executor, build, launcher, listener);
+            }
         } catch (PostBuildScriptException pse) {
             listener.getLogger().println("[PostBuildScript] - [Error] - Problems occurs: " + pse.getMessage());
             build.setResult(Result.FAILURE);
