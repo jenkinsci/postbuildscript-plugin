@@ -90,9 +90,9 @@
         </f:nested>
 
     </f:entry>
-    <f:entry field="scriptOnlyIfSuccess"
-             title="${%Execute script only if build succeeds}">
-        <f:checkbox />
+
+    <f:entry title="${%Execute script only if build succeeds}">
+        <f:checkbox name="scriptOnlyIfSuccess" checked="${instance.scriptOnlyIfSuccess}" />
     </f:entry>
 
 </j:jelly>

@@ -259,6 +259,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return buildSteps;
     }
 
+    @SuppressWarnings("unused")
+    public boolean isScriptOnlyIfSuccess() {
+        return scriptOnlyIfSuccess;
+    }
+
     @Extension(ordinal = 99)
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
