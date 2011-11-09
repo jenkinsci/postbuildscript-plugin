@@ -6,6 +6,8 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.ivy.AbstractIvyProject;
+import hudson.ivy.IvyModuleSet;
 import hudson.matrix.*;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
@@ -86,7 +88,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         ).getInstance(ScriptExecutor.class);
 
         try {
-            if(scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)){
+            if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
                 listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
                 return false;
             } else {
@@ -281,7 +283,8 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return Project.class.isAssignableFrom(jobType)
                     || MatrixProject.class.isAssignableFrom(jobType)
-                    || MavenModuleSet.class.isAssignableFrom(jobType);
+                    || MavenModuleSet.class.isAssignableFrom(jobType)
+                    || IvyModuleSet.class.isAssignableFrom(jobType);
         }
     }
 
