@@ -1,10 +1,9 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
     <f:entry title="${%Batch or a shell script files to execute}">
         <f:nested>
             <div style="padding-left:2em">
-                <f:repeatable var="genericScriptFile" items="${instance.genericScriptList}"
+                <f:repeatable var="genericScriptFile" items="${instance.genericScriptFileList}"
                               add="${%Add a shell or a Windows batch file}">
                     <table width="100%">
 
@@ -92,7 +91,7 @@
     </f:entry>
 
     <f:entry title="${%Execute script only if build succeeds}">
-        <f:checkbox name="scriptOnlyIfSuccess" checked="${instance.scriptOnlyIfSuccess}" />
+        <f:checkbox name="scriptOnlyIfSuccess" checked="${instance.scriptOnlyIfSuccess}"/>
     </f:entry>
 
 </j:jelly>
