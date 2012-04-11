@@ -91,7 +91,7 @@
     </f:entry>
 
     <f:entry title="${%Execute script only if build succeeds}">
-        <f:checkbox name="scriptOnlyIfSuccess" checked="${instance.scriptOnlyIfSuccess}"/>
+        <f:checkbox name="scriptOnlyIfSuccess" checked="${h.defaultToTrue(instance.scriptOnlyIfSuccess)}"/>
     </f:entry>
 
 </j:jelly>
