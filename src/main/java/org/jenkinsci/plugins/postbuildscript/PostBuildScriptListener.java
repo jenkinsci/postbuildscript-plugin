@@ -33,14 +33,13 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
                 putLastListPostBuildPublisher(MatrixProject.class, (MatrixProject) job);
             } else if (job instanceof IvyModuleSet) {
                 putLastListPostBuildPublisher(IvyModuleSet.class, (IvyModuleSet) job);
-            } else {
+            } else if (job instanceof Project) {
                 putLastListPostBuildPublisher(Project.class, (Project) job);
             }
         } catch (PostBuildScriptException pe) {
             LOGGER.severe("[PostBuildScript] - Severe error to start" + pe.getMessage());
             pe.printStackTrace();
         }
-
     }
 
 
