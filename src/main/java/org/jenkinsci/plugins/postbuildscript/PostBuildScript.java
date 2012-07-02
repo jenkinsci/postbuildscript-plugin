@@ -6,8 +6,6 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.ivy.AbstractIvyProject;
-import hudson.ivy.IvyModuleSet;
 import hudson.matrix.*;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
@@ -284,7 +282,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             return Project.class.isAssignableFrom(jobType)
                     || MatrixProject.class.isAssignableFrom(jobType)
                     || MavenModuleSet.class.isAssignableFrom(jobType)
-                    || IvyModuleSet.class.isAssignableFrom(jobType);
+                    || ( Hudson.getInstance().getPlugin("ivy") != null && hudson.ivy.IvyModuleSet.class.isAssignableFrom(jobType));
         }
     }
 
