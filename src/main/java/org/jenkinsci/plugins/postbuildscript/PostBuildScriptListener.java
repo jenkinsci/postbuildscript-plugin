@@ -1,8 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Extension;
-import hudson.Plugin;
-import hudson.PluginManager;
 import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
