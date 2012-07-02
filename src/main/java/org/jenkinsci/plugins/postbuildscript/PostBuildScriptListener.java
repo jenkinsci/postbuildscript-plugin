@@ -1,7 +1,8 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Extension;
-import hudson.ivy.IvyModuleSet;
+import hudson.Plugin;
+import hudson.PluginManager;
 import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
@@ -31,8 +32,8 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
                 putLastListPostBuildPublisher(MavenModuleSet.class, (MavenModuleSet) job);
             } else if (job instanceof MatrixProject) {
                 putLastListPostBuildPublisher(MatrixProject.class, (MatrixProject) job);
-            } else if (job instanceof IvyModuleSet) {
-                putLastListPostBuildPublisher(IvyModuleSet.class, (IvyModuleSet) job);
+            } else if (Hudson.getInstance().getPlugin("ivy") != null && job instanceof hudson.ivy.IvyModuleSet) {
+                putLastListPostBuildPublisher(hudson.ivy.IvyModuleSet.class, (hudson.ivy.IvyModuleSet) job);
             } else if (job instanceof Project) {
                 putLastListPostBuildPublisher(Project.class, (Project) job);
             }
