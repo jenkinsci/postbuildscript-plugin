@@ -31,7 +31,7 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
             } else if (job instanceof MatrixProject) {
                 putLastListPostBuildPublisher(MatrixProject.class, (MatrixProject) job);
             } else if (Hudson.getInstance().getPlugin("ivy") != null && job instanceof hudson.ivy.IvyModuleSet) {
-                putLastListPostBuildPublisher(hudson.ivy.IvyModuleSet.class, (hudson.ivy.IvyModuleSet) job);
+                putLastListPostBuildPublisher(hudson.ivy.IvyModuleSet.class, (AbstractProject) job);
             } else if (job instanceof Project) {
                 putLastListPostBuildPublisher(Project.class, (Project) job);
             }
