@@ -1,9 +1,9 @@
 PostBuildScript, Jenkins plugin
 -------------------------------
 
-After build run:
+Can run the following things after a build:
 * Bath or shell script
 * Groovy script
 * Normal build steps
 
-Can be set to only run if the build was successful 
+Can be also be parameterized on build status (i.e., only run when build is successful)
