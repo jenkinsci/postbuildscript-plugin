@@ -88,7 +88,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         try {
             if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
                 listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
-                return false;
+                return true;
             } else {
                 return processScripts(executor, build, launcher, listener);
             }
