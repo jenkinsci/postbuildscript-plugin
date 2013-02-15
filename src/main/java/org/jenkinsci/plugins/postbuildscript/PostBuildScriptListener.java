@@ -48,15 +48,17 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
             publishersField = jobClass.getDeclaredField("publishers");
             publishersField.setAccessible(true);
             DescribableList<Publisher, Descriptor<Publisher>> publishers = (DescribableList<Publisher, Descriptor<Publisher>>) publishersField.get(project);
-            Iterator<Publisher> it = publishers.iterator();
-            while (it.hasNext()) {
-                Publisher curPublisher = it.next();
-                if (curPublisher instanceof PostBuildScript) {
-                    publishers.remove(curPublisher.getClass());
-                    publishers.add(curPublisher);
+            if (publishers != null) {
+                Iterator<Publisher> it = publishers.iterator();
+                while (it.hasNext()) {
+                    Publisher curPublisher = it.next();
+                    if (curPublisher instanceof PostBuildScript) {
+                        publishers.remove(curPublisher.getClass());
+                        publishers.add(curPublisher);
+                    }
                 }
+                publishersField.set(project, publishers);
             }
-            publishersField.set(project, publishers);
 
         } catch (NoSuchFieldException nse) {
             throw new PostBuildScriptException(nse);
