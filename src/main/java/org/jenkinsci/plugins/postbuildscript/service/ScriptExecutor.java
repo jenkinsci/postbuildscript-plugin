@@ -14,7 +14,6 @@ import hudson.tasks.Shell;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptLog;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,11 +23,14 @@ import java.io.Serializable;
  */
 public class ScriptExecutor implements Serializable {
 
-    @Inject
     protected PostBuildScriptLog log;
 
-    @Inject
     private BuildListener listener;
+
+    public ScriptExecutor(PostBuildScriptLog log, BuildListener listener) {
+        this.log = log;
+        this.listener = listener;
+    }
 
     public int executeScriptPathAndGetExitCode(FilePath workspace, String scriptFilePath, Launcher launcher) throws PostBuildScriptException {
 

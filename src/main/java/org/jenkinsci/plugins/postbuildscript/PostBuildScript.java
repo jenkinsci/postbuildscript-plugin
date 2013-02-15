@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -74,16 +72,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         listener.getLogger().println("[PostBuildScript] - Execution post build scripts.");
 
-        ScriptExecutor executor = Guice.createInjector(
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(PostBuildScriptLog.class).toInstance(new PostBuildScriptLog(listener));
-                        bind(Launcher.class).toInstance(launcher);
-                        bind(BuildListener.class).toInstance(listener);
-                    }
-                }
-        ).getInstance(ScriptExecutor.class);
+        ScriptExecutor executor = new ScriptExecutor(
+                new PostBuildScriptLog(listener),
+                listener
+        );
 
         try {
             if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
