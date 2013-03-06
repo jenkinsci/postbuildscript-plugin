@@ -37,18 +37,21 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     private List<BuildStep> buildSteps;
 
     private boolean scriptOnlyIfSuccess;
+    private boolean scriptOnlyIfFailure;
 
     @DataBoundConstructor
     public PostBuildScript(List<GenericScript> genericScriptFile,
                            List<GroovyScriptFile> groovyScriptFile,
                            List<GroovyScriptContent> groovyScriptContent,
                            boolean scriptOnlyIfSuccess,
+                           boolean scriptOnlyIfFailure,
                            List<BuildStep> buildStep) {
         this.genericScriptFileList = genericScriptFile;
         this.groovyScriptFileList = groovyScriptFile;
         this.groovyScriptContentList = groovyScriptContent;
         this.buildSteps = buildStep;
         this.scriptOnlyIfSuccess = scriptOnlyIfSuccess;
+        this.scriptOnlyIfFailure = scriptOnlyIfFailure;
     }
 
     public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
@@ -80,6 +83,9 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         try {
             if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
                 listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
+                return true;
+            } else if (scriptOnlyIfFailure && build.getResult().isBetterThan(Result.FAILURE)) {
+                listener.getLogger().println("[PostBuildScript] Build is not failure : do not execute script");
                 return true;
             } else {
                 return processScripts(executor, build, launcher, listener);
@@ -254,6 +260,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     @SuppressWarnings("unused")
     public boolean isScriptOnlyIfSuccess() {
         return scriptOnlyIfSuccess;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isScriptOnlyIfFailure() {
+        return scriptOnlyIfFailure;
     }
 
     @Extension(ordinal = 99)
