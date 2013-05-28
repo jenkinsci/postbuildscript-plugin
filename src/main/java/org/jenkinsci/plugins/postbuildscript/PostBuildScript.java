@@ -38,6 +38,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private boolean scriptOnlyIfSuccess;
     private boolean scriptOnlyIfFailure;
+    private boolean executeOnMatrixNodes;
 
     @DataBoundConstructor
     public PostBuildScript(List<GenericScript> genericScriptFile,
@@ -45,6 +46,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
                            List<GroovyScriptContent> groovyScriptContent,
                            boolean scriptOnlyIfSuccess,
                            boolean scriptOnlyIfFailure,
+                           boolean executeOnMatrixNodes,
                            List<BuildStep> buildStep) {
         this.genericScriptFileList = genericScriptFile;
         this.groovyScriptFileList = groovyScriptFile;
@@ -52,6 +54,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         this.buildSteps = buildStep;
         this.scriptOnlyIfSuccess = scriptOnlyIfSuccess;
         this.scriptOnlyIfFailure = scriptOnlyIfFailure;
+        this.executeOnMatrixNodes = executeOnMatrixNodes;
     }
 
     public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
@@ -65,7 +68,8 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
-        if (!(build.getProject() instanceof MatrixConfiguration)) {
+        boolean matrix = build.getProject() instanceof MatrixConfiguration;
+        if ((matrix && executeOnMatrixNodes) || !matrix) {
             return _perform(build, launcher, listener);
         }
         return true;
@@ -267,12 +271,17 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return scriptOnlyIfFailure;
     }
 
+    @SuppressWarnings("unused")
+    public boolean isExecuteOnMatrixNodes() {
+        return executeOnMatrixNodes;
+    }
+
     @Extension(ordinal = 99)
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         @Override
         public String getDisplayName() {
-            return "[PostBuildScript] - Execute a set of scripts";
+            return "Execute a set of scripts";
         }
 
         @Override
@@ -287,6 +296,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
                     || MavenModuleSet.class.isAssignableFrom(jobType)
                     || (Hudson.getInstance().getPlugin("ivy") != null && hudson.ivy.IvyModuleSet.class.isAssignableFrom(jobType));
         }
+
+        public boolean isMatrixProject(Object job) {
+            return job instanceof MatrixProject;
+        }
+
     }
 
     @SuppressWarnings({"unused", "deprecation"})

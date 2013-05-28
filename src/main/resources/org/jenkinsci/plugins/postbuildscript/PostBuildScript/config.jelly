@@ -98,4 +98,11 @@
         <f:checkbox name="scriptOnlyIfFailure" checked="${h.defaultToFalse(instance.scriptOnlyIfFailure)}"/>
     </f:entry>
 
+    <j:if test="${descriptor.isMatrixProject(it)}">
+      <f:entry title="${%Execute script on each axe}" field="executeOnMatrixNodes">
+        <f:checkbox/>
+      </f:entry>
+    </j:if>
+
+
 </j:jelly>
