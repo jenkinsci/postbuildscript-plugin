@@ -296,6 +296,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
                     || MavenModuleSet.class.isAssignableFrom(jobType)
                     || (Hudson.getInstance().getPlugin("ivy") != null && hudson.ivy.IvyModuleSet.class.isAssignableFrom(jobType));
         }
+
+        public boolean isMatrixProject(Object job) {
+            return job instanceof MatrixProject;
+        }
+
     }
 
     @SuppressWarnings({"unused", "deprecation"})

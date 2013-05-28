@@ -98,8 +98,7 @@
         <f:checkbox name="scriptOnlyIfFailure" checked="${h.defaultToFalse(instance.scriptOnlyIfFailure)}"/>
     </f:entry>
 
-    <!-- Can't use instanceof to check it is an ItemGroup (MatrixProject), so check getItems() -->
-    <j:if test="${it.items != null}">
+    <j:if test="${descriptor.isMatrixProject(it)}">
       <f:entry title="${%Execute script on each axe}" field="executeOnMatrixNodes">
         <f:checkbox/>
       </f:entry>
