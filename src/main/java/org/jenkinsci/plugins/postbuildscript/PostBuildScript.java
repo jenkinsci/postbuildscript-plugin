@@ -61,7 +61,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return new MatrixAggregator(build, launcher, listener) {
             @Override
             public boolean endBuild() throws InterruptedException, IOException {
-                return _perform(build, launcher, listener);
+                return perform(build, launcher, listener);
             }
         };
     }
