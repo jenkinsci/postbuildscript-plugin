@@ -20,11 +20,6 @@ import java.util.List;
  * @author Gregory Boissinot
  */
 public class PostBuildScript extends Notifier implements MatrixAggregatable {
-
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.BUILD;
-    }
-
     @Deprecated
     private transient List<GenericScript> genericScriptList = new ArrayList<GenericScript>();
 
@@ -89,15 +84,17 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         );
 
         try {
-            if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
-                listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
-                return true;
-            } else if (scriptOnlyIfFailure && build.getResult().isBetterThan(Result.FAILURE)) {
-                listener.getLogger().println("[PostBuildScript] Build is not failure : do not execute script");
-                return true;
-            } else {
-                return processScripts(executor, build, launcher, listener);
+            if (scriptOnlyIfSuccess || scriptOnlyIfFailure) {
+                if (scriptOnlyIfSuccess && build.getResult().isWorseThan(Result.SUCCESS)) {
+                    listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
+                    return true;
+                } else if (scriptOnlyIfFailure && build.getResult().isBetterThan(Result.FAILURE)) {
+                    listener.getLogger().println("[PostBuildScript] Build is not failure : do not execute script");
+                    return true;
+                }
             }
+
+            return processScripts(executor, build, launcher, listener);
         } catch (PostBuildScriptException pse) {
             listener.getLogger().println("[PostBuildScript] - [Error] - Problems occurs: " + pse.getMessage());
             build.setResult(Result.FAILURE);
@@ -361,5 +358,12 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     private boolean isUnix() {
         return File.pathSeparatorChar == ':';
     }
-}
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        if (scriptOnlyIfSuccess || scriptOnlyIfFailure) {
+            return BuildStepMonitor.BUILD;
+        } else {
+            return BuildStepMonitor.NONE;
+        }
+    }
+}
