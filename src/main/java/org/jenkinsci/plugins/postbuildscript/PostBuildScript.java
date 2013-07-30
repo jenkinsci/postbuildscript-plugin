@@ -61,7 +61,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return new MatrixAggregator(build, launcher, listener) {
             @Override
             public boolean endBuild() throws InterruptedException, IOException {
-                return _perform(build, launcher, listener);
+                if (!executeOnMatrixNodes)
+                    return _perform(build, launcher, listener);
+                else
+                    return true;
             }
         };
     }
@@ -69,11 +72,9 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         Job job = build.getProject();
-        boolean matrix = isMatrixProject(job);
         boolean axe = isMatrixAxe(job);
         if (   (axe && executeOnMatrixNodes)     // matrix axe, and set to execute on axes' nodes
-            || (matrix && !executeOnMatrixNodes) // matrix head, and set to execute on head
-            || (!matrix && !axe)) {              // neither matrix head nor axe
+            || (!axe)) {                         // neither matrix head nor axe
             return _perform(build, launcher, listener);
         }
         return true;
