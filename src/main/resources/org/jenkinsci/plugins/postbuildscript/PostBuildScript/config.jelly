@@ -99,8 +99,13 @@
     </f:entry>
 
     <j:if test="${descriptor.isMatrixProject(it)}">
-      <f:entry title="${%Execute script on each axe}" field="executeOnMatrixNodes">
-        <f:checkbox/>
+      <f:entry title="${%Execute script on}">
+        <select name="executeOn">
+          <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.ExecuteOn" method="values"/>
+          <j:forEach items="${values}" var="value">
+              <f:option selected="${instance.executeOn == value}">${value}</f:option>
+          </j:forEach>
+        </select>
       </f:entry>
     </j:if>
 
