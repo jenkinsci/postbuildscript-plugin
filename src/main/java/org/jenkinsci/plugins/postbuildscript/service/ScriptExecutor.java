@@ -115,7 +115,7 @@ public class ScriptExecutor implements Serializable {
     }
 
 
-    public boolean performGroovyScript(FilePath workspace, final String scriptContent) {
+    public boolean performGroovyScript(final FilePath workspace, final String scriptContent) {
 
         if (scriptContent == null) {
             throw new NullPointerException("The script content object must be set.");
@@ -126,6 +126,9 @@ public class ScriptExecutor implements Serializable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                     log.info(String.format("Evaluating the groovy script: \n %s", scriptContent));
                     GroovyShell shell = new GroovyShell();
+                    shell.setVariable("workspace", new File(workspace.getRemote()));
+                    shell.setVariable("log", log);
+                    shell.setVariable("out", log.getListener().getLogger());
                     shell.evaluate(groovyExpressionResolved);
                     return true;
                 }
