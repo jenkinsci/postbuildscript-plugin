@@ -7,6 +7,7 @@ import hudson.model.*;
 import hudson.model.listeners.RunListener;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
+import hudson.util.VersionNumber;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,23 +25,29 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
 
     @Override
     public void onStarted(Run run, TaskListener listener) {
-        try {
-            Job job = run.getParent();
-            if (job instanceof MavenModuleSet) {
-                putLastListPostBuildPublisher(MavenModuleSet.class, (MavenModuleSet) job);
-            } else if (job instanceof MatrixProject) {
-                putLastListPostBuildPublisher(MatrixProject.class, (MatrixProject) job);
-            } else if (Hudson.getInstance().getPlugin("ivy") != null && job instanceof hudson.ivy.IvyModuleSet) {
-                putLastListPostBuildPublisher(hudson.ivy.IvyModuleSet.class, (AbstractProject) job);
-            } else if (job instanceof Project) {
-                putLastListPostBuildPublisher(Project.class, (Project) job);
+        if (isChangingOrder()) {
+            try {
+                Job job = run.getParent();
+                if (job instanceof MavenModuleSet) {
+                    putLastListPostBuildPublisher(MavenModuleSet.class, (MavenModuleSet) job);
+                } else if (job instanceof MatrixProject) {
+                    putLastListPostBuildPublisher(MatrixProject.class, (MatrixProject) job);
+                } else if (Hudson.getInstance().getPlugin("ivy") != null && job instanceof hudson.ivy.IvyModuleSet) {
+                    putLastListPostBuildPublisher(hudson.ivy.IvyModuleSet.class, (AbstractProject) job);
+                } else if (job instanceof Project) {
+                    putLastListPostBuildPublisher(Project.class, (Project) job);
+                }
+            } catch (PostBuildScriptException pe) {
+                LOGGER.severe("[PostBuildScript] - Severe error to start" + pe.getMessage());
+                pe.printStackTrace();
             }
-        } catch (PostBuildScriptException pe) {
-            LOGGER.severe("[PostBuildScript] - Severe error to start" + pe.getMessage());
-            pe.printStackTrace();
         }
     }
 
+
+    private boolean isChangingOrder() {
+        return Hudson.getVersion().isOlderThan(new VersionNumber("1.478"));
+    }
 
     private void putLastListPostBuildPublisher(Class<? extends AbstractProject> jobClass, AbstractProject project) throws PostBuildScriptException {
         Field publishersField;
