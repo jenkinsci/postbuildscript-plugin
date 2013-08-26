@@ -93,20 +93,21 @@
     <f:entry title="${%Execute script only if build succeeds}">
         <f:checkbox name="scriptOnlyIfSuccess" checked="${h.defaultToTrue(instance.scriptOnlyIfSuccess)}"/>
     </f:entry>
-    
+
     <f:entry title="${%Execute script only if build fails}">
-        <f:checkbox name="scriptOnlyIfFailure" checked="${h.defaultToFalse(instance.scriptOnlyIfFailure)}"/>
+        <f:checkbox name="scriptOnlyIfFailure" checked="${instance.scriptOnlyIfFailure}"/>
     </f:entry>
 
     <j:if test="${descriptor.isMatrixProject(it)}">
-      <f:entry title="${%Execute script on}">
-        <select name="executeOn">
-          <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.ExecuteOn" method="values"/>
-          <j:forEach items="${values}" var="value">
-              <f:option selected="${instance.executeOn == value}">${value}</f:option>
-          </j:forEach>
-        </select>
-      </f:entry>
+        <f:entry title="${%Execute script on}">
+            <select name="executeOn">
+                <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.ExecuteOn"
+                                method="values"/>
+                <j:forEach items="${values}" var="value">
+                    <f:option selected="${instance.executeOn == value}">${value}</f:option>
+                </j:forEach>
+            </select>
+        </f:entry>
     </j:if>
 
 
