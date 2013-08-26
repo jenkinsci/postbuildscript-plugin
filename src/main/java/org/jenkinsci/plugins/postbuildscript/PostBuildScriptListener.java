@@ -12,7 +12,6 @@ import hudson.util.VersionNumber;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
@@ -49,6 +48,7 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
         return Hudson.getVersion().isOlderThan(new VersionNumber("1.478"));
     }
 
+    @SuppressWarnings("unchecked")
     private void putLastListPostBuildPublisher(Class<? extends AbstractProject> jobClass, AbstractProject project) throws PostBuildScriptException {
         Field publishersField;
         try {
@@ -56,12 +56,10 @@ public class PostBuildScriptListener extends RunListener<Run> implements Seriali
             publishersField.setAccessible(true);
             DescribableList<Publisher, Descriptor<Publisher>> publishers = (DescribableList<Publisher, Descriptor<Publisher>>) publishersField.get(project);
             if (publishers != null) {
-                Iterator<Publisher> it = publishers.iterator();
-                while (it.hasNext()) {
-                    Publisher curPublisher = it.next();
-                    if (curPublisher instanceof PostBuildScript) {
-                        publishers.remove(curPublisher.getClass());
-                        publishers.add(curPublisher);
+                for (Publisher publisher : publishers) {
+                    if (publisher instanceof PostBuildScript) {
+                        publishers.remove(publisher.getClass());
+                        publishers.add(publisher);
                     }
                 }
                 publishersField.set(project, publishers);
