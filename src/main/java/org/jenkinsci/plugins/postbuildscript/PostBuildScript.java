@@ -79,8 +79,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     public boolean perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         Job job = build.getProject();
         boolean axe = isMatrixAxe(job);
-        if (   (axe && executeOn.axes())     // matrix axe, and set to execute on axes' nodes
-            || (!axe)) {                         // neither matrix head nor axe
+        if (   (axe && executeOn.axes()) ) {     // matrix axe, and set to execute on axes' nodes
             return _perform(build, launcher, listener);
         }
         return true;
