@@ -26,7 +26,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     private transient boolean executeOnMatrixNodes;
 
     public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.BUILD;
+        return BuildStepMonitor.NONE;
     }
 
     @Deprecated
