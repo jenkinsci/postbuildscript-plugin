@@ -16,9 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.AXES;
 import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.BOTH;
-import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.MATRIX;
 
 /**
  * @author Gregory Boissinot
@@ -67,10 +65,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return new MatrixAggregator(build, launcher, listener) {
             @Override
             public boolean endBuild() throws InterruptedException, IOException {
-                if (executeOn.matrix())
-                    return _perform(build, launcher, listener);
-                else
-                    return true;
+                return !executeOn.matrix() || _perform(build, launcher, listener);
             }
         };
     }
@@ -78,11 +73,13 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         Job job = build.getProject();
+
         boolean axe = isMatrixAxe(job);
-        if (   (axe && executeOn.axes()) ) {     // matrix axe, and set to execute on axes' nodes
+        if ((axe && executeOn.axes())) {     // matrix axe, and set to execute on axes' nodes
             return _perform(build, launcher, listener);
         }
-        return true;
+
+        return axe || _perform(build, launcher, listener);
     }
 
     private boolean _perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
@@ -218,6 +215,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private String getResolvedPath(String path, AbstractBuild build, BuildListener listener) throws PostBuildScriptException {
         if (path == null) {
             return null;
