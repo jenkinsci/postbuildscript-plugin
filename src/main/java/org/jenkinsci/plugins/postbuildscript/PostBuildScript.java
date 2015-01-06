@@ -42,6 +42,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private boolean scriptOnlyIfSuccess;
     private boolean scriptOnlyIfFailure;
+    private boolean markBuildUnstable;
     private ExecuteOn executeOn;
 
     @DataBoundConstructor
@@ -50,6 +51,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
                            List<GroovyScriptContent> groovyScriptContent,
                            boolean scriptOnlyIfSuccess,
                            boolean scriptOnlyIfFailure,
+                           boolean markBuildUnstable,
                            ExecuteOn executeOn,
                            List<BuildStep> buildStep) {
         this.genericScriptFileList = genericScriptFile;
@@ -58,6 +60,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         this.buildSteps = buildStep;
         this.scriptOnlyIfSuccess = scriptOnlyIfSuccess;
         this.scriptOnlyIfFailure = scriptOnlyIfFailure;
+        this.markBuildUnstable = markBuildUnstable;
         this.executeOn = executeOn;
     }
 
@@ -115,8 +118,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (genericScriptFileList != null) {
             boolean result = processGenericScriptList(genericScriptFileList, executor, build, launcher, listener);
             if (!result) {
-                setFailedResult(build);
-                return false;
+                return setBuildStepsResult(build);
             }
         }
 
@@ -124,8 +126,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (groovyScriptFileList != null) {
             boolean result = processGroovyScriptFileList(groovyScriptFileList, executor, build, listener);
             if (!result) {
-                setFailedResult(build);
-                return false;
+                return setBuildStepsResult(build);
             }
         }
 
@@ -133,8 +134,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (groovyScriptContentList != null) {
             boolean result = processGroovyScriptContentList(build.getWorkspace(), groovyScriptContentList, executor);
             if (!result) {
-                setFailedResult(build);
-                return false;
+                return setBuildStepsResult(build);
             }
         }
 
@@ -142,8 +142,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (buildSteps != null) {
             boolean result = processBuildSteps(buildSteps, build, launcher, listener);
             if (!result) {
-                setFailedResult(build);
-                return false;
+                return setBuildStepsResult(build);
             }
         }
 
@@ -203,7 +202,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         try {
             for (BuildStep bs : buildSteps) {
                 if (!bs.perform(build, launcher, listener)) {
-                    setFailedResult(build);
                     return false;
                 }
             }
@@ -237,6 +235,21 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         build.setResult(Result.FAILURE);
     }
 
+    private void setUnstableResult(AbstractBuild build) {
+        build.setResult(Result.UNSTABLE);
+    }
+    
+    private boolean setBuildStepsResult(AbstractBuild build)
+    {
+        if (isMarkBuildUnstable())
+        {
+            setUnstableResult(build);
+            return true;
+        }
+        setFailedResult(build);
+        return false;
+    }
+    
     @Deprecated
     @SuppressWarnings({"unused", "deprecation"})
     public List<GenericScript> getGenericScriptList() {
@@ -277,6 +290,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     @SuppressWarnings("unused")
     public boolean isScriptOnlyIfFailure() {
         return scriptOnlyIfFailure;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isMarkBuildUnstable() {
+        return markBuildUnstable;
     }
 
     @SuppressWarnings("unused")
