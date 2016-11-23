@@ -6,6 +6,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
 import hudson.remoting.Callable;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BatchFile;
@@ -32,18 +33,18 @@ public class ScriptExecutor implements Serializable {
         this.listener = listener;
     }
 
-    public int executeScriptPathAndGetExitCode(FilePath workspace, String scriptFilePath, Launcher launcher) throws PostBuildScriptException {
+    public int executeScriptPathAndGetExitCode(AbstractBuild build, String scriptFilePath, Launcher launcher) throws PostBuildScriptException {
 
         if (scriptFilePath == null) {
             throw new NullPointerException("The scriptFilePath object must be set.");
         }
 
-        FilePath filePath = getFilePath(workspace, scriptFilePath);
+        FilePath filePath = getFilePath(build.getWorkspace(), scriptFilePath);
         if (filePath == null) {
             throw new PostBuildScriptException(String.format("The script file path '%s' doesn't exist.", scriptFilePath));
         }
 
-        return executeScript(workspace, filePath, launcher);
+        return executeScript(build, filePath, launcher);
     }
 
     private String getResolvedContentWithEnvVars(FilePath filePath) throws PostBuildScriptException {
@@ -65,7 +66,7 @@ public class ScriptExecutor implements Serializable {
         return scriptContentResolved;
     }
 
-    private int executeScript(FilePath workspace, FilePath script, final Launcher launcher) throws PostBuildScriptException {
+    private int executeScript(AbstractBuild build, FilePath script, final Launcher launcher) throws PostBuildScriptException {
 
         assert script != null;
         assert launcher != null;
@@ -80,8 +81,8 @@ public class ScriptExecutor implements Serializable {
             } else {
                 batchRunner = new BatchFile(scriptContent);
             }
-            tmpFile = batchRunner.createScriptFile(workspace);
-            return launcher.launch().cmds(batchRunner.buildCommandLine(tmpFile)).stdout(listener).pwd(workspace).join();
+            tmpFile = batchRunner.createScriptFile(build.getWorkspace());
+            return launcher.launch().cmds(batchRunner.buildCommandLine(tmpFile)).stdout(listener).pwd(build.getWorkspace()).join();
         } catch (InterruptedException ie) {
             throw new PostBuildScriptException("Error to execute script", ie);
         } catch (IOException ioe) {
@@ -115,18 +116,20 @@ public class ScriptExecutor implements Serializable {
     }
 
 
-    public boolean performGroovyScript(final FilePath workspace, final String scriptContent) {
+    public boolean performGroovyScript(final AbstractBuild build, final String scriptContent) {
 
         if (scriptContent == null) {
             throw new NullPointerException("The script content object must be set.");
         }
         try {
+            final FilePath workspace = build.getWorkspace();
             return workspace.act(new Callable<Boolean, Throwable>() {
                 public Boolean call() throws Throwable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                     log.info(String.format("Evaluating the groovy script: \n %s", scriptContent));
                     GroovyShell shell = new GroovyShell();
                     shell.setVariable("workspace", new File(workspace.getRemote()));
+                    shell.setVariable("build", build);
                     shell.setVariable("log", log);
                     shell.setVariable("out", log.getListener().getLogger());
                     shell.evaluate(groovyExpressionResolved);
@@ -146,17 +149,17 @@ public class ScriptExecutor implements Serializable {
     }
 
 
-    public boolean performGroovyScriptFile(FilePath workspace, final String scriptFilePath) throws PostBuildScriptException {
+    public boolean performGroovyScriptFile(AbstractBuild build, final String scriptFilePath) throws PostBuildScriptException {
         if (scriptFilePath == null) {
             throw new NullPointerException("The scriptFilePath object must be set.");
         }
 
-        FilePath filePath = getFilePath(workspace, scriptFilePath);
+        FilePath filePath = getFilePath(build.getWorkspace(), scriptFilePath);
         if (filePath == null) {
             throw new PostBuildScriptException(String.format("The script file path '%s' doesn't exist.", scriptFilePath));
         }
 
         String scriptContent = getResolvedContentWithEnvVars(filePath);
-        return performGroovyScript(workspace, scriptContent);
+        return performGroovyScript(build, scriptContent);
     }
 }

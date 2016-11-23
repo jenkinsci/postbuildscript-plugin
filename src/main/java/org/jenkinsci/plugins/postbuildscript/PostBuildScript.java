@@ -132,7 +132,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         //Execute Groovy scripts content
         if (groovyScriptContentList != null) {
-            boolean result = processGroovyScriptContentList(build.getWorkspace(), groovyScriptContentList, executor);
+            boolean result = processGroovyScriptContentList(build, groovyScriptContentList, executor);
             if (!result) {
                 return setBuildStepsResult(build);
             }
@@ -153,11 +153,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         assert genericScriptFileList != null;
 
-        FilePath workspace = build.getWorkspace();
         for (GenericScript script : genericScriptFileList) {
             String scriptPath = getResolvedPath(script.getFilePath(), build, listener);
             if (scriptPath != null) {
-                int cmd = executor.executeScriptPathAndGetExitCode(workspace, scriptPath, launcher);
+                int cmd = executor.executeScriptPathAndGetExitCode(build, scriptPath, launcher);
                 if (cmd != 0) {
                     return false;
                 }
@@ -171,11 +170,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         assert groovyScriptFileList != null;
 
-        FilePath workspace = build.getWorkspace();
         for (GroovyScriptFile groovyScript : groovyScriptFileList) {
             String groovyPath = getResolvedPath(groovyScript.getFilePath(), build, listener);
             if (groovyPath != null) {
-                if (!executor.performGroovyScriptFile(workspace, groovyPath)) {
+                if (!executor.performGroovyScriptFile(build, groovyPath)) {
                     return false;
                 }
             }
@@ -183,14 +181,14 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return true;
     }
 
-    private boolean processGroovyScriptContentList(FilePath workspace, List<GroovyScriptContent> groovyScriptContentList, ScriptExecutor executor) throws PostBuildScriptException {
+    private boolean processGroovyScriptContentList(AbstractBuild build, List<GroovyScriptContent> groovyScriptContentList, ScriptExecutor executor) throws PostBuildScriptException {
 
         assert groovyScriptContentList != null;
 
         for (GroovyScriptContent groovyScript : groovyScriptContentList) {
             String content = groovyScript.getContent();
             if (content != null) {
-                if (!executor.performGroovyScript(workspace, content)) {
+                if (!executor.performGroovyScript(build, content)) {
                     return false;
                 }
             }
