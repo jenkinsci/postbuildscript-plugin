@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
-import groovy.lang.GroovyShell;
+import groovy.lang.Binding;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -14,6 +14,7 @@ import jenkins.SlaveToMasterFileCallable;
 import jenkins.security.SlaveToMasterCallable;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptLog;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,11 +130,14 @@ public class ScriptExecutor implements Serializable {
 				public Boolean call() throws Throwable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                     log.info(String.format("Evaluating the groovy script: \n %s", scriptContent));
-                    GroovyShell shell = new GroovyShell();
-                    shell.setVariable("workspace", new File(workspace.getRemote()));
-                    shell.setVariable("log", log);
-                    shell.setVariable("out", log.getListener().getLogger());
-                    shell.evaluate(groovyExpressionResolved);
+                    Binding binding = new Binding();
+					binding.setVariable("workspace", new File(workspace.getRemote()));
+					binding.setVariable("log", log);
+					binding.setVariable("out", log.getListener().getLogger());
+					ClassLoader classLoader = getClass().getClassLoader();
+					SecureGroovyScript script = new SecureGroovyScript(groovyExpressionResolved, false, null);
+					script.configuringWithNonKeyItem();
+					script.evaluate(classLoader, binding);
                     return true;
                 }
             });
