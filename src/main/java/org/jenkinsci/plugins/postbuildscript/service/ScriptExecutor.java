@@ -6,11 +6,12 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
-import hudson.remoting.Callable;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
+import jenkins.SlaveToMasterFileCallable;
+import jenkins.security.SlaveToMasterCallable;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptLog;
 
@@ -51,8 +52,9 @@ public class ScriptExecutor implements Serializable {
         try {
             log.info("Resolving environment variables for the script content.");
             scriptContentResolved =
-                    filePath.act(new FilePath.FileCallable<String>() {
-                        public String invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
+                    filePath.act(new SlaveToMasterFileCallable<String>() {
+                        @Override
+						public String invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
                             String scriptContent = Util.loadFile(f);
                             return Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                         }
@@ -93,8 +95,9 @@ public class ScriptExecutor implements Serializable {
     private FilePath getFilePath(final FilePath workspace, final String givenPath) throws PostBuildScriptException {
 
         try {
-            return workspace.act(new FilePath.FileCallable<FilePath>() {
-                public FilePath invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
+            return workspace.act(new SlaveToMasterFileCallable<FilePath>() {
+                @Override
+				public FilePath invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
                     File givenFile = new File(givenPath);
                     if (givenFile.exists()) {
                         return new FilePath(channel, givenFile.getPath());
@@ -121,8 +124,9 @@ public class ScriptExecutor implements Serializable {
             throw new NullPointerException("The script content object must be set.");
         }
         try {
-            return workspace.act(new Callable<Boolean, Throwable>() {
-                public Boolean call() throws Throwable {
+            return workspace.act(new SlaveToMasterCallable<Boolean, Throwable>() {
+                @Override
+				public Boolean call() throws Throwable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                     log.info(String.format("Evaluating the groovy script: \n %s", scriptContent));
                     GroovyShell shell = new GroovyShell();
