@@ -5,7 +5,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.*;
-import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 import hudson.tasks.*;
 import org.jenkinsci.plugins.postbuildscript.service.ScriptExecutor;
@@ -317,10 +316,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return Project.class.isAssignableFrom(jobType)
-                    || MatrixProject.class.isAssignableFrom(jobType)
-                    || MavenModuleSet.class.isAssignableFrom(jobType)
-                    || (Hudson.getInstance().getPlugin("ivy") != null && hudson.ivy.IvyModuleSet.class.isAssignableFrom(jobType));
+            return true;
         }
 
         public boolean isMatrixProject(Object job) {

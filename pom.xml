@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.501</version>
+		<version>2.37</version>
     </parent>
 
     <artifactId>postbuildscript</artifactId>
@@ -28,34 +28,21 @@
         </developer>
     </developers>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <ivy.plugin.version>1.19</ivy.plugin.version>
-    </properties>
-
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/postbuildscript-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/postbuildscript-plugin.git</developerConnection>
       <tag>HEAD</tag>
-  </scm>
+  	</scm>
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.jenkins-ci.main</groupId>
-            <artifactId>maven-plugin</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>matrix-project</artifactId>
+			<version>1.12</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>ivy</artifactId>
-            <version>${ivy.plugin.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
+	</dependencies>
 
     <repositories>
         <repository>
