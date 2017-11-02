@@ -10,7 +10,7 @@
     <artifactId>postbuildscript</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Post-Build Script Plug-in</name>
-    <version>0.18</version>
+    <version>0.19-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin</url>
 
     <licenses>
@@ -35,7 +35,7 @@
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/postbuildscript-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/postbuildscript-plugin.git</developerConnection>
-        <tag>postbuildscript-0.18</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
