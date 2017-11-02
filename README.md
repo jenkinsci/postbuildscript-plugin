@@ -2,7 +2,7 @@ PostBuildScript, Jenkins plugin
 -------------------------------
 
 Can run the following things after a build:
-* Bath or shell script
+* Bash or shell script
 * Groovy script
 * Normal build steps
 
