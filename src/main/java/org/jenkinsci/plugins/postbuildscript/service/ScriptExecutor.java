@@ -127,7 +127,7 @@ public class ScriptExecutor implements Serializable {
                 @Override
                 public Boolean call() throws Throwable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
-                    log.info(String.format("Evaluating the groovy script: \n %s", scriptContent));
+                    log.info(String.format("Evaluating the groovy script: %n %s", scriptContent));
                     Binding binding = new Binding();
                     binding.setVariable("workspace", new File(workspace.getRemote()));
                     binding.setVariable("log", log);
