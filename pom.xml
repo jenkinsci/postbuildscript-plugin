@@ -27,6 +27,10 @@
             <name>Gregory Boissinot</name>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>dheid</id>
+            <name>Daniel Heid</name>
+        </developer>
     </developers>
 
     <scm>
