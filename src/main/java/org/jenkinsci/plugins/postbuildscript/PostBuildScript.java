@@ -42,14 +42,14 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     }
 
     @Deprecated
-    private transient List<GenericScript> genericScriptList = new ArrayList<GenericScript>();
+    private transient List<GenericScript> genericScriptList = new ArrayList<>();
 
     @SuppressWarnings("deprecation")
-    private transient List<GroovyScript> groovyScriptList = new ArrayList<GroovyScript>();
+    private transient List<GroovyScript> groovyScriptList = new ArrayList<>();
 
-    private List<GenericScript> genericScriptFileList = new ArrayList<GenericScript>();
-    private List<GroovyScriptFile> groovyScriptFileList = new ArrayList<GroovyScriptFile>();
-    private List<GroovyScriptContent> groovyScriptContentList = new ArrayList<GroovyScriptContent>();
+    private List<GenericScript> genericScriptFileList = new ArrayList<>();
+    private List<GroovyScriptFile> groovyScriptFileList = new ArrayList<>();
+    private List<GroovyScriptContent> groovyScriptContentList = new ArrayList<>();
     private List<BuildStep> buildSteps;
 
     private boolean scriptOnlyIfSuccess;
@@ -350,10 +350,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     public Object readResolve() {
         if (genericScriptList != null) {
             if (genericScriptFileList == null) {
-                genericScriptFileList = new ArrayList<GenericScript>();
+                genericScriptFileList = new ArrayList<>();
             }
             if (buildSteps == null) {
-                buildSteps = new ArrayList<BuildStep>();
+                buildSteps = new ArrayList<>();
             }
             for (GenericScript script : genericScriptList) {
                 genericScriptFileList.add(script);
@@ -362,10 +362,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         if (groovyScriptList != null) {
             if (groovyScriptContentList == null) {
-                groovyScriptContentList = new ArrayList<GroovyScriptContent>();
+                groovyScriptContentList = new ArrayList<>();
             }
             if (groovyScriptFileList == null) {
-                groovyScriptFileList = new ArrayList<GroovyScriptFile>();
+                groovyScriptFileList = new ArrayList<>();
             }
             for (GroovyScript groovyScript : groovyScriptList) {
                 if (groovyScript.getContent() != null) {
