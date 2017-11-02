@@ -9,8 +9,6 @@ public class GenericScript {
 
     private final String filePath;
 
-    private transient String content;
-
     @DataBoundConstructor
     public GenericScript(String filePath) {
         this.filePath = filePath;
@@ -21,9 +19,4 @@ public class GenericScript {
         return filePath;
     }
 
-    @SuppressWarnings("unused")
-    @Deprecated
-    public String getContent() {
-        return content;
-    }
 }
