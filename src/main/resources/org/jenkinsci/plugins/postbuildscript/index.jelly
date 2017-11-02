@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
       This plugin makes it possible to execute a set of script in the last build step of a Jenkins job.
 </div>
