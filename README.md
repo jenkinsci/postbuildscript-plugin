@@ -43,8 +43,13 @@ Then visit http://localhost:8080/jenkins/ to play with the plugins.
 
 ## Changelog
 
+### Version 1.0
+* JENKINS-30011 - Allow multiple instances of Post Build Scripts as a post build action
+* Fix JENKINS-28825 - Confusing error message when leaving script path empty
+
 ### Version 0.18
 * Fix JENKINS-43637 - Arbitrary code execution vulnerability: https://github.com/jenkinsci/postbuildscript-plugin/pull/15
+* Fix JENKINS-19873 - Batch or a shell script files to execute doesn't run with arguments
 
 ### Version 0.17
 * Added an option to set the build to unstable instead of failed
