@@ -43,7 +43,7 @@ Then visit http://localhost:8080/jenkins/ to play with the plugins.
 
 ## Changelog
 
-### Version 1.0
+### Version 1.0.0
 * JENKINS-30011 - Allow multiple instances of Post Build Scripts as a post build action
 * Fix JENKINS-28825 - Confusing error message when leaving script path empty
 
