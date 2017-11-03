@@ -24,6 +24,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.postbuildscript.service.ScriptExecutor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -41,19 +42,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return BuildStepMonitor.NONE;
     }
 
-    @Deprecated
-    private transient List<GenericScript> genericScriptList = new ArrayList<>();
-
-    @SuppressWarnings("deprecation")
-    private transient List<GroovyScript> groovyScriptList = new ArrayList<>();
-
     private List<GenericScript> genericScriptFileList = new ArrayList<>();
     private List<GroovyScriptFile> groovyScriptFileList = new ArrayList<>();
     private List<GroovyScriptContent> groovyScriptContentList = new ArrayList<>();
-    private List<BuildStep> buildSteps;
+    private List<PostBuildStep> buildSteps;
 
-    private boolean scriptOnlyIfSuccess;
-    private boolean scriptOnlyIfFailure;
     private boolean markBuildUnstable;
     private ExecuteOn executeOn;
 
@@ -61,17 +54,13 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     public PostBuildScript(List<GenericScript> genericScriptFile,
         List<GroovyScriptFile> groovyScriptFile,
         List<GroovyScriptContent> groovyScriptContent,
-        boolean scriptOnlyIfSuccess,
-        boolean scriptOnlyIfFailure,
         boolean markBuildUnstable,
         ExecuteOn executeOn,
-        List<BuildStep> buildStep) {
+        List<PostBuildStep> buildStep) {
         this.genericScriptFileList = genericScriptFile;
         this.groovyScriptFileList = groovyScriptFile;
         this.groovyScriptContentList = groovyScriptContent;
         this.buildSteps = buildStep;
-        this.scriptOnlyIfSuccess = scriptOnlyIfSuccess;
-        this.scriptOnlyIfFailure = scriptOnlyIfFailure;
         this.markBuildUnstable = markBuildUnstable;
         this.executeOn = executeOn;
     }
@@ -98,7 +87,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return axe || _perform(build, launcher, listener);
     }
 
-    private boolean _perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
+    private boolean _perform(AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
 
         listener.getLogger().println("[PostBuildScript] - Execution post build scripts.");
 
@@ -108,16 +97,9 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         );
 
         try {
-            Result result = build.getResult();
-            if (result != null && scriptOnlyIfSuccess && result.isWorseThan(Result.SUCCESS)) {
-                listener.getLogger().println("[PostBuildScript] Build is not success : do not execute script");
-                return true;
-            } else if (result != null && scriptOnlyIfFailure && result.isBetterThan(Result.FAILURE)) {
-                listener.getLogger().println("[PostBuildScript] Build is not failure : do not execute script");
-                return true;
-            } else {
-                return processScripts(executor, build, launcher, listener);
-            }
+
+            return processScripts(executor, build, launcher, listener);
+
         } catch (PostBuildScriptException pse) {
             listener.getLogger().println("[PostBuildScript] - [Error] - Problems occurs: " + pse.getMessage());
             build.setResult(Result.FAILURE);
@@ -129,7 +111,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         //Execute Generic scripts file
         if (genericScriptFileList != null) {
-            boolean result = processGenericScriptList(genericScriptFileList, executor, build, launcher, listener);
+            boolean result = processGenericScriptList(executor, build, launcher, listener);
             if (!result) {
                 return setBuildStepsResult(build);
             }
@@ -137,7 +119,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         //Execute Groovy scripts file
         if (groovyScriptFileList != null) {
-            boolean result = processGroovyScriptFileList(groovyScriptFileList, executor, build, listener);
+            boolean result = processGroovyScriptFileList(executor, build, listener);
             if (!result) {
                 return setBuildStepsResult(build);
             }
@@ -145,7 +127,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         //Execute Groovy scripts content
         if (groovyScriptContentList != null) {
-            boolean result = processGroovyScriptContentList(build.getWorkspace(), groovyScriptContentList, executor);
+            boolean result = processGroovyScriptContentList(executor, build, listener);
             if (!result) {
                 return setBuildStepsResult(build);
             }
@@ -153,7 +135,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         //Execute Build steps
         if (buildSteps != null) {
-            boolean result = processBuildSteps(buildSteps, build, launcher, listener);
+            boolean result = processBuildSteps(build, launcher, listener);
             if (!result) {
                 return setBuildStepsResult(build);
             }
@@ -162,62 +144,105 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return true;
     }
 
-    private boolean processGenericScriptList(List<GenericScript> genericScriptFileList, ScriptExecutor executor, AbstractBuild build, Launcher launcher, BuildListener listener)
+    private boolean processGenericScriptList(ScriptExecutor executor, AbstractBuild build, Launcher launcher, BuildListener listener)
         throws PostBuildScriptException {
 
         assert genericScriptFileList != null;
 
+        Result result = build.getResult();
         FilePath workspace = build.getWorkspace();
         for (GenericScript script : genericScriptFileList) {
-            String scriptPath = getResolvedPath(script.getFilePath(), build, listener);
-            if (scriptPath != null) {
-                int cmd = executor.executeScriptPathAndGetExitCode(workspace, scriptPath, launcher);
-                if (cmd != 0) {
-                    return false;
+
+            Result targetResult = script.getTargetResult();
+            if (result == null || result.equals(targetResult)) {
+                String scriptPath = getResolvedPath(script.getFilePath(), build, listener);
+                if (scriptPath != null) {
+                    int cmd = executor.executeScriptPathAndGetExitCode(workspace, scriptPath, launcher);
+                    if (cmd != 0) {
+                        return false;
+                    }
                 }
+            } else {
+                logSkippingOfExecution(listener, script.getFilePath(), targetResult);
             }
+
+
         }
         return true;
     }
 
-    private boolean processGroovyScriptFileList(List<GroovyScriptFile> groovyScriptFileList, ScriptExecutor executor, AbstractBuild build, BuildListener listener)
+    private void logSkippingOfExecution(BuildListener listener, String scriptName, Result targetResult) {
+        listener.getLogger().println("[PostBuildScript] Build does not have result \"" + targetResult +"\". Did not execute " + scriptName);
+    }
+
+    private boolean processGroovyScriptFileList(ScriptExecutor executor, AbstractBuild build, BuildListener listener)
         throws PostBuildScriptException {
 
         assert groovyScriptFileList != null;
 
+        Result result = build.getResult();
         FilePath workspace = build.getWorkspace();
         for (GroovyScriptFile groovyScript : groovyScriptFileList) {
-            String groovyPath = getResolvedPath(groovyScript.getFilePath(), build, listener);
-            if (groovyPath != null) {
-                if (!executor.performGroovyScriptFile(workspace, groovyPath)) {
-                    return false;
+
+            Result targetResult = groovyScript.getTargetResult();
+            if (result == null || result.equals(targetResult)) {
+                String groovyPath = getResolvedPath(groovyScript.getFilePath(), build, listener);
+                if (groovyPath != null) {
+                    if (!executor.performGroovyScriptFile(workspace, groovyPath)) {
+                        return false;
+                    }
                 }
+            } else {
+                logSkippingOfExecution(listener, groovyScript.getFilePath(), targetResult);
             }
+
         }
         return true;
     }
 
-    private boolean processGroovyScriptContentList(FilePath workspace, List<GroovyScriptContent> groovyScriptContentList, ScriptExecutor executor) throws PostBuildScriptException {
+    private boolean processGroovyScriptContentList(ScriptExecutor executor, AbstractBuild build, BuildListener listener) {
 
         assert groovyScriptContentList != null;
 
+        FilePath workspace = build.getWorkspace();
+
+        Result result = build.getResult();
         for (GroovyScriptContent groovyScript : groovyScriptContentList) {
-            String content = groovyScript.getContent();
-            if (content != null) {
-                if (!executor.performGroovyScript(workspace, content)) {
-                    return false;
+
+            Result targetResult = groovyScript.getTargetResult();
+            if (result == null || result.equals(targetResult)) {
+                String content = groovyScript.getContent();
+                if (content != null) {
+                    if (!executor.performGroovyScript(workspace, content)) {
+                        return false;
+                    }
                 }
+            } else {
+                logSkippingOfExecution(listener, "Groovy script #" + groovyScriptContentList.indexOf(groovyScript), targetResult);
             }
+
         }
         return true;
     }
 
-    private boolean processBuildSteps(List<BuildStep> buildSteps, AbstractBuild build, Launcher launcher, BuildListener listener) throws PostBuildScriptException {
+    private boolean processBuildSteps(AbstractBuild build, Launcher launcher, BuildListener listener) throws PostBuildScriptException {
+
+        Result result = build.getResult();
+
         try {
-            for (BuildStep bs : buildSteps) {
-                if (!bs.perform(build, launcher, listener)) {
-                    return false;
+            for (PostBuildStep bs : buildSteps) {
+
+                Result targetResult = bs.getTargetResult();
+                if (result == null || result.equals(targetResult)) {
+                    for (BuildStep buildStep : bs.getBuildSteps()) {
+                        if (!buildStep.perform(build, launcher, listener)) {
+                            return false;
+                        }
+                    }
+                } else {
+                    logSkippingOfExecution(listener, "build step #" + buildSteps.indexOf(bs), targetResult);
                 }
+
             }
             return true;
         } catch (IOException ioe) {
@@ -262,18 +287,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return false;
     }
 
-    @Deprecated
-    @SuppressWarnings({"unused", "deprecation"})
-    public List<GenericScript> getGenericScriptList() {
-        return genericScriptList;
-    }
-
-    @Deprecated
-    @SuppressWarnings({"unused", "deprecation"})
-    public List<GroovyScript> getGroovyScriptList() {
-        return groovyScriptList;
-    }
-
     @SuppressWarnings("unused")
     public List<GenericScript> getGenericScriptFileList() {
         return genericScriptFileList;
@@ -290,18 +303,8 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     }
 
     @SuppressWarnings("unused")
-    public List<BuildStep> getBuildSteps() {
+    public List<PostBuildStep> getBuildSteps() {
         return buildSteps;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean isScriptOnlyIfSuccess() {
-        return scriptOnlyIfSuccess;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean isScriptOnlyIfFailure() {
-        return scriptOnlyIfFailure;
     }
 
     @SuppressWarnings("unused")
@@ -336,6 +339,16 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             return PostBuildScript.isMatrixProject(job);
         }
 
+        public ListBoxModel doFillResultItems() {
+            ListBoxModel items = new ListBoxModel();
+            items.add(Result.SUCCESS.toString());
+            items.add(Result.UNSTABLE.toString());
+            items.add(Result.FAILURE.toString());
+            items.add(Result.NOT_BUILT.toString());
+            items.add(Result.ABORTED.toString());
+            return items;
+        }
+
     }
 
     private static boolean isMatrixProject(Object job) {
@@ -348,35 +361,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     @SuppressWarnings({"unused", "deprecation"})
     public Object readResolve() {
-        if (genericScriptList != null) {
-            if (genericScriptFileList == null) {
-                genericScriptFileList = new ArrayList<>();
-            }
-            if (buildSteps == null) {
-                buildSteps = new ArrayList<>();
-            }
-            for (GenericScript script : genericScriptList) {
-                genericScriptFileList.add(script);
-            }
-        }
-
-        if (groovyScriptList != null) {
-            if (groovyScriptContentList == null) {
-                groovyScriptContentList = new ArrayList<>();
-            }
-            if (groovyScriptFileList == null) {
-                groovyScriptFileList = new ArrayList<>();
-            }
-            for (GroovyScript groovyScript : groovyScriptList) {
-                if (groovyScript.getContent() != null) {
-                    groovyScriptContentList.add(new GroovyScriptContent(groovyScript.getContent()));
-                }
-                if (groovyScript.getFilePath() != null) {
-                    groovyScriptFileList.add(new GroovyScriptFile(groovyScript.getFilePath()));
-                }
-            }
-        }
-
         if (executeOn == null)
             executeOn = BOTH;
 

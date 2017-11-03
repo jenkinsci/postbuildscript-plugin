@@ -6,12 +6,13 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * @author Gregory Boissinot
  */
-public class GroovyScriptFile {
+public class GroovyScriptFile extends PostBuildItem {
 
     private final String filePath;
 
     @DataBoundConstructor
-    public GroovyScriptFile(String filePath) {
+    public GroovyScriptFile(String filePath, String result) {
+        super(result);
         this.filePath = Util.fixEmpty(filePath);
     }
 
