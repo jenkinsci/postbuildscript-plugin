@@ -10,7 +10,7 @@
     <artifactId>postbuildscript</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins PostBuildScript Plugin</name>
-    <version>0.19-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin</url>
 
     <licenses>
