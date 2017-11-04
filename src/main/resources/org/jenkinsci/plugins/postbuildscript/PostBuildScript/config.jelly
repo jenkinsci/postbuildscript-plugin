@@ -1,20 +1,23 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="jelly:core ">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="jelly:core ">
 
-    <f:entry title="${%Batch or a shell script files to execute}">
+    <f:entry title="${%Batch or shell script files}">
         <f:nested>
 
-            <f:repeatable var="genericScriptFile" items="${instance.genericScriptFileList}"
-                          add="${%Add a shell or a Windows batch file}">
+            <f:repeatable
+                var="genericScriptFiles"
+                items="${instance.genericScriptFiles}"
+                add="${%Add a shell or a Windows batch file}"
+            >
                 <table width="100%">
 
                     <f:entry field="filePath" title="${%Script path}">
-                        <f:textbox name="postBuild.genericScript.filePath"
-                                   value="${genericScriptFile.filePath}"/>
+                        <f:textbox value="${genericScriptFiles.filePath}"/>
                     </f:entry>
 
                     <f:entry field="result" title="${%When build is}">
-                        <f:select value="${genericScriptFile.result}"/>
+                        <f:select value="${genericScriptFiles.result}"/>
                     </f:entry>
 
                     <f:block>
@@ -29,21 +32,23 @@
 
     </f:entry>
 
-    <f:entry title="${%Groovy script files to evaluate}">
+    <f:entry title="${%Groovy script files}">
         <f:nested>
 
-            <f:repeatable var="groovyScriptFile" items="${instance.groovyScriptFileList}"
-                          add="${%Add a Groovy script file to evaluate}">
+            <f:repeatable
+                var="groovyScriptFiles"
+                items="${instance.groovyScriptFiles}"
+                add="${%Add a Groovy script file to evaluate}"
+            >
 
                 <table width="100%">
 
                     <f:entry field="filePath" title="${%Script Path}">
-                        <f:textbox name="postBuild.groovyScriptFile.filePath"
-                                   value="${groovyScriptFile.filePath}"/>
+                        <f:textbox value="${groovyScriptFiles.filePath}"/>
                     </f:entry>
 
-                    <f:entry field="result" title="${%When build is}">
-                        <f:select value="${groovyScriptFile.result}"/>
+                    <f:entry field="result" title="${%When build was}">
+                        <f:select value="${groovyScriptFiles.result}"/>
                     </f:entry>
 
                     <f:block>
@@ -58,21 +63,23 @@
         </f:nested>
     </f:entry>
 
-    <f:entry title="${%Groovy script content to evaluate}">
+    <f:entry title="${%Groovy scripts}">
         <f:nested>
 
-            <f:repeatable var="groovyScriptContent" items="${instance.groovyScriptContentList}"
-                          add="${%Add a Groovy script content to evaluate}">
+            <f:repeatable
+                var="groovyScripts"
+                items="${instance.groovyScripts}"
+                add="${%Add a Groovy script content to evaluate}"
+            >
 
                 <table width="100%">
 
                     <f:entry field="content" title="${%Script}">
-                        <f:textarea name="postBuild.groovyScriptContent.content"
-                                    value="${groovyScriptContent.content}"/>
+                        <f:textarea value="${groovyScripts.content}"/>
                     </f:entry>
 
-                    <f:entry field="result" title="${%When build is}">
-                        <f:select value="${groovyScriptContent.result}"/>
+                    <f:entry field="result" title="${%When build was}">
+                        <f:select value="${groovyScripts.result}"/>
                     </f:entry>
 
                     <f:block>
@@ -92,20 +99,26 @@
 
         <f:nested>
 
-            <f:repeatable var="buildStep" items="${instance.buildSteps}"
-                          add="${%Add post build operations}">
+            <f:repeatable
+                var="buildSteps"
+                items="${instance.buildSteps}"
+                add="${%Add post build operations}"
+            >
 
                 <table width="100%">
 
                     <f:block>
-                        <f:hetero-list name="postBuild.buildStep.buildSteps" hasHeader="true"
-                                       descriptors="${h.getBuilderDescriptors(it)}"
-                                       items="${buildStep.buildSteps}"
-                                       addCaption="${%Add steps}"/>
+                        <f:hetero-list
+                            name="postBuild.buildStep.buildSteps"
+                            hasHeader="true"
+                            descriptors="${h.getBuilderDescriptors(it)}"
+                            items="${buildSteps.buildSteps}"
+                            addCaption="${%Add steps}"
+                        />
                     </f:block>
 
-                    <f:entry field="result" title="${%Execute operation when build is}">
-                        <f:select value="${buildStep.result}"/>
+                    <f:entry field="result" title="${%When build was}">
+                        <f:select value="${buildSteps.result}"/>
                     </f:entry>
 
                     <f:block>
@@ -123,7 +136,7 @@
 
     </f:entry>
 
-    <f:entry title="${%Mark build unstable instead of failed on script error}">
+    <f:entry title="${%Mark build unstable instead of failed on post build script error}">
         <f:checkbox name="markBuildUnstable" checked="${instance.markBuildUnstable}"/>
     </f:entry>
 

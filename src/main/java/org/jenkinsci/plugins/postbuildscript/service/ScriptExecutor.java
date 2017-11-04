@@ -12,8 +12,8 @@ import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
 import jenkins.SlaveToMasterFileCallable;
 import jenkins.security.SlaveToMasterCallable;
+import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
-import org.jenkinsci.plugins.postbuildscript.PostBuildScriptLog;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 import java.io.File;
@@ -28,11 +28,11 @@ import java.util.List;
  */
 public class ScriptExecutor implements Serializable {
 
-    private PostBuildScriptLog log;
+    private final Logger log;
 
-    private BuildListener listener;
+    private final BuildListener listener;
 
-    public ScriptExecutor(PostBuildScriptLog log, BuildListener listener) {
+    public ScriptExecutor(Logger log, BuildListener listener) {
         this.log = log;
         this.listener = listener;
     }
@@ -57,7 +57,7 @@ public class ScriptExecutor implements Serializable {
             scriptContentResolved =
                     filePath.act(new SlaveToMasterFileCallable<String>() {
                         @Override
-                        public String invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
+                        public String invoke(File f, VirtualChannel channel) throws IOException {
                             String scriptContent = Util.loadFile(f);
                             return Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                         }
@@ -68,7 +68,7 @@ public class ScriptExecutor implements Serializable {
         return scriptContentResolved;
     }
 
-    private int executeScript(FilePath workspace, FilePath script, final Launcher launcher, String[] parameters) throws PostBuildScriptException {
+    private int executeScript(FilePath workspace, FilePath script, Launcher launcher, String[] parameters) throws PostBuildScriptException {
 
         assert script != null;
         assert launcher != null;
@@ -77,7 +77,7 @@ public class ScriptExecutor implements Serializable {
         log.info(String.format("Executing the script %s with parameters %s", script, Arrays.toString(parameters)));
         FilePath tmpFile;
         try {
-            final CommandInterpreter batchRunner;
+            CommandInterpreter batchRunner;
             if (launcher.isUnix()) {
                 batchRunner = new Shell(scriptContent);
             } else {
@@ -126,7 +126,7 @@ public class ScriptExecutor implements Serializable {
             return workspace.act(new SlaveToMasterCallable<Boolean, Throwable>() {
                 @Override
                 public Boolean call() throws Throwable {
-                    final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
+                    String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
                     log.info(String.format("Evaluating the groovy script: %n %s", scriptContent));
                     Binding binding = new Binding();
                     binding.setVariable("workspace", new File(workspace.getRemote()));
@@ -146,7 +146,7 @@ public class ScriptExecutor implements Serializable {
     }
 
 
-    public boolean performGroovyScriptFile(FilePath workspace, final String scriptFilePath) throws PostBuildScriptException {
+    public boolean performGroovyScriptFile(FilePath workspace, String scriptFilePath) throws PostBuildScriptException {
         FilePath filePath = resolveScriptPath(workspace, scriptFilePath);
 
         String scriptContent = getResolvedContentWithEnvVars(filePath);

@@ -1,23 +1,20 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import hudson.Util;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * @author Gregory Boissinot
+ *
+ * @deprecated Still here for downwards compatibility. Please use {@link Script} instead
  */
-public class GroovyScriptContent extends PostBuildItem {
-
-    private final String content;
+@Deprecated
+public class GroovyScriptContent extends Script {
 
     @DataBoundConstructor
     public GroovyScriptContent(String content, String result) {
-        super(result);
-        this.content = Util.fixEmpty(content);
+        super(result, content);
+
     }
 
-    @SuppressWarnings("unused")
-    public String getContent() {
-        return content;
-    }
 }

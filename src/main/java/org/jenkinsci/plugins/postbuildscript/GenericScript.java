@@ -1,23 +1,19 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * @author Gregory Boissinot
+ *
+ * @deprecated Still here for downwards compatibility. Please use {@link ScriptFile} instead
  */
-public class GenericScript extends PostBuildItem {
-
-    private final String filePath;
+@Deprecated
+public class GenericScript extends ScriptFile {
 
     @DataBoundConstructor
     public GenericScript(String filePath, String result) {
-        super(result);
-        this.filePath = filePath;
-    }
-
-    @SuppressWarnings("unused")
-    public String getFilePath() {
-        return filePath;
+        super(result, filePath);
     }
 
 }

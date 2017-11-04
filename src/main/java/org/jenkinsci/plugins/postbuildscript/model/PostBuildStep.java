@@ -1,9 +1,9 @@
-package org.jenkinsci.plugins.postbuildscript;
-
-import java.util.List;
+package org.jenkinsci.plugins.postbuildscript.model;
 
 import hudson.tasks.BuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import java.util.List;
 
 
 public class PostBuildStep extends PostBuildItem {

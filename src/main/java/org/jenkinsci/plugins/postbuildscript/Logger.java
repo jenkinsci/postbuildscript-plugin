@@ -7,11 +7,11 @@ import java.io.Serializable;
 /**
  * @author Gregory Boissinot
  */
-public class PostBuildScriptLog implements Serializable {
+public class Logger implements Serializable {
 
-    private TaskListener listener;
+    private final TaskListener listener;
 
-    public PostBuildScriptLog(TaskListener listener) {
+    public Logger(TaskListener listener) {
         this.listener = listener;
     }
 
