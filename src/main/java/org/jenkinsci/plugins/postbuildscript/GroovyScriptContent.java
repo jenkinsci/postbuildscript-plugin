@@ -5,7 +5,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * @author Gregory Boissinot
- *
  * @deprecated Still here for downwards compatibility. Please use {@link Script} instead
  */
 @Deprecated
