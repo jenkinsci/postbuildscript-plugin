@@ -55,13 +55,13 @@ public class ScriptExecutor implements Serializable {
         try {
             log.info("Resolving environment variables for the script content.");
             scriptContentResolved =
-                    filePath.act(new SlaveToMasterFileCallable<String>() {
-                        @Override
-                        public String invoke(File f, VirtualChannel channel) throws IOException {
-                            String scriptContent = Util.loadFile(f);
-                            return Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
-                        }
-                    });
+                filePath.act(new SlaveToMasterFileCallable<String>() {
+                    @Override
+                    public String invoke(File f, VirtualChannel channel) throws IOException {
+                        String scriptContent = Util.loadFile(f);
+                        return Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
+                    }
+                });
         } catch (IOException | InterruptedException ioe) {
             throw new PostBuildScriptException("Error to resolve environment variables", ioe);
         }
