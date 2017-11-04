@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import com.google.common.base.Optional;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
@@ -28,7 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.BOTH;
 
@@ -95,17 +97,11 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     }
 
-    private static void applyResult(
-        Boolean flag,
-        Iterable<? extends PostBuildItem> postBuildItems,
-        Result result
-    ) {
-        Optional<Boolean> optional = Optional.fromNullable(flag);
-        if (optional.isPresent() && optional.get()) {
-            for (PostBuildItem postBuildItem : postBuildItems) {
-                if (!postBuildItem.hasResult()) {
-                    postBuildItem.setResult(result.toString());
-                }
+    private void applyResult(Iterable<? extends PostBuildItem> postBuildItems) {
+        Set<String> results = migrateResults();
+        for (PostBuildItem postBuildItem : postBuildItems) {
+            if (!postBuildItem.hasResult()) {
+                postBuildItem.addResults(results);
             }
         }
     }
@@ -160,7 +156,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         addGroovyScriptContentList();
         addBuildSteps();
 
-        if (markBuildUnstable != null) {
+        if (markBuildUnstable != null && markBuildUnstable) {
             createNewConfigurationIfNotPresent();
             config.setMarkBuildUnstable(markBuildUnstable);
         }
@@ -169,6 +165,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     public List<? extends ScriptFile> getGenericScriptFiles() {
         if (config == null && genericScriptFileList != null) {
+            applyResult(genericScriptFileList);
             return genericScriptFileList;
         }
         createNewConfigurationIfNotPresent();
@@ -177,6 +174,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     public List<? extends ScriptFile> getGroovyScriptFiles() {
         if (config == null && groovyScriptFileList != null) {
+            applyResult(groovyScriptFileList);
             return groovyScriptFileList;
         }
         createNewConfigurationIfNotPresent();
@@ -185,6 +183,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     public List<? extends Script> getGroovyScripts() {
         if (config == null && groovyScriptContentList != null) {
+            applyResult(groovyScriptContentList);
             return groovyScriptContentList;
         }
         createNewConfigurationIfNotPresent();
@@ -196,14 +195,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             List<PostBuildStep> buildSteps = new ArrayList<>(this.buildSteps.size());
             for (BuildStep step : this.buildSteps) {
 
-                String result = Result.SUCCESS.toString();
-                if (scriptOnlyIfFailure != null && scriptOnlyIfFailure) {
-                    result = Result.FAILURE.toString();
-                }
-
+                Set<String> results = migrateResults();
                 PostBuildStep postBuildStep = new PostBuildStep(
                     Collections.singletonList(step),
-                    result
+                    results
                 );
 
                 buildSteps.add(postBuildStep);
@@ -215,13 +210,24 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         return config.getBuildSteps();
     }
 
+    private Set<String> migrateResults() {
+        Set<String> results = new HashSet<>();
+        if (scriptOnlyIfFailure != null && scriptOnlyIfFailure) {
+            results.add(Result.FAILURE.toString());
+        }
+        if (scriptOnlyIfSuccess != null && scriptOnlyIfSuccess) {
+            results.add(Result.SUCCESS.toString());
+        }
+        return results;
+    }
+
     private void addBuildSteps() {
         if (buildSteps != null && !buildSteps.isEmpty()) {
             createNewConfigurationIfNotPresent();
             for (BuildStep step : buildSteps) {
                 List<BuildStep> steps = Collections.singletonList(step);
-                addBuildStep(steps, scriptOnlyIfSuccess, Result.SUCCESS);
-                addBuildStep(steps, scriptOnlyIfFailure, Result.FAILURE);
+                Set<String> results = migrateResults();
+                addBuildStep(steps, results);
             }
         }
     }
@@ -230,8 +236,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (groovyScriptContentList != null && !groovyScriptContentList.isEmpty()) {
             createNewConfigurationIfNotPresent();
             config.addGroovyScripts(groovyScriptContentList);
-            applyResult(scriptOnlyIfSuccess, groovyScriptContentList, Result.SUCCESS);
-            applyResult(scriptOnlyIfFailure, groovyScriptContentList, Result.FAILURE);
+            applyResult(groovyScriptContentList);
         }
     }
 
@@ -239,8 +244,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (groovyScriptFileList != null && !groovyScriptFileList.isEmpty()) {
             createNewConfigurationIfNotPresent();
             config.addGroovyScriptFiles(groovyScriptFileList);
-            applyResult(scriptOnlyIfSuccess, groovyScriptFileList, Result.SUCCESS);
-            applyResult(scriptOnlyIfFailure, groovyScriptFileList, Result.FAILURE);
+            applyResult(groovyScriptFileList);
         }
     }
 
@@ -248,8 +252,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         if (genericScriptFileList != null && !genericScriptFileList.isEmpty()) {
             createNewConfigurationIfNotPresent();
             config.addGenericScriptFiles(genericScriptFileList);
-            applyResult(scriptOnlyIfSuccess, genericScriptFileList, Result.SUCCESS);
-            applyResult(scriptOnlyIfFailure, genericScriptFileList, Result.FAILURE);
+            applyResult(genericScriptFileList);
         }
     }
 
@@ -261,14 +264,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private void addBuildStep(
         List<BuildStep> steps,
-        Boolean flag,
-        Result result
+        Set<String> results
     ) {
-        Optional<Boolean> optional = Optional.fromNullable(flag);
-        if (optional.isPresent() && optional.get()) {
-            createNewConfigurationIfNotPresent();
-            config.addBuildStep(new PostBuildStep(steps, result.toString()));
-        }
+        createNewConfigurationIfNotPresent();
+        config.addBuildStep(new PostBuildStep(steps, results));
     }
 
     public boolean isMarkBuildUnstable() {
@@ -312,7 +311,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             return job instanceof MatrixProject;
         }
 
-        public ListBoxModel doFillResultItems() {
+        public ListBoxModel doFillResultsItems() {
             ListBoxModel items = new ListBoxModel();
             items.add(Result.SUCCESS.toString());
             items.add(Result.UNSTABLE.toString());
@@ -322,6 +321,10 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             return items;
         }
 
+        @Override
+        public void calcFillSettings(String field, Map<String, Object> attributes) {
+            super.calcFillSettings(field, attributes);
+        }
     }
 
 }

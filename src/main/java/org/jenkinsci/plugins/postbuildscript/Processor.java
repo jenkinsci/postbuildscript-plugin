@@ -16,6 +16,7 @@ import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.jenkinsci.plugins.postbuildscript.service.ScriptExecutor;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class Processor {
 
@@ -58,8 +59,8 @@ public class Processor {
         }
     }
 
-    private static void logSkippingOfExecution(TaskListener listener, String scriptName, String targetResult) {
-        log(listener, "Build does not have result \"%s\". Did not execute %s", targetResult, scriptName);
+    private static void logSkippingOfExecution(TaskListener listener, String scriptName, Set<String> targetResult) {
+        log(listener, "Build does not have any of the results %s. Did not execute %s", targetResult, scriptName);
     }
 
     public boolean process() {
@@ -133,7 +134,7 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(listener, filePath, script.getResult());
+                logSkippingOfExecution(listener, filePath, script.getResults());
             }
 
 
@@ -163,7 +164,7 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(listener, script.getFilePath(), script.getResult());
+                logSkippingOfExecution(listener, script.getFilePath(), script.getResults());
             }
 
         }
@@ -185,7 +186,7 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(listener, "Groovy script #" + config.groovyScriptIndexOf(script), script.getResult());
+                logSkippingOfExecution(listener, "Groovy script #" + config.groovyScriptIndexOf(script), script.getResults());
             }
 
         }
@@ -205,7 +206,7 @@ public class Processor {
                         }
                     }
                 } else {
-                    logSkippingOfExecution(listener, "build step #" + config.buildStepIndexOf(postBuildStep), postBuildStep.getResult());
+                    logSkippingOfExecution(listener, "build step #" + config.buildStepIndexOf(postBuildStep), postBuildStep.getResults());
                 }
 
             }

@@ -3,13 +3,15 @@ package org.jenkinsci.plugins.postbuildscript.model;
 import hudson.Util;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.util.Collection;
+
 public class Script extends PostBuildItem {
 
     private final String content;
 
     @DataBoundConstructor
-    public Script(String result, String content) {
-        super(result);
+    public Script(Collection<String> results, String content) {
+        super(results);
         this.content = Util.fixEmpty(content);
     }
 

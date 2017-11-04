@@ -16,8 +16,8 @@
                         <f:textbox value="${genericScriptFiles.filePath}"/>
                     </f:entry>
 
-                    <f:entry field="result" title="${%When build is}">
-                        <f:select value="${genericScriptFiles.result}"/>
+                    <f:entry field="results" title="${%When build was}">
+                        <f:select value="${genericScriptFiles.results}" multiple="multiple"/>
                     </f:entry>
 
                     <f:block>
@@ -47,8 +47,8 @@
                         <f:textbox value="${groovyScriptFiles.filePath}"/>
                     </f:entry>
 
-                    <f:entry field="result" title="${%When build was}">
-                        <f:select value="${groovyScriptFiles.result}"/>
+                    <f:entry field="results" title="${%When build was}">
+                        <f:select value="${groovyScriptFiles.results}" multiple="multiple"/>
                     </f:entry>
 
                     <f:block>
@@ -78,8 +78,8 @@
                         <f:textarea value="${groovyScripts.content}"/>
                     </f:entry>
 
-                    <f:entry field="result" title="${%When build was}">
-                        <f:select value="${groovyScripts.result}"/>
+                    <f:entry field="results" title="${%When build was}">
+                        <f:select value="${groovyScripts.results}" multiple="multiple"/>
                     </f:entry>
 
                     <f:block>
@@ -117,8 +117,8 @@
                         />
                     </f:block>
 
-                    <f:entry field="result" title="${%When build was}">
-                        <f:select value="${buildSteps.result}"/>
+                    <f:entry field="results" title="${%When build was}">
+                        <f:select value="${buildSteps.results}" multiple="multiple"/>
                     </f:entry>
 
                     <f:block>
