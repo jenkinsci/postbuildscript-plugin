@@ -14,6 +14,11 @@
     <version>1.0.0-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin</url>
 
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.jenkins-ci.org/browse</url>
+    </issueManagement>
+
     <licenses>
         <license>
             <name>MIT license</name>

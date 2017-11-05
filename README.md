@@ -16,7 +16,7 @@ Please refer to the [plugin description](https://wiki.jenkins.io/display/JENKINS
 
 Please choose, which one you prefer:
 
-* Official Jenkins JIRA: https://issues.jenkins-ci.org/browse/JENKINS-46523?jql=component%20%3D%20postbuildscript-plugin
+* Official Jenkins JIRA: https://issues.jenkins-ci.org/issues/?jql=component%20%3D%20postbuildscript-plugin
 * GitHub: https://github.com/jenkinsci/postbuildscript-plugin/issues
 
 ## Contributing
@@ -25,7 +25,7 @@ Please choose, which one you prefer:
 
 For bug fixes and enhancements to existing features, first make sure an issue is filed by checking
 
-* https://issues.jenkins-ci.org/browse/JENKINS-46523?jql=resolution%20%3D%20Unresolved%20AND%20component%20%3D%20postbuildscript-plugin
+* https://issues.jenkins-ci.org/issues/?jql=status%20not%20in%20(Resolved%2C%20Closed%2C%20Done)%20AND%20component%20%3D%20postbuildscript-plugin
 * https://github.com/jenkinsci/postbuildscript-plugin/issues
 
 After that please file a pull request with your change and link to the JIRA issue in the PR, and link to the PR from the JIRA issue.
