@@ -115,7 +115,7 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         Launcher launcher,
         BuildListener buildListener
     ) {
-        return new MatrixAggregator(
+        return new ConfigurableMatrixAggregator(
             matrixBuild,
             launcher,
             buildListener,
