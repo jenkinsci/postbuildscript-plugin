@@ -1,6 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="jelly:core ">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:pbs="/lib/postbuildscript">
 
     <f:entry title="${%Batch or shell script files}">
         <f:nested>
@@ -16,9 +15,7 @@
                         <f:textbox value="${genericScriptFiles.filePath}"/>
                     </f:entry>
 
-                    <f:entry field="results" title="${%When build was}">
-                        <f:select value="${genericScriptFiles.results}" multiple="multiple"/>
-                    </f:entry>
+                    <pbs:results values="${genericScriptFiles.results}"/>
 
                     <f:block>
                         <div align="right">
@@ -47,9 +44,7 @@
                         <f:textbox value="${groovyScriptFiles.filePath}"/>
                     </f:entry>
 
-                    <f:entry field="results" title="${%When build was}">
-                        <f:select value="${groovyScriptFiles.results}" multiple="multiple"/>
-                    </f:entry>
+                    <pbs:results values="${groovyScriptFiles.results}"/>
 
                     <f:block>
                         <div align="right">
@@ -78,9 +73,7 @@
                         <f:textarea value="${groovyScripts.content}"/>
                     </f:entry>
 
-                    <f:entry field="results" title="${%When build was}">
-                        <f:select value="${groovyScripts.results}" multiple="multiple"/>
-                    </f:entry>
+                    <pbs:results values="${genericScriptFiles.results}"/>
 
                     <f:block>
                         <div align="right">
@@ -117,9 +110,7 @@
                         />
                     </f:block>
 
-                    <f:entry field="results" title="${%When build was}">
-                        <f:select value="${buildSteps.results}" multiple="multiple"/>
-                    </f:entry>
+                    <pbs:results values="${buildSteps.results}"/>
 
                     <f:block>
                         <div align="right">

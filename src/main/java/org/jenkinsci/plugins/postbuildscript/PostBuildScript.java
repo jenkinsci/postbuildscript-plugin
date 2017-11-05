@@ -16,7 +16,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
@@ -29,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.BOTH;
@@ -311,20 +309,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             return job instanceof MatrixProject;
         }
 
-        public ListBoxModel doFillResultsItems() {
-            ListBoxModel items = new ListBoxModel();
-            items.add(Result.SUCCESS.toString());
-            items.add(Result.UNSTABLE.toString());
-            items.add(Result.FAILURE.toString());
-            items.add(Result.NOT_BUILT.toString());
-            items.add(Result.ABORTED.toString());
-            return items;
-        }
-
-        @Override
-        public void calcFillSettings(String field, Map<String, Object> attributes) {
-            super.calcFillSettings(field, attributes);
-        }
     }
 
 }
