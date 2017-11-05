@@ -6,13 +6,13 @@ import hudson.model.BuildListener;
 
 import java.io.IOException;
 
-public class MatrixAggregator extends hudson.matrix.MatrixAggregator {
+public class ConfigurableMatrixAggregator extends hudson.matrix.MatrixAggregator {
 
     private final Processor processor;
 
     private final ExecuteOn executeOn;
 
-    public MatrixAggregator(
+    public ConfigurableMatrixAggregator(
         MatrixBuild build,
         Launcher launcher,
         BuildListener listener,
