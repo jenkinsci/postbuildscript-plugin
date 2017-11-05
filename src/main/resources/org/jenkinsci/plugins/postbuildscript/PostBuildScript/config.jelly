@@ -73,7 +73,7 @@
                         <f:textarea value="${groovyScripts.content}"/>
                     </f:entry>
 
-                    <pbs:results values="${genericScriptFiles.results}"/>
+                    <pbs:results values="${groovyScripts.results}"/>
 
                     <f:block>
                         <div align="right">
