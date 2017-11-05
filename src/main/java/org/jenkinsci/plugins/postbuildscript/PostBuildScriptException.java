@@ -5,6 +5,8 @@ package org.jenkinsci.plugins.postbuildscript;
  */
 public class PostBuildScriptException extends Exception {
 
+    private static final long serialVersionUID = 8656827646635596263L;
+
     public PostBuildScriptException(String s) {
         super(s);
     }

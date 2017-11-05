@@ -10,6 +10,7 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
@@ -45,7 +46,12 @@ public class Processor {
         listener.getLogger().printf("[PostBuildScript] - %s%n", String.format(message, args));
     }
 
-    private static String getResolvedPath(String path, AbstractBuild<?, ?> build, TaskListener listener) throws PostBuildScriptException {
+    private static String getResolvedPath(
+        String path,
+        AbstractBuild<?, ?> build,
+        TaskListener listener
+    )
+        throws PostBuildScriptException {
         if (path == null) {
             return null;
         }
@@ -68,7 +74,7 @@ public class Processor {
         try {
             return processScripts();
         } catch (PostBuildScriptException pse) {
-            log(listener, "[Error] - Problems occured: %s", pse.getMessage());
+            log(listener, "[Error] - Problems occurred: %s", pse.getMessage());
             build.setResult(Result.FAILURE);
             return false;
         }
@@ -121,7 +127,7 @@ public class Processor {
         for (ScriptFile script : config.getGenericScriptFiles()) {
             String filePath = script.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                log(listener, "No filepath provided for script file #%d", config.genericScriptFileIndexOf(script));
+                log(listener, "No file path provided for script file #%d", config.genericScriptFileIndexOf(script));
                 continue;
             }
 
@@ -152,7 +158,7 @@ public class Processor {
             String filePath = script.getFilePath();
 
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                log(listener, "No filepath provided for script file #%d", config.groovyScriptFileIndexOf(script));
+                log(listener, "No file path provided for script file #%d", config.groovyScriptFileIndexOf(script));
                 continue;
             }
 
@@ -186,7 +192,11 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(listener, "Groovy script #" + config.groovyScriptIndexOf(script), script.getResults());
+                logSkippingOfExecution(
+                    listener,
+                    "Groovy script #" + config.groovyScriptIndexOf(script),
+                    script.getResults()
+                );
             }
 
         }
@@ -206,7 +216,11 @@ public class Processor {
                         }
                     }
                 } else {
-                    logSkippingOfExecution(listener, "build step #" + config.buildStepIndexOf(postBuildStep), postBuildStep.getResults());
+                    logSkippingOfExecution(
+                        listener,
+                        "build step #" + config.buildStepIndexOf(postBuildStep),
+                        postBuildStep.getResults()
+                    );
                 }
 
             }

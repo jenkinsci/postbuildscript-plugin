@@ -1,8 +1,4 @@
-package org.jenkinsci.plugins.postbuildscript;
-
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+package org.jenkinsci.plugins.postbuildscript.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,8 +69,8 @@ public class Configuration {
         this.buildSteps.addAll(buildSteps);
     }
 
-    public boolean addBuildStep(PostBuildStep postBuildStep) {
-        return buildSteps.add(postBuildStep);
+    public void addBuildStep(PostBuildStep postBuildStep) {
+        buildSteps.add(postBuildStep);
     }
 
 }

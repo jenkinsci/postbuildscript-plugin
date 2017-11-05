@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.postbuildscript;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.model.BuildListener;
+import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 
 import java.io.IOException;
 

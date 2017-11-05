@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class Logger implements Serializable {
 
+    private static final long serialVersionUID = 1083402096308867767L;
     private final TaskListener listener;
 
     public Logger(TaskListener listener) {
@@ -23,7 +24,4 @@ public class Logger implements Serializable {
         listener.getLogger().println("[PostBuildScript] - " + message);
     }
 
-    public void error(String message) {
-        listener.getLogger().println("[PostBuildScript] - [ERROR] - " + message);
-    }
 }
