@@ -25,8 +25,8 @@ to report new bugs or request features.
 
 For bug fixes and enhancements to existing features, first make sure an issue is filed by checking
 
-* https://issues.jenkins-ci.org/issues/?jql=status%20not%20in%20(Resolved%2C%20Closed%2C%20Done)%20AND%20component%20%3D%20postbuildscript-plugin
-* https://github.com/jenkinsci/postbuildscript-plugin/issues
+[this Jira filter](https://issues.jenkins-ci.org/issues/?jql=status%20not%20in%20(Resolved%2C%20Closed%2C%20Done)%20AND%20component%20%3D%20postbuildscript-plugin)
+
 
 After that please create a pull request on GitHub with your change and link to the JIRA issue in the PR, and link to
 the PR from the JIRA issue.
