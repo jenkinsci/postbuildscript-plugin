@@ -26,12 +26,12 @@ public class ScriptExecutor implements Serializable {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final long serialVersionUID = 6304738377691375266L;
 
-    private final Logger log;
+    private final Logger logger;
 
     private final BuildListener listener;
 
-    public ScriptExecutor(Logger log, BuildListener listener) {
-        this.log = log;
+    public ScriptExecutor(Logger logger, BuildListener listener) {
+        this.logger = logger;
         this.listener = listener;
     }
 
@@ -80,7 +80,7 @@ public class ScriptExecutor implements Serializable {
     private String getResolvedContentWithEnvVars(FilePath filePath) throws PostBuildScriptException {
         String resolvedScript;
         try {
-            log.info(Messages.PostBuildScript_ResolvingEnvironmentVariables());
+            logger.info(Messages.PostBuildScript_ResolvingEnvironmentVariables());
             resolvedScript =
                 filePath.act(new LoadScriptContentCallable());
         } catch (IOException | InterruptedException ioe) {
@@ -104,7 +104,7 @@ public class ScriptExecutor implements Serializable {
         }
 
         String scriptContent = getResolvedContentWithEnvVars(script);
-        log.info(Messages.PostBuildScript_ExecutingScript(script, Arrays.toString(parameters)));
+        logger.info(Messages.PostBuildScript_ExecutingScript(script, Arrays.toString(parameters)));
         try {
             CommandInterpreter batchRunner;
             if (launcher.isUnix()) {
@@ -133,23 +133,19 @@ public class ScriptExecutor implements Serializable {
         }
 
         try {
-            return workspace.act(new GroovyScriptExecutionCallable(scriptContent, build, log));
+            return workspace.act(new GroovyScriptExecutionCallable(scriptContent, build, logger));
         } catch (Throwable throwable) {
-            log(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
+            logger.info(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
             return false;
         }
     }
 
     private boolean ensureWorkspaceNotNull(FilePath workspace) {
         if (workspace == null) {
-            log(Messages.PostBuildScript_WorkspaceEmpty());
+            logger.info(Messages.PostBuildScript_WorkspaceEmpty());
             return true;
         }
         return false;
-    }
-
-    private void log(String message) {
-        listener.getLogger().println(message);
     }
 
     public boolean performGroovyScriptFile(

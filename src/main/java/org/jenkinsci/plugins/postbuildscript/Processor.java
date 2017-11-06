@@ -26,6 +26,7 @@ public class Processor {
     private final BuildListener listener;
     private final Configuration config;
     private final ScriptExecutor executor;
+    private final Logger logger;
 
     public Processor(
         AbstractBuild<?, ?> build,
@@ -36,18 +37,11 @@ public class Processor {
         this.launcher = launcher;
         this.listener = listener;
         this.config = config;
+        logger = new Logger(listener);
         executor = new ScriptExecutor(
-            new Logger(listener),
+            logger,
             listener
         );
-    }
-
-    private void logError(String message) {
-        log(Messages.PostBuildScript_ErrorPrefix(message));
-    }
-
-    private void log(String message) {
-        listener.getLogger().println(Messages.PostBuildScript_LogPrefix(message));
     }
 
     private static String getResolvedPath(
@@ -69,15 +63,15 @@ public class Processor {
     }
 
     private void logSkippingOfExecution(String scriptName, Set<String> targetResult) {
-        log(Messages.PostBuildScript_BuildDoesNotHaveAnyOfTheResults(targetResult, scriptName));
+        logger.info(Messages.PostBuildScript_BuildDoesNotHaveAnyOfTheResults(targetResult, scriptName));
     }
 
     public boolean process() {
-        log(Messages.PostBuildScript_ExecutingPostBuildScripts());
+        logger.info(Messages.PostBuildScript_ExecutingPostBuildScripts());
         try {
             return processScripts();
         } catch (PostBuildScriptException pse) {
-            logError(Messages.PostBuildScript_ProblemOccured(pse.getMessage()));
+            logger.error(Messages.PostBuildScript_ProblemOccured(pse.getMessage()));
             build.setResult(Result.FAILURE);
             return false;
         }
@@ -130,7 +124,7 @@ public class Processor {
         for (ScriptFile script : config.getGenericScriptFiles()) {
             String filePath = script.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logError(Messages.PostBuildScript_NoFilePathProvided(config.genericScriptFileIndexOf(script)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.genericScriptFileIndexOf(script)));
                 continue;
             }
 
@@ -160,7 +154,7 @@ public class Processor {
             String filePath = script.getFilePath();
 
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logError(Messages.PostBuildScript_NoFilePathProvided(config.groovyScriptFileIndexOf(script)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.groovyScriptFileIndexOf(script)));
                 continue;
             }
 

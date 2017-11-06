@@ -20,7 +20,15 @@ public class Logger implements Serializable {
         return listener;
     }
 
+    public void error(String message) {
+        log(Messages.PostBuildScript_ErrorPrefix(message));
+    }
+
     public void info(String message) {
+        log(message);
+    }
+
+    private void log(String message) {
         listener.getLogger().println(Messages.PostBuildScript_LogPrefix(message));
     }
 
