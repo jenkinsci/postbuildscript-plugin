@@ -14,7 +14,7 @@ import java.io.File;
 public class GroovyScriptExecutionCallable extends SlaveToMasterCallable<Boolean, Throwable> {
     private static final long serialVersionUID = 3874477459736242748L;
     private final String scriptContent;
-    private final AbstractBuild<?, ?> build;
+    private final transient AbstractBuild<?, ?> build;
     private final Logger log;
 
     public GroovyScriptExecutionCallable(String scriptContent, AbstractBuild<?, ?> build, Logger log) {
