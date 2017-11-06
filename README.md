@@ -61,6 +61,8 @@ changes without needing to run to `package` phase.
 * JENKINS-30011 - Allow multiple instances of Post Build Scripts as a post build action
 * Fix JENKINS-28825 - Confusing error message when leaving script path empty
 * Major refactoring, but still trying to be downwards compatible
+* Added help files and translations
+* JENKINS-24308 - Expost build variable, the AbstractBuild
 
 ### Version 0.18
 * Fix JENKINS-43637 - Arbitrary code execution vulnerability:

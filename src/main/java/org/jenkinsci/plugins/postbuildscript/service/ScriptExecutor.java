@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
@@ -120,27 +121,51 @@ public class ScriptExecutor implements Serializable {
         }
     }
 
-    public boolean performGroovyScript(FilePath workspace, String scriptContent) {
+    public boolean performGroovyScript(AbstractBuild<?, ?> build, String scriptContent) {
 
         if (scriptContent == null) {
             throw new IllegalArgumentException("The script content object must be set.");
         }
+
+        FilePath workspace = build.getWorkspace();
+        if (ensureWorkspaceNotNull(workspace)) {
+            return false;
+        }
+
         try {
-            return workspace.act(new GroovyScriptExecutionCallable(scriptContent, workspace, log));
+            return workspace.act(new GroovyScriptExecutionCallable(scriptContent, build, log));
         } catch (Throwable throwable) {
-            listener.getLogger().println(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
+            log(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
             return false;
         }
     }
 
+    private boolean ensureWorkspaceNotNull(FilePath workspace) {
+        if (workspace == null) {
+            log(Messages.PostBuildScript_WorkspaceEmpty());
+            return true;
+        }
+        return false;
+    }
+
+    private void log(String message) {
+        listener.getLogger().println(message);
+    }
+
     public boolean performGroovyScriptFile(
-        FilePath workspace,
+        AbstractBuild<?, ?> build,
         CharSequence scriptFilePath
     ) throws PostBuildScriptException {
+
+        FilePath workspace = build.getWorkspace();
+        if (ensureWorkspaceNotNull(workspace)) {
+            return false;
+        }
+
         FilePath filePath = resolveScriptPath(workspace, scriptFilePath);
 
         String scriptContent = getResolvedContentWithEnvVars(filePath);
-        return performGroovyScript(workspace, scriptContent);
+        return performGroovyScript(build, scriptContent);
     }
 
 }

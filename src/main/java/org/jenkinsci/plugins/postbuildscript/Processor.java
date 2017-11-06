@@ -54,8 +54,7 @@ public class Processor {
         String path,
         AbstractBuild<?, ?> build,
         TaskListener listener
-    )
-        throws PostBuildScriptException {
+    ) throws PostBuildScriptException {
         if (path == null) {
             return null;
         }
@@ -156,7 +155,6 @@ public class Processor {
         throws PostBuildScriptException {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
-        FilePath workspace = build.getWorkspace();
         for (ScriptFile script : config.getGroovyScriptFiles()) {
 
             String filePath = script.getFilePath();
@@ -169,7 +167,7 @@ public class Processor {
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String groovyPath = getResolvedPath(script.getFilePath(), build, listener);
                 if (groovyPath != null) {
-                    if (!executor.performGroovyScriptFile(workspace, groovyPath)) {
+                    if (!executor.performGroovyScriptFile(build, groovyPath)) {
                         return false;
                     }
                 }
@@ -183,15 +181,13 @@ public class Processor {
 
     private boolean processGroovyScriptContentList() {
 
-        FilePath workspace = build.getWorkspace();
-
         Optional<Result> result = Optional.fromNullable(build.getResult());
         for (Script script : config.getGroovyScripts()) {
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String content = script.getContent();
                 if (content != null) {
-                    if (!executor.performGroovyScript(workspace, content)) {
+                    if (!executor.performGroovyScript(build, content)) {
                         return false;
                     }
                 }
