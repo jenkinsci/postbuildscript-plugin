@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-    <f:entry title="${%When build was}">
+    <f:entry title="${%If build was}">
         <select multiple="multiple" name="results" size="5">
             <f:option value="SUCCESS"
                       selected="${values.contains('SUCCESS')}">

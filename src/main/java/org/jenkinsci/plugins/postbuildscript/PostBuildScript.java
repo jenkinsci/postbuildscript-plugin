@@ -293,12 +293,12 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         @Override
         public String getDisplayName() {
-            return "Execute a set of scripts";
+            return Messages.PostBuildScript_DisplayName();
         }
 
         @Override
         public String getHelpFile() {
-            return "/plugin/postbuildscript/help.html";
+            return "/plugin/postbuildscript/help/postbuildscript.html"; //NON-NLS
         }
 
         @Override

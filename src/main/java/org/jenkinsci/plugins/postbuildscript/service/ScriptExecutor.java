@@ -7,6 +7,7 @@ import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
 import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
 import java.io.IOException;
@@ -54,9 +55,7 @@ public class ScriptExecutor implements Serializable {
 
         FilePath filePath = getFilePath(workspace, scriptFilePath);
         if (filePath == null) {
-            throw new PostBuildScriptException(String.format(
-                "The script file path '%s' doesn't exist.",
-                scriptFilePath));
+            throw new PostBuildScriptException(Messages.PostBuildScript_ScriptFilePathDoesNotExist(scriptFilePath));
         }
         return filePath;
     }
@@ -80,7 +79,7 @@ public class ScriptExecutor implements Serializable {
     private String getResolvedContentWithEnvVars(FilePath filePath) throws PostBuildScriptException {
         String resolvedScript;
         try {
-            log.info("Resolving environment variables for the script content.");
+            log.info(Messages.PostBuildScript_ResolvingEnvironmentVariables());
             resolvedScript =
                 filePath.act(new LoadScriptContentCallable());
         } catch (IOException | InterruptedException ioe) {
@@ -104,7 +103,7 @@ public class ScriptExecutor implements Serializable {
         }
 
         String scriptContent = getResolvedContentWithEnvVars(script);
-        log.info(String.format("Executing the script %s with parameters %s", script, Arrays.toString(parameters)));
+        log.info(Messages.PostBuildScript_ExecutingScript(script, Arrays.toString(parameters)));
         try {
             CommandInterpreter batchRunner;
             if (launcher.isUnix()) {
@@ -129,7 +128,7 @@ public class ScriptExecutor implements Serializable {
         try {
             return workspace.act(new GroovyScriptExecutionCallable(scriptContent, workspace, log));
         } catch (Throwable throwable) {
-            listener.getLogger().printf("Problem occurred: %s", throwable.getMessage());
+            listener.getLogger().println(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
             return false;
         }
     }

@@ -29,9 +29,9 @@ public class GroovyScriptExecutionCallable extends SlaveToMasterCallable<Boolean
 
 
         Binding binding = new Binding();
-        binding.setVariable("workspace", new File(workspace.getRemote()));
+        binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
         binding.setVariable("log", log);
-        binding.setVariable("out", log.getListener().getLogger());
+        binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
 
         ClassLoader classLoader = getClass().getClassLoader();
 

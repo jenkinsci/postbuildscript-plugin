@@ -21,7 +21,7 @@ public class Logger implements Serializable {
     }
 
     public void info(String message) {
-        listener.getLogger().println("[PostBuildScript] - " + message);
+        listener.getLogger().println(Messages.PostBuildScript_LogPrefix(message));
     }
 
 }
