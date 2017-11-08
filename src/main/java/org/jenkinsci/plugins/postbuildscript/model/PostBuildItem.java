@@ -30,7 +30,7 @@ public class PostBuildItem {
     }
 
     public void addResults(@Nonnull Collection<String> results) {
-        if (this.results == null) {
+        if (this.results == null) { // may happen, if initialized from JSON
             this.results = new HashSet<>();
         }
         this.results.addAll(results);
