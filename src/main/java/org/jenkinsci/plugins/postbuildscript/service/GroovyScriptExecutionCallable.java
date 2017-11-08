@@ -12,6 +12,7 @@ import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import java.io.File;
 
 public class GroovyScriptExecutionCallable extends SlaveToMasterCallable<Boolean, Throwable> {
+
     private static final long serialVersionUID = 3874477459736242748L;
     private final String scriptContent;
     private final transient AbstractBuild<?, ?> build;
@@ -30,7 +31,7 @@ public class GroovyScriptExecutionCallable extends SlaveToMasterCallable<Boolean
 
         Binding binding = new Binding();
         FilePath workspace = build.getWorkspace();
-        if (workspace != null) {
+        if (workspace != null && workspace.getRemote() != null) {
             binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
         }
         binding.setVariable("log", log);
