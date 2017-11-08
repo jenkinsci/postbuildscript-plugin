@@ -79,22 +79,18 @@ public class Processor {
 
     private boolean processScripts() throws PostBuildScriptException {
 
-        //Execute Generic scripts file
         if (!processGenericScriptList()) {
             return setBuildStepsResult();
         }
 
-        //Execute Groovy scripts file
         if (!processGroovyScriptFileList()) {
             return setBuildStepsResult();
         }
 
-        //Execute Groovy scripts content
         if (!processGroovyScriptContentList()) {
             return setBuildStepsResult();
         }
 
-        //Execute Build steps
         return processBuildSteps() || setBuildStepsResult();
 
     }
@@ -159,14 +155,14 @@ public class Processor {
             }
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
-                String groovyPath = getResolvedPath(script.getFilePath(), build, listener);
+                String groovyPath = getResolvedPath(filePath, build, listener);
                 if (groovyPath != null) {
                     if (!executor.performGroovyScriptFile(build, groovyPath)) {
                         return false;
                     }
                 }
             } else {
-                logSkippingOfExecution(script.getFilePath(), script.getResults());
+                logSkippingOfExecution(filePath, script.getResults());
             }
 
         }
