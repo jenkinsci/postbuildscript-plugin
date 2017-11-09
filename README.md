@@ -1,6 +1,6 @@
 # PostBuildScript Jenkins plugin
 
-## Summary
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/)
 
 This plugin allows you to run the following actions after a build:
 
