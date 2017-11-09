@@ -14,7 +14,8 @@ import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.jenkinsci.plugins.postbuildscript.service.ScriptExecutor;
+import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
+import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutor;
 
 import java.io.IOException;
 import java.util.Set;
@@ -25,7 +26,6 @@ public class Processor {
     private final Launcher launcher;
     private final BuildListener listener;
     private final Configuration config;
-    private final ScriptExecutor executor;
     private final Logger logger;
 
     public Processor(
@@ -38,10 +38,6 @@ public class Processor {
         this.listener = listener;
         this.config = config;
         logger = new Logger(listener);
-        executor = new ScriptExecutor(
-            logger,
-            listener
-        );
     }
 
     private static String getResolvedPath(
@@ -87,7 +83,7 @@ public class Processor {
             return setBuildStepsResult();
         }
 
-        if (!processGroovyScriptContentList()) {
+        if (!processGroovyScripts()) {
             return setBuildStepsResult();
         }
 
@@ -117,6 +113,7 @@ public class Processor {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
+        CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
         for (ScriptFile script : config.getGenericScriptFiles()) {
             String filePath = script.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
@@ -127,7 +124,7 @@ public class Processor {
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String scriptPath = getResolvedPath(filePath, build, listener);
                 if (scriptPath != null) {
-                    int cmd = executor.executeScriptPathAndGetExitCode(workspace, scriptPath, launcher);
+                    int cmd = executor.executeCommand(scriptPath);
                     if (cmd != 0) {
                         return false;
                     }
@@ -145,6 +142,7 @@ public class Processor {
         throws PostBuildScriptException {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
+        GroovyScriptExecutor executor = new GroovyScriptExecutor(logger);
         for (ScriptFile script : config.getGroovyScriptFiles()) {
 
             String filePath = script.getFilePath();
@@ -169,9 +167,10 @@ public class Processor {
         return true;
     }
 
-    private boolean processGroovyScriptContentList() {
+    private boolean processGroovyScripts() {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
+        GroovyScriptExecutor executor = new GroovyScriptExecutor(logger);
         for (Script script : config.getGroovyScripts()) {
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
