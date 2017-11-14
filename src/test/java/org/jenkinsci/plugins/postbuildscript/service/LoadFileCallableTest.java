@@ -40,7 +40,7 @@ public class LoadFileCallableTest {
             ".txt");
         tempFile.deleteOnExit();
 
-        FilePath workspace = new FilePath((VirtualChannel) null, tempFile.getParent());
+        FilePath workspace = new FilePath(tempFile.getParentFile());
 
         LoadFileCallable callable = new LoadFileCallable(tempFile.getName(), workspace);
         FilePath filePath = callable.invoke(null, virtualChannel);

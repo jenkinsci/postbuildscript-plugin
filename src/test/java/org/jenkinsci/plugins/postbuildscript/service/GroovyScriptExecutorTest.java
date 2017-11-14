@@ -20,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GroovyScriptExecutionCallableTest {
+public class GroovyScriptExecutorTest {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
@@ -44,7 +44,7 @@ public class GroovyScriptExecutionCallableTest {
         EnvVars.masterEnvVars.put("envVar1", "world");
         EnvVars.masterEnvVars.put("envVar2", "jenkins");
 
-        GroovyScriptExecutionCallable callable = new GroovyScriptExecutionCallable(
+        GroovyScriptExecutor callable = new GroovyScriptExecutor(
             "log.info('hello $envVar1'); out.println(build.id)", executable, log);
         Boolean result = callable.call();
 

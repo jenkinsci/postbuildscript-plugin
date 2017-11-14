@@ -15,7 +15,8 @@ import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
-import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutor;
+import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory;
+import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptPreparer;
 
 import java.io.IOException;
 import java.util.Set;
@@ -142,7 +143,7 @@ public class Processor {
         throws PostBuildScriptException {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
-        GroovyScriptExecutor executor = new GroovyScriptExecutor(logger);
+        GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (ScriptFile script : config.getGroovyScriptFiles()) {
 
             String filePath = script.getFilePath();
@@ -155,7 +156,7 @@ public class Processor {
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String groovyPath = getResolvedPath(filePath, build, listener);
                 if (groovyPath != null) {
-                    if (!executor.performGroovyScriptFile(build, groovyPath)) {
+                    if (!executor.evaluateFile(groovyPath)) {
                         return false;
                     }
                 }
@@ -170,13 +171,13 @@ public class Processor {
     private boolean processGroovyScripts() {
 
         Optional<Result> result = Optional.fromNullable(build.getResult());
-        GroovyScriptExecutor executor = new GroovyScriptExecutor(logger);
+        GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (Script script : config.getGroovyScripts()) {
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String content = script.getContent();
                 if (content != null) {
-                    if (!executor.performGroovyScript(build, content)) {
+                    if (!executor.evaluate(content)) {
                         return false;
                     }
                 }
@@ -188,6 +189,13 @@ public class Processor {
 
         }
         return true;
+    }
+
+    private GroovyScriptPreparer createGroovyScriptPreparer() {
+        FilePath workspace = build.getWorkspace();
+        GroovyScriptExecutorFactory groovyScriptExecutorFactory =
+            new GroovyScriptExecutorFactory(build, logger);
+        return new GroovyScriptPreparer(logger, workspace, groovyScriptExecutorFactory);
     }
 
     private boolean processBuildSteps() throws PostBuildScriptException {

@@ -1,68 +1,49 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import groovy.lang.Binding;
+import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.Util;
 import hudson.model.AbstractBuild;
+import jenkins.security.SlaveToMasterCallable;
 import org.jenkinsci.plugins.postbuildscript.Logger;
-import org.jenkinsci.plugins.postbuildscript.Messages;
-import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
-import java.io.Serializable;
+import java.io.File;
 
-/**
- * @author Gregory Boissinot
- */
-public class GroovyScriptExecutor implements Serializable {
+public class GroovyScriptExecutor extends SlaveToMasterCallable<Boolean, Exception> {
 
-    private static final long serialVersionUID = 6304738377691375266L;
+    private static final long serialVersionUID = 3874477459736242748L;
+    private final String scriptContent;
+    private final transient AbstractBuild<?, ?> build;
+    private final Logger log;
 
-    private final Logger logger;
-
-    public GroovyScriptExecutor(Logger logger) {
-        this.logger = logger;
+    public GroovyScriptExecutor(String scriptContent, AbstractBuild<?, ?> build, Logger log) {
+        this.scriptContent = scriptContent;
+        this.build = build;
+        this.log = log;
     }
 
-    public boolean performGroovyScript(AbstractBuild<?, ?> build, String scriptContent) {
+    @Override
+    public Boolean call() throws Exception {
 
-        if (scriptContent == null) {
-            throw new IllegalArgumentException("The script content object must be set.");
-        }
+        String script = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
 
+        Binding binding = new Binding();
         FilePath workspace = build.getWorkspace();
-        if (ensureWorkspaceNotNull(workspace)) {
-            return false;
+        if (workspace != null && workspace.getRemote() != null) {
+            binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
         }
+        binding.setVariable("log", log);
+        binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
+        binding.setVariable("build", build); //NON-NLS
 
-        try {
-            return workspace.act(new GroovyScriptExecutionCallable(scriptContent, build, logger));
-        } catch (Throwable throwable) {
-            logger.info(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
-            return false;
-        }
+        ClassLoader classLoader = getClass().getClassLoader();
 
+        SecureGroovyScript groovyScript = new SecureGroovyScript(script, false, null);
+        groovyScript.configuringWithNonKeyItem();
+        groovyScript.evaluate(classLoader, binding);
+
+        return true;
     }
-
-    private boolean ensureWorkspaceNotNull(FilePath workspace) {
-        if (workspace == null) {
-            logger.info(Messages.PostBuildScript_WorkspaceEmpty());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean performGroovyScriptFile(
-        AbstractBuild<?, ?> build,
-        CharSequence command
-    ) throws PostBuildScriptException {
-
-        FilePath workspace = build.getWorkspace();
-        if (ensureWorkspaceNotNull(workspace)) {
-            return false;
-        }
-
-        FilePath filePath = new ScriptFilePath(workspace).resolve(command);
-        LoadScriptContentCallable callable = new LoadScriptContentCallable();
-        String scriptContent = new Content(logger, callable).resolve(filePath);
-        return performGroovyScript(build, scriptContent);
-    }
-
 }
