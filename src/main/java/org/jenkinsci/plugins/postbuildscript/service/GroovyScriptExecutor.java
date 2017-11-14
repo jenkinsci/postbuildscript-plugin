@@ -5,13 +5,13 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
-import jenkins.security.SlaveToMasterCallable;
+import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 import java.io.File;
 
-public class GroovyScriptExecutor extends SlaveToMasterCallable<Boolean, Exception> {
+public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Exception> {
 
     private static final long serialVersionUID = 3874477459736242748L;
     private final String scriptContent;
