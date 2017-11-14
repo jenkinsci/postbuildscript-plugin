@@ -10,8 +10,9 @@ import hudson.remoting.VirtualChannel;
 import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
+import jenkins.MasterToSlaveFileCallable;
 import jenkins.SlaveToMasterFileCallable;
-import jenkins.security.SlaveToMasterCallable;
+import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptLog;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -96,7 +97,7 @@ public class ScriptExecutor implements Serializable {
     private FilePath getFilePath(final FilePath workspace, final String givenPath) throws PostBuildScriptException {
 
         try {
-            return workspace.act(new SlaveToMasterFileCallable<FilePath>() {
+            return workspace.act(new MasterToSlaveFileCallable<FilePath>() {
                 @Override
                 public FilePath invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
                     File givenFile = new File(givenPath);
@@ -123,7 +124,7 @@ public class ScriptExecutor implements Serializable {
             throw new NullPointerException("The script content object must be set.");
         }
         try {
-            return workspace.act(new SlaveToMasterCallable<Boolean, Throwable>() {
+            return workspace.act(new MasterToSlaveCallable<Boolean, Throwable>() {
                 @Override
                 public Boolean call() throws Throwable {
                     final String groovyExpressionResolved = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
