@@ -56,7 +56,7 @@
         <f:nested>
             <div style="padding-left:2em">
                 <f:repeatable var="groovyScriptContent" items="${instance.groovyScriptContentList}"
-                              add="${%Add a Groovy script content to evaluate}">
+                              add="${%Add Groovy script content to evaluate}">
 
                     <table width="100%">
 
