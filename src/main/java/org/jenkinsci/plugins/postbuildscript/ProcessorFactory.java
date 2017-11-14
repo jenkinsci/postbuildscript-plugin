@@ -7,11 +7,16 @@ import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 
 public class ProcessorFactory {
 
-    public static Processor create(
+    private final Configuration config;
+
+    public ProcessorFactory(Configuration config) {
+        this.config = config;
+    }
+
+    public Processor create(
         AbstractBuild<?, ?> build,
         Launcher launcher,
-        BuildListener listener,
-        Configuration config) {
+        BuildListener listener) {
         return new Processor(build, launcher, listener, config);
     }
 }

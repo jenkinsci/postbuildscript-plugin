@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.postbuildscript;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.model.BuildListener;
-import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 
 import java.io.IOException;
 
@@ -17,11 +16,11 @@ public class ConfigurableMatrixAggregator extends hudson.matrix.MatrixAggregator
         MatrixBuild build,
         Launcher launcher,
         BuildListener listener,
-        Configuration config,
+        ProcessorFactory processorFactory,
         ExecuteOn executeOn
     ) {
         super(build, launcher, listener);
-        processor = ProcessorFactory.create(build, launcher, listener, config);
+        processor = processorFactory.create(build, launcher, listener);
         this.executeOn = executeOn;
     }
 

@@ -116,11 +116,12 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         Launcher launcher,
         BuildListener buildListener
     ) {
+        ProcessorFactory processorFactory = new ProcessorFactory(config);
         return new ConfigurableMatrixAggregator(
             matrixBuild,
             launcher,
             buildListener,
-            config,
+            processorFactory,
             executeOn
         );
     }
@@ -136,9 +137,8 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
             enrichConfigWithDeprecatedFields();
         }
 
-        Processor processor = ProcessorFactory.create(
-            build, launcher, listener, config
-        );
+        ProcessorFactory processorFactory = new ProcessorFactory(config);
+        Processor processor = processorFactory.create(build, launcher, listener);
 
         Job<?, ?> job = build.getProject();
         boolean axe = job instanceof MatrixConfiguration;
