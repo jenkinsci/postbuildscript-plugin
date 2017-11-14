@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -19,6 +18,7 @@ import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptPreparer;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 
 public class Processor {
@@ -112,7 +112,7 @@ public class Processor {
     private boolean processGenericScriptList()
         throws PostBuildScriptException {
 
-        Optional<Result> result = Optional.fromNullable(build.getResult());
+        Optional<Result> result = Optional.ofNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
         CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
         for (ScriptFile script : config.getGenericScriptFiles()) {
@@ -142,7 +142,7 @@ public class Processor {
     private boolean processGroovyScriptFileList()
         throws PostBuildScriptException {
 
-        Optional<Result> result = Optional.fromNullable(build.getResult());
+        Optional<Result> result = Optional.ofNullable(build.getResult());
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (ScriptFile script : config.getGroovyScriptFiles()) {
 
@@ -170,7 +170,7 @@ public class Processor {
 
     private boolean processGroovyScripts() {
 
-        Optional<Result> result = Optional.fromNullable(build.getResult());
+        Optional<Result> result = Optional.ofNullable(build.getResult());
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (Script script : config.getGroovyScripts()) {
 
@@ -200,7 +200,7 @@ public class Processor {
 
     private boolean processBuildSteps() throws PostBuildScriptException {
 
-        Optional<Result> result = Optional.fromNullable(build.getResult());
+        Optional<Result> result = Optional.ofNullable(build.getResult());
         try {
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
 
