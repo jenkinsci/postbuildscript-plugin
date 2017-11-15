@@ -16,7 +16,7 @@ public class GroovyScriptPreparer implements Serializable {
 
     private final Logger logger;
 
-    private final GroovyScriptExecutorFactory groovyScriptExecutorFactory;
+    private final transient GroovyScriptExecutorFactory groovyScriptExecutorFactory;
 
     private final FilePath workspace;
 
