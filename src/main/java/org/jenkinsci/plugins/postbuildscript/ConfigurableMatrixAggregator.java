@@ -1,12 +1,15 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import hudson.Extension;
 import hudson.Launcher;
+import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.model.BuildListener;
 
 import java.io.IOException;
 
-public class ConfigurableMatrixAggregator extends hudson.matrix.MatrixAggregator {
+@Extension(optional = true)
+public class ConfigurableMatrixAggregator extends MatrixAggregator {
 
     private final Processor processor;
 
