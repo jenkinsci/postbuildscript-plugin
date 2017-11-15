@@ -2,14 +2,9 @@ package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.matrix.MatrixAggregatable;
-import hudson.matrix.MatrixBuild;
-import hudson.matrix.MatrixConfiguration;
-import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Job;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
@@ -23,21 +18,19 @@ import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jenkinsci.plugins.postbuildscript.ExecuteOn.BOTH;
-
 
 /**
  * @author Gregory Boissinot
  */
-public class PostBuildScript extends Notifier implements MatrixAggregatable {
+public class PostBuildScript extends Notifier {
 
     private Configuration config = new Configuration();
 
@@ -62,16 +55,13 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     @Deprecated
     private Boolean markBuildUnstable;
 
-    private ExecuteOn executeOn;
-
     @DataBoundConstructor
     public PostBuildScript(
         Collection<ScriptFile> genericScriptFiles,
         Collection<ScriptFile> groovyScriptFiles,
         Collection<Script> groovyScripts,
         Collection<PostBuildStep> buildSteps,
-        boolean markBuildUnstable,
-        ExecuteOn executeOn
+        boolean markBuildUnstable
     ) {
 
         if (genericScriptFiles != null) {
@@ -92,8 +82,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
         config.setMarkBuildUnstable(markBuildUnstable);
 
-        this.executeOn = executeOn;
-
     }
 
     private void applyResult(Iterable<? extends PostBuildItem> postBuildItems) {
@@ -111,101 +99,39 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
     }
 
     @Override
-    public hudson.matrix.MatrixAggregator createAggregator(
-        MatrixBuild matrixBuild,
-        Launcher launcher,
-        BuildListener buildListener
-    ) {
-        ProcessorFactory processorFactory = new ProcessorFactory(config);
-        return new ConfigurableMatrixAggregator(
-            matrixBuild,
-            launcher,
-            buildListener,
-            processorFactory,
-            executeOn
-        );
-    }
-
-    @Override
     public boolean perform(
         AbstractBuild<?, ?> build,
         Launcher launcher,
         BuildListener listener
     ) throws InterruptedException, IOException {
 
-        if (config == null) {
-            enrichConfigWithDeprecatedFields();
-        }
+        Processor processor = createProcessor(build, launcher, listener);
+        return processor.process();
 
-        ProcessorFactory processorFactory = new ProcessorFactory(config);
-        Processor processor = processorFactory.create(build, launcher, listener);
-
-        Job<?, ?> job = build.getProject();
-        boolean axe = job instanceof MatrixConfiguration;
-        if (axe && executeOn.axes()) {     // matrix axe, and set to execute on axes' nodes
-            return processor.process();
-        }
-
-        return axe || processor.process();
     }
 
-    private void enrichConfigWithDeprecatedFields() {
-        addGenericScriptFileList();
-        addGroovyScriptFileList();
-        addGroovyScriptContentList();
-        addBuildSteps();
+    Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+        ProcessorFactory processorFactory = createProcessorFactory();
+        return processorFactory.create(build, launcher, listener);
+    }
 
-        if (markBuildUnstable != null && markBuildUnstable) {
-            createConfigurationIfNotPresent();
-            config.setMarkBuildUnstable(markBuildUnstable);
-        }
-
+    ProcessorFactory createProcessorFactory() {
+        return new ProcessorFactory(config);
     }
 
     public List<? extends ScriptFile> getGenericScriptFiles() {
-        if (config == null && genericScriptFileList != null) {
-            applyResult(genericScriptFileList);
-            return Collections.unmodifiableList(genericScriptFileList);
-        }
-        createConfigurationIfNotPresent();
         return config.getGenericScriptFiles();
     }
 
     public List<? extends ScriptFile> getGroovyScriptFiles() {
-        if (config == null && groovyScriptFileList != null) {
-            applyResult(groovyScriptFileList);
-            return Collections.unmodifiableList(groovyScriptFileList);
-        }
-        createConfigurationIfNotPresent();
         return config.getGroovyScriptFiles();
     }
 
     public List<? extends Script> getGroovyScripts() {
-        if (config == null && groovyScriptContentList != null) {
-            applyResult(groovyScriptContentList);
-            return Collections.unmodifiableList(groovyScriptContentList);
-        }
-        createConfigurationIfNotPresent();
         return config.getGroovyScripts();
     }
 
     public List<PostBuildStep> getBuildSteps() {
-        if (config == null && buildSteps != null) {
-            List<PostBuildStep> buildSteps = new ArrayList<>(this.buildSteps.size());
-            for (BuildStep step : this.buildSteps) {
-
-                Set<String> results = migrateResults();
-                PostBuildStep postBuildStep = new PostBuildStep(
-                    Collections.singletonList(step),
-                    results
-                );
-
-                buildSteps.add(postBuildStep);
-
-            }
-            return buildSteps;
-        }
-        createConfigurationIfNotPresent();
         return config.getBuildSteps();
     }
 
@@ -222,7 +148,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private void addBuildSteps() {
         if (buildSteps != null && !buildSteps.isEmpty()) {
-            createConfigurationIfNotPresent();
             for (BuildStep step : buildSteps) {
                 List<BuildStep> steps = Collections.singletonList(step);
                 Set<String> results = migrateResults();
@@ -233,7 +158,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private void addGroovyScriptContentList() {
         if (groovyScriptContentList != null && !groovyScriptContentList.isEmpty()) {
-            createConfigurationIfNotPresent();
             config.addGroovyScripts(groovyScriptContentList);
             applyResult(groovyScriptContentList);
         }
@@ -241,7 +165,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private void addGroovyScriptFileList() {
         if (groovyScriptFileList != null && !groovyScriptFileList.isEmpty()) {
-            createConfigurationIfNotPresent();
             config.addGroovyScriptFiles(groovyScriptFileList);
             applyResult(groovyScriptFileList);
         }
@@ -249,15 +172,8 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
 
     private void addGenericScriptFileList() {
         if (genericScriptFileList != null && !genericScriptFileList.isEmpty()) {
-            createConfigurationIfNotPresent();
             config.addGenericScriptFiles(genericScriptFileList);
             applyResult(genericScriptFileList);
-        }
-    }
-
-    private void createConfigurationIfNotPresent() {
-        if (config == null) {
-            config = new Configuration();
         }
     }
 
@@ -265,32 +181,32 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         List<BuildStep> steps,
         Set<String> results
     ) {
-        createConfigurationIfNotPresent();
         config.addBuildStep(new PostBuildStep(steps, results));
     }
 
     public boolean isMarkBuildUnstable() {
-        if (config == null && markBuildUnstable != null) {
-            return markBuildUnstable;
-        }
-        createConfigurationIfNotPresent();
         return config.isMarkBuildUnstable();
     }
 
-    public ExecuteOn getExecuteOn() {
-        return executeOn;
-    }
-
     public Object readResolve() {
-        if (executeOn == null) {
-            executeOn = BOTH;
+        config = new Configuration();
+
+        addGenericScriptFileList();
+        addGroovyScriptFileList();
+        addGroovyScriptContentList();
+        addBuildSteps();
+
+        if (markBuildUnstable != null) {
+            config.setMarkBuildUnstable(markBuildUnstable);
         }
+
         return this;
     }
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.PostBuildScript_DisplayName();
@@ -304,10 +220,6 @@ public class PostBuildScript extends Notifier implements MatrixAggregatable {
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
-        }
-
-        public boolean isMatrixProject(Object job) {
-            return job instanceof MatrixProject;
         }
 
     }
