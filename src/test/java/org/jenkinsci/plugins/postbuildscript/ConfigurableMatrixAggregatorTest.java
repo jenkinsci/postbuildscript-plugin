@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import java.io.IOException;
+
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.model.BuildListener;
@@ -7,8 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -33,10 +33,7 @@ public class ConfigurableMatrixAggregatorTest {
     @Mock
     private Processor processor;
     private ConfigurableMatrixAggregator aggregator;
-
-    private static void thenContinuesBuild(boolean processed) {
-        assertThat(processed, is(true));
-    }
+    private boolean processed;
 
     @Test
     public void doesNotProcessIfExecutedOnAxes() throws Exception {
@@ -45,9 +42,9 @@ public class ConfigurableMatrixAggregatorTest {
         givenAggregator(ExecuteOn.AXES);
         givenWillProcess();
 
-        boolean processed = whenBuildEnd();
+        whenBuildEnd();
 
-        thenContinuesBuild(processed);
+        thenContinuesBuild();
 
     }
 
@@ -58,10 +55,10 @@ public class ConfigurableMatrixAggregatorTest {
         givenAggregator(ExecuteOn.BOTH);
         givenWillProcess();
 
-        boolean processed = whenBuildEnd();
+        whenBuildEnd();
 
         thenProcesses();
-        thenContinuesBuild(processed);
+        thenContinuesBuild();
 
     }
 
@@ -72,10 +69,10 @@ public class ConfigurableMatrixAggregatorTest {
         givenAggregator(ExecuteOn.MATRIX);
         givenWillProcess();
 
-        boolean processed = whenBuildEnd();
+        whenBuildEnd();
 
         thenProcesses();
-        thenContinuesBuild(processed);
+        thenContinuesBuild();
 
     }
 
@@ -83,8 +80,8 @@ public class ConfigurableMatrixAggregatorTest {
         verify(processor).process();
     }
 
-    private boolean whenBuildEnd() throws InterruptedException, IOException {
-        return aggregator.endBuild();
+    private void whenBuildEnd() throws InterruptedException, IOException {
+        processed = aggregator.endBuild();
     }
 
     private void givenAggregator(ExecuteOn executeOn) {
@@ -104,4 +101,9 @@ public class ConfigurableMatrixAggregatorTest {
     private void givenProcessor() {
         given(processorFactory.create(build, launcher, listener)).willReturn(processor);
     }
+
+    private void thenContinuesBuild() {
+        assertThat(processed, is(true));
+    }
+
 }
