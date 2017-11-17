@@ -1,5 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import hudson.EnvVars;
 import hudson.FilePath;
 import org.jenkinsci.plugins.postbuildscript.Logger;
@@ -10,12 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -93,12 +94,12 @@ public class GroovyScriptPreparerTest {
     public void evaluatesFile() throws Exception {
 
         EnvVars.masterEnvVars.put("name", "world");
-        given(executorFactory.create("Hello world\n")).willReturn(executor);
+        given(executorFactory.create(startsWith("Hello world"))).willReturn(executor);
         given(executor.call()).willReturn(true);
 
         boolean evaluated = groovyScriptPreparer.evaluateFile(scriptFile.getName());
 
-        verify(executorFactory).create("Hello world\n");
+        verify(executorFactory).create(startsWith("Hello world"));
         verify(executor).call();
         assertThat(evaluated, is(true));
 
