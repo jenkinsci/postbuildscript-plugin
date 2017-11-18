@@ -1,6 +1,10 @@
+![PostBuildScript](pbs-logo.svg)
+
 # PostBuildScript Jenkins plugin
 
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/)
+[![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/postbuildscript.svg)](http://updates.jenkins-ci.org/download/plugins/postbuildscript)
+[![GitHub contributors](https://img.shields.io/github/contributors/jenkinsci/postbuildscript-plugin.svg)]()
 
 This plugin allows you to run the following actions after a build:
 
@@ -13,13 +17,31 @@ You can configure these actions depending on the build status (i.e., only run wh
 Please refer to the [plugin description](https://wiki.jenkins.io/display/JENKINS/PostBuildScript+Plugin) for further
 information.
 
+## Downloads
+
+You'll find the latest HPI files of the plugin here:
+
+http://updates.jenkins-ci.org/download/plugins/postbuildscript
+
+Just put a HPI file into your plugins subdirectory of your Jenkins installation root, e.g. /var/lib/jenkins.
+
 ## Issue Tracking
 
 Please use the
 [official Jenkins Jira project and issue tracking software](https://issues.jenkins-ci.org/issues/?jql=component%20%3D%20postbuildscript-plugin)
 to report new bugs or request features.
 
+## Continuous Integration
+
+Each commit is built by the official Jenkins CI. The current build status is accessible here:
+
+https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin
+
+
 ## Contributing
+
+The plugin was created in 2011 by Gregory Boissinot. It was adopted by Daniel Heid in Oktober 2017. Feel free
+to contribute as you like by forking the repository and creating pull requests.
 
 ### Pull Requests
 
@@ -31,7 +53,7 @@ For bug fixes and enhancements to existing features, first make sure an issue is
 After that please create a pull request on GitHub with your change and link to the JIRA issue in the PR, and link to
 the PR from the JIRA issue.
 
-### Plugin Installation
+### Building and installing a snapshot version
 
 Run
 
@@ -43,7 +65,7 @@ Don't forget to restart Jenkins afterwards.
 Alternatively use the plugin management console (http://example.com:8080/pluginManager/advanced)
 to upload the hpi file. You have to restart Jenkins in order to find the plugin in the installed plugins list.
 
-### Running in development mode
+### Using HPI Maven plugin to test your changes locally
 
 If you want to try running recent development changes, rather than released binaries, you have two options.
 You can run directly from the root of the plugin repository:
