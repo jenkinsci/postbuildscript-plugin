@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -27,7 +29,7 @@ public class GroovyScriptExecutorFactoryTest {
     @Test
     public void createsExecutor() throws Exception {
 
-        GroovyScriptExecutor executor = executorFactory.create("scriptContent");
+        GroovyScriptExecutor executor = executorFactory.create("scriptContent", Collections.emptyList());
 
         assertThat(executor, is(notNullValue()));
 

@@ -6,6 +6,8 @@ import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Gregory Boissinot
@@ -30,7 +32,11 @@ public class GroovyScriptPreparer implements Serializable {
         this.groovyScriptExecutorFactory = groovyScriptExecutorFactory;
     }
 
-    public boolean evaluate(String scriptContent) {
+    public boolean evaluateScript(String scriptContent) {
+        return evaluateScript(scriptContent, Collections.emptyList());
+    }
+
+    public boolean evaluateScript(String scriptContent, List<String> arguments) {
 
         if (scriptContent == null) {
             throw new IllegalArgumentException("The script content object must be set.");
@@ -41,7 +47,7 @@ public class GroovyScriptPreparer implements Serializable {
         }
 
         try {
-            return workspace.act(groovyScriptExecutorFactory.create(scriptContent));
+            return workspace.act(groovyScriptExecutorFactory.create(scriptContent, arguments));
         } catch (Exception throwable) {
             logger.info(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
             return false;
@@ -57,16 +63,16 @@ public class GroovyScriptPreparer implements Serializable {
         return false;
     }
 
-    public boolean evaluateFile(CharSequence command) throws PostBuildScriptException {
+    public boolean evaluateCommand(Command command) throws PostBuildScriptException {
 
         if (ensureWorkspaceNotNull(workspace)) {
             return false;
         }
 
-        FilePath filePath = new ScriptFilePath(workspace).resolve(command);
+        FilePath filePath = new ScriptFilePath(workspace).resolve(command.getScriptPath());
         LoadScriptContentCallable callable = new LoadScriptContentCallable();
         String scriptContent = new Content(logger, callable).resolve(filePath);
-        return evaluate(scriptContent);
+        return evaluateScript(scriptContent, command.getParameters());
     }
 
 }

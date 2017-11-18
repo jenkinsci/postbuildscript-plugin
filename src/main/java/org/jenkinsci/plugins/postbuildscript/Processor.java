@@ -7,12 +7,12 @@ import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.service.Command;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptPreparer;
@@ -41,19 +41,15 @@ public class Processor {
         logger = new Logger(listener);
     }
 
-    private static String getResolvedPath(
-        String path,
-        AbstractBuild<?, ?> build,
-        TaskListener listener
-    ) throws PostBuildScriptException {
-        if (path == null) {
+    private Command getResolvedCommand(String command) throws PostBuildScriptException {
+        if (command == null) {
             return null;
         }
 
         try {
-            String resolvedPath = Util.replaceMacro(path, build.getEnvironment(listener));
+            String resolvedPath = Util.replaceMacro(command, build.getEnvironment(listener));
             resolvedPath = Util.replaceMacro(resolvedPath, build.getBuildVariables());
-            return resolvedPath;
+            return new Command(resolvedPath);
         } catch (IOException | InterruptedException ioe) {
             throw new PostBuildScriptException(ioe);
         }
@@ -76,11 +72,11 @@ public class Processor {
 
     private boolean processScripts() throws PostBuildScriptException {
 
-        if (!processGenericScriptList()) {
+        if (!processGenericScriptFiles()) {
             return setBuildStepsResult();
         }
 
-        if (!processGroovyScriptFileList()) {
+        if (!processGroovyScriptFiles()) {
             return setBuildStepsResult();
         }
 
@@ -109,7 +105,7 @@ public class Processor {
         build.setResult(Result.UNSTABLE);
     }
 
-    private boolean processGenericScriptList()
+    private boolean processGenericScriptFiles()
         throws PostBuildScriptException {
 
         Optional<Result> result = Optional.ofNullable(build.getResult());
@@ -123,9 +119,9 @@ public class Processor {
             }
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
-                String scriptPath = getResolvedPath(filePath, build, listener);
-                if (scriptPath != null) {
-                    int cmd = executor.executeCommand(scriptPath);
+                Command command = getResolvedCommand(filePath);
+                if (command != null) {
+                    int cmd = executor.executeCommand(command);
                     if (cmd != 0) {
                         return false;
                     }
@@ -139,7 +135,7 @@ public class Processor {
         return true;
     }
 
-    private boolean processGroovyScriptFileList()
+    private boolean processGroovyScriptFiles()
         throws PostBuildScriptException {
 
         Optional<Result> result = Optional.ofNullable(build.getResult());
@@ -154,9 +150,9 @@ public class Processor {
             }
 
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
-                String groovyPath = getResolvedPath(filePath, build, listener);
-                if (groovyPath != null) {
-                    if (!executor.evaluateFile(groovyPath)) {
+                Command command = getResolvedCommand(filePath);
+                if (command != null) {
+                    if (!executor.evaluateCommand(command)) {
                         return false;
                     }
                 }
@@ -177,7 +173,7 @@ public class Processor {
             if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
                 String content = script.getContent();
                 if (content != null) {
-                    if (!executor.evaluate(content)) {
+                    if (!executor.evaluateScript(content)) {
                         return false;
                     }
                 }

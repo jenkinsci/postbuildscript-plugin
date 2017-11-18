@@ -10,16 +10,20 @@ import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Exception> {
 
     private static final long serialVersionUID = 3874477459736242748L;
     private final String scriptContent;
+    private final List<String> arguments;
     private final transient AbstractBuild<?, ?> build;
     private final Logger log;
 
-    public GroovyScriptExecutor(String scriptContent, AbstractBuild<?, ?> build, Logger log) {
+    public GroovyScriptExecutor(String scriptContent, List<String> arguments, AbstractBuild<?, ?> build, Logger log) {
         this.scriptContent = scriptContent;
+        this.arguments = new ArrayList<>(arguments);
         this.build = build;
         this.log = log;
     }
@@ -37,6 +41,8 @@ public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Excepti
         binding.setVariable("log", log);
         binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
         binding.setVariable("build", build); //NON-NLS
+        binding.setVariable("args", arguments);
+
 
         ClassLoader classLoader = getClass().getClassLoader();
 

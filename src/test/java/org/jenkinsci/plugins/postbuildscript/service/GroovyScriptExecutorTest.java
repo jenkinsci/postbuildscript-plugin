@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.PrintStream;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -45,7 +46,7 @@ public class GroovyScriptExecutorTest {
         EnvVars.masterEnvVars.put("envVar2", "jenkins");
 
         GroovyScriptExecutor callable = new GroovyScriptExecutor(
-            "log.info('hello $envVar1'); out.println(build.id)", executable, log);
+            "log.info('hello $envVar1'); out.println(build.id)", Collections.emptyList(), executable, log);
         Boolean result = callable.call();
 
         assertThat(result, is(true));

@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.postbuildscript.service;
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.postbuildscript.Logger;
 
+import java.util.List;
+
 public class GroovyScriptExecutorFactory {
 
     private final AbstractBuild<?, ?> build;
@@ -14,7 +16,7 @@ public class GroovyScriptExecutorFactory {
         this.logger = logger;
     }
 
-    public GroovyScriptExecutor create(String scriptContent) {
-        return new GroovyScriptExecutor(scriptContent, build, logger);
+    public GroovyScriptExecutor create(String scriptContent, List<String> arguments) {
+        return new GroovyScriptExecutor(scriptContent, arguments, build, logger);
     }
 }

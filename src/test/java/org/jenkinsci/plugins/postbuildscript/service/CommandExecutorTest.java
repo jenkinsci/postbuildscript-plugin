@@ -34,7 +34,7 @@ public class CommandExecutorTest {
         TaskListener listener = jenkinsRule.createTaskListener();
         CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
 
-        int command = executor.executeCommand(tempFile.getName() + " param1 param2");
+        int command = executor.executeCommand(new Command(tempFile.getName() + " param1 param2"));
 
         assertThat(command, is(0));
 
