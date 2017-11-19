@@ -23,7 +23,7 @@ public class PostBuildStepTest {
     public void containsBuildSteps() throws Exception {
 
         PostBuildStep postBuildStep = new PostBuildStep(
-            Collections.singleton(buildStep), Collections.singleton(RESULT));
+            Collections.singleton(RESULT), Collections.singleton(buildStep));
 
         assertThat(postBuildStep.getBuildSteps(), contains(buildStep));
     }

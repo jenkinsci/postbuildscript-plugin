@@ -16,7 +16,7 @@ public class PostBuildStep extends PostBuildItem {
     private final List<BuildStep> buildSteps;
 
     @DataBoundConstructor
-    public PostBuildStep(@Nonnull Collection<BuildStep> buildSteps, @Nullable Collection<String> results) {
+    public PostBuildStep(@Nullable Collection<String> results, @Nonnull Collection<BuildStep> buildSteps) {
         super(results);
         this.buildSteps = new ArrayList<>(buildSteps);
     }

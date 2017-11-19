@@ -181,7 +181,7 @@ public class PostBuildScript extends Notifier {
         List<BuildStep> steps,
         Set<String> results
     ) {
-        config.addBuildStep(new PostBuildStep(steps, results));
+        config.addBuildStep(new PostBuildStep(results, steps));
     }
 
     public boolean isMarkBuildUnstable() {

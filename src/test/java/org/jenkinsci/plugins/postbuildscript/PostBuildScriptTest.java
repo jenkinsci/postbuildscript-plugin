@@ -1,11 +1,16 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Functions;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.tasks.BuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -18,13 +23,21 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PostBuildScriptTest {
+
+    private static final Set<String> SUCCESS_RESULTS = Collections.singleton("SUCCESS");
 
     @Rule
     public final JenkinsRule jenkinsRule = new JenkinsRule();
@@ -33,17 +46,12 @@ public class PostBuildScriptTest {
     private PostBuildScript postBuildScript;
     private FreeStyleBuild build;
 
-    @Before
-    public void setUp() throws Exception {
-        outFile = File.createTempFile(getClass().getName(), "out");
-        outFile.deleteOnExit();
-    }
-
     @Test
     public void executesShellScriptFile() throws Exception {
         assumeFalse(Functions.isWindows());
 
-        givenScriptFiles("/script.sh");
+        givenOutfile();
+        givenScriptFiles("/script.sh"); //NON-NLS
         postBuildScript = new PostBuildScript(
             scriptFiles,
             Collections.emptyList(),
@@ -56,13 +64,13 @@ public class PostBuildScriptTest {
 
         thenSuccessfulBuild();
         thenWroteHelloWorldToFile();
-
     }
 
     @Test
     public void executesGroovyScriptFile() throws Exception {
 
-        givenScriptFiles("/script.groovy");
+        givenOutfile();
+        givenScriptFiles("/script.groovy"); //NON-NLS
         postBuildScript = new PostBuildScript(
             Collections.emptyList(),
             scriptFiles,
@@ -75,13 +83,61 @@ public class PostBuildScriptTest {
 
         thenSuccessfulBuild();
         thenWroteHelloWorldToFile();
+    }
 
+    @Test
+    public void executesGroovyScript() throws Exception {
+
+        givenOutfile();
+        String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath()); //NON-NLS
+        Script script = new Script(SUCCESS_RESULTS, scriptContent);
+        Collection<Script> scripts = Collections.singleton(script);
+        postBuildScript = new PostBuildScript(
+            Collections.emptyList(),
+            Collections.emptyList(),
+            scripts,
+            Collections.emptyList(),
+            false
+        );
+
+        whenBuilt();
+
+        thenSuccessfulBuild();
+        thenWroteHelloWorldToFile();
+    }
+
+    @Test
+    public void executesPostBuildStep() throws Exception {
+
+        BuildStep buildStep = mock(BuildStep.class);
+        given(buildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(true);
+        Collection<BuildStep> buildSteps = Collections.singleton(buildStep);
+        PostBuildStep step = new PostBuildStep(SUCCESS_RESULTS, buildSteps);
+        Collection<PostBuildStep> steps = Collections.singleton(step);
+        postBuildScript = new PostBuildScript(
+            Collections.emptyList(),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            steps,
+            false
+        );
+
+        whenBuilt();
+
+        thenSuccessfulBuild();
+        verify(buildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+
+    }
+
+    private void givenOutfile() throws Exception {
+        outFile = File.createTempFile(getClass().getName(), ".out");
+        outFile.deleteOnExit();
     }
 
     private void givenScriptFiles(String scriptFileLocation) throws URISyntaxException {
         String scriptFilePath = getClass().getResource(scriptFileLocation).toURI().getPath();
         String command = scriptFilePath + " " + outFile.getPath();
-        ScriptFile scriptFile = new ScriptFile(Collections.singleton("SUCCESS"), command);
+        ScriptFile scriptFile = new ScriptFile(SUCCESS_RESULTS, command);
         scriptFiles = Collections.singleton(scriptFile);
     }
 
