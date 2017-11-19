@@ -83,6 +83,10 @@
             <organization>OpenText</organization>
             <organizationUrl>https://www.opentext.com/</organizationUrl>
         </contributor>
+        <contributor>
+            <name>Markus Alexander Kuppe</name>
+            <url>http://www.lemmster.de/</url>
+        </contributor>
     </contributors>
 
     <scm>
