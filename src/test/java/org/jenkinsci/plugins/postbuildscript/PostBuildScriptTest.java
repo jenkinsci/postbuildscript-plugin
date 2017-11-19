@@ -87,6 +87,7 @@ public class PostBuildScriptTest {
 
     @Test
     public void executesGroovyScript() throws Exception {
+        assumeFalse(Functions.isWindows());
 
         givenOutfile();
         String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath()); //NON-NLS
