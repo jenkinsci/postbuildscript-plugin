@@ -4,8 +4,7 @@
     <pbs:form/>
 
     <j:if test="${descriptor.isMatrixProject(it)}">
-        <f:entry title="" help="/plugin/postbuildscript/help/execute-on.html">
-            ${%Execute script on}
+        <f:entry title="${%Execute script on}" help="/plugin/postbuildscript/help/execute-on.html">
             <select name="executeOn">
                 <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.ExecuteOn"
                                 method="values"/>

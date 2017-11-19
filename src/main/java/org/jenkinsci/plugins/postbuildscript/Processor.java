@@ -9,6 +9,7 @@ import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Configuration;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
@@ -56,7 +57,7 @@ public class Processor {
     }
 
     private void logSkippingOfExecution(String scriptName, Set<String> targetResult) {
-        logger.info(Messages.PostBuildScript_BuildDoesNotHaveAnyOfTheResults(targetResult, scriptName));
+        logger.info(Messages.PostBuildScript_BuildDoesNotFit(targetResult, scriptName));
     }
 
     public boolean process() {
@@ -111,14 +112,14 @@ public class Processor {
         Optional<Result> result = Optional.ofNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
         CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
-        for (ScriptFile script : config.getGenericScriptFiles()) {
-            String filePath = script.getFilePath();
+        for (ScriptFile scriptFile : config.getGenericScriptFiles()) {
+            String filePath = scriptFile.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.genericScriptFileIndexOf(script)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.genericScriptFileIndexOf(scriptFile)));
                 continue;
             }
 
-            if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
+            if (result.isPresent() && scriptFile.shouldBeExecuted(result.get().toString()) && roleFits(scriptFile)) {
                 Command command = getResolvedCommand(filePath);
                 if (command != null) {
                     int cmd = executor.executeCommand(command);
@@ -127,7 +128,7 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(filePath, script.getResults());
+                logSkippingOfExecution(filePath, scriptFile.getResults());
             }
 
 
@@ -140,16 +141,16 @@ public class Processor {
 
         Optional<Result> result = Optional.ofNullable(build.getResult());
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
-        for (ScriptFile script : config.getGroovyScriptFiles()) {
+        for (ScriptFile scriptFile : config.getGroovyScriptFiles()) {
 
-            String filePath = script.getFilePath();
+            String filePath = scriptFile.getFilePath();
 
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.groovyScriptFileIndexOf(script)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.groovyScriptFileIndexOf(scriptFile)));
                 continue;
             }
 
-            if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
+            if (result.isPresent() && scriptFile.shouldBeExecuted(result.get().toString()) && roleFits(scriptFile)) {
                 Command command = getResolvedCommand(filePath);
                 if (command != null) {
                     if (!executor.evaluateCommand(command)) {
@@ -157,7 +158,7 @@ public class Processor {
                     }
                 }
             } else {
-                logSkippingOfExecution(filePath, script.getResults());
+                logSkippingOfExecution(filePath, scriptFile.getResults());
             }
 
         }
@@ -170,7 +171,7 @@ public class Processor {
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (Script script : config.getGroovyScripts()) {
 
-            if (!result.isPresent() || script.shouldBeExecuted(result.get().toString())) {
+            if (result.isPresent() && script.shouldBeExecuted(result.get().toString()) && roleFits(script)) {
                 String content = script.getContent();
                 if (content != null) {
                     if (!executor.evaluateScript(content)) {
@@ -200,7 +201,10 @@ public class Processor {
         try {
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
 
-                if (!result.isPresent() || postBuildStep.shouldBeExecuted(result.get().toString())) {
+                if (result.isPresent() &&
+                    postBuildStep.shouldBeExecuted(result.get().toString()) &&
+                    roleFits(postBuildStep)
+                    ) {
                     for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
                         if (!buildStep.perform(build, launcher, listener)) {
                             return false;
@@ -218,6 +222,14 @@ public class Processor {
         } catch (IOException | InterruptedException ioe) {
             throw new PostBuildScriptException(ioe);
         }
+    }
+
+    private boolean roleFits(PostBuildItem item) {
+        boolean runsOnMaster = build.getBuiltOnStr() == null || build.getBuiltOnStr().isEmpty();
+        if (runsOnMaster) {
+            return item.shouldRunOnMaster();
+        }
+        return item.shouldRunOnSlave();
     }
 
 }

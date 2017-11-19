@@ -15,7 +15,11 @@ public class GroovyScriptContent extends Script {
     @DataBoundConstructor
     public GroovyScriptContent(String content, Collection<String> results) {
         super(results, content);
+    }
 
+    public Object readResolve() {
+        super.readResolve();
+        return this;
     }
 
 }

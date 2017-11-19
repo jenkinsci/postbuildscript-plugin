@@ -18,4 +18,10 @@ public class Script extends PostBuildItem {
     public String getContent() {
         return content;
     }
+
+    public Object readResolve() {
+        super.readResolve();
+        return this;
+    }
+
 }

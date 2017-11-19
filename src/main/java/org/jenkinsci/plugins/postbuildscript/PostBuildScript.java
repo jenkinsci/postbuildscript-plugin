@@ -189,15 +189,17 @@ public class PostBuildScript extends Notifier {
     }
 
     public Object readResolve() {
-        config = new Configuration();
+        if (config == null) {
+            config = new Configuration();
 
-        addGenericScriptFileList();
-        addGroovyScriptFileList();
-        addGroovyScriptContentList();
-        addBuildSteps();
+            addGenericScriptFileList();
+            addGroovyScriptFileList();
+            addGroovyScriptContentList();
+            addBuildSteps();
 
-        if (markBuildUnstable != null) {
-            config.setMarkBuildUnstable(markBuildUnstable);
+            if (markBuildUnstable != null) {
+                config.setMarkBuildUnstable(markBuildUnstable);
+            }
         }
 
         return this;

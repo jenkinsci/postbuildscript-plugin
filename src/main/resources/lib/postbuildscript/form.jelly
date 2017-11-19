@@ -13,6 +13,8 @@
 
                 <pbs:results values="${genericScriptFiles.results}"/>
 
+                <pbs:role item="${genericScriptFiles}"/>
+
                 <f:block>
                     <div align="right">
                         <f:repeatableDeleteButton/>
@@ -37,6 +39,8 @@
                 </f:entry>
 
                 <pbs:results values="${groovyScriptFiles.results}"/>
+
+                <pbs:role item="${groovyScriptFiles}"/>
 
                 <f:block>
                     <div align="right">
@@ -65,6 +69,8 @@
                 </f:entry>
 
                 <pbs:results values="${groovyScripts.results}"/>
+
+                <pbs:role item="${groovyScripts}"/>
 
                 <f:block>
                     <div align="right">
@@ -97,6 +103,8 @@
                 </f:block>
 
                 <pbs:results values="${buildSteps.results}"/>
+
+                <pbs:role item="${buildSteps}"/>
 
                 <f:block>
                     <div align="right">

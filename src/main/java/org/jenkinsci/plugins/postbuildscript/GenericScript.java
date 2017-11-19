@@ -17,4 +17,9 @@ public class GenericScript extends ScriptFile {
         super(results, filePath);
     }
 
+    public Object readResolve() {
+        super.readResolve();
+        return this;
+    }
+
 }

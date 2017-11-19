@@ -32,7 +32,7 @@ public class PostBuildItemTest {
     @Test
     public void doesNotHaveResultOnEmptyResults() throws Exception {
 
-        PostBuildItem postBuildItem = new PostBuildItem(Collections.<String>emptySet());
+        PostBuildItem postBuildItem = new PostBuildItem(Collections.emptySet());
         assertThat(postBuildItem.hasResult(), is(false));
 
     }
@@ -65,6 +65,23 @@ public class PostBuildItemTest {
         postBuildItem.addResults(Collections.singleton(FAILURE));
 
         assertThat(postBuildItem.getResults(), contains(SUCCESS, FAILURE));
+
+    }
+
+    @Test
+    public void runsOnBothRolesPerDefault() {
+
+        assertThat(postBuildItem.shouldRunOnMaster(), is(true));
+        assertThat(postBuildItem.shouldRunOnSlave(), is(true));
+
+    }
+
+    @Test
+    public void setsRole() {
+
+        postBuildItem.setRole(Role.MASTER);
+        assertThat(postBuildItem.shouldRunOnMaster(), is(true));
+        assertThat(postBuildItem.shouldRunOnSlave(), is(false));
 
     }
 

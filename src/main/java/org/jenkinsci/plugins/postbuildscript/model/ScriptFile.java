@@ -18,4 +18,9 @@ public class ScriptFile extends PostBuildItem {
         return filePath;
     }
 
+    public Object readResolve() {
+        super.readResolve();
+        return this;
+    }
+
 }

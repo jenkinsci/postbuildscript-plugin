@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:entry title="${%Run on}" help="/plugin/postbuildscript/help/role.html">
+        <f:radio name="role"
+                 checked="${item.shouldRunOnMaster() and not item.shouldRunOnSlave()}"
+                 title="${%Master}"
+                 value="MASTER"/>
+        <f:radio name="role"
+                 checked="${item.shouldRunOnSlave() and not item.shouldRunOnMaster()}"
+                 title="${%Slave}"
+                 value="SLAVE"/>
+        <f:radio name="role"
+                 checked="${item.shouldRunOnMaster() and item.shouldRunOnSlave()}"
+                 title="${%Both}"
+                 value="BOTH"/>
+    </f:entry>
+
+</j:jelly>

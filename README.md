@@ -79,6 +79,9 @@ changes without needing to run to `package` phase.
 
 ## Changelog
 
+### Version 1.1.0
+* JENKINS-11285 - Ability to run postbuild script on a given node
+
 ### Version 1.0.0
 * JENKINS-30011 - Allow multiple instances of Post Build Scripts as a post build action
 * Fix JENKINS-28825 - Confusing error message when leaving script path empty
