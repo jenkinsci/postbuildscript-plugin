@@ -4,12 +4,10 @@ import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixBuild;
-import hudson.matrix.MatrixConfiguration;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Job;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
@@ -59,13 +57,11 @@ public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggr
 
         Processor processor = createProcessor(build, launcher, listener);
 
-        Job<?, ?> job = build.getProject();
-        boolean axe = job instanceof MatrixConfiguration;
-        if (axe && executeOn.axes()) {     // matrix axe, and set to execute on axes' nodes
+        if (executeOn.axes()) {
             return processor.process();
         }
 
-        return axe || processor.process();
+        return true;
     }
 
     public ExecuteOn getExecuteOn() {
