@@ -17,9 +17,4 @@ public class GroovyScriptContent extends Script {
         super(results, content);
     }
 
-    public Object readResolve() {
-        super.readResolve();
-        return this;
-    }
-
 }

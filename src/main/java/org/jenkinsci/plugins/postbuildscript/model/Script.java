@@ -19,9 +19,4 @@ public class Script extends PostBuildItem {
         return content;
     }
 
-    public Object readResolve() {
-        super.readResolve();
-        return this;
-    }
-
 }
