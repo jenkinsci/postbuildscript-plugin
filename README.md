@@ -14,6 +14,8 @@ This plugin allows you to run the following actions after a build:
 
 You can configure these actions depending on the build status (i.e., only run when build is successful).
 
+With version 1.1.0 scripts can be executed on the master, on slaves or both.
+
 Please refer to the [plugin description](https://wiki.jenkins.io/display/JENKINS/PostBuildScript+Plugin) for further
 information.
 
