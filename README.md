@@ -85,6 +85,7 @@ changes without needing to run to `package` phase.
 
 Fixed some bugs that came in with the release of a new major version. Sorry for the inconvenience.
 
+* JENKINS-48197 - Do not initialize fields already loaded from configuration
 * JENKINS-48177 - Even marking build as unstable when errors during script execution appear
 * JENKINS-48169 - Using better descriptions for role limitations 
 
