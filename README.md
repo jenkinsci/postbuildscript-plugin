@@ -79,7 +79,10 @@ Then visit http://localhost:8080/jenkins/ to play with the plugin.
 If your IDE supports compile-on-save mode this is especially convenient since each `hpi:run` will pick up compiled
 changes without needing to run to `package` phase.
 
-## Changelog
+## Release Notes
+
+### Version 1.1.1
+* JENKINS-48169 - Using better descriptions for role limitations 
 
 ### Version 1.1.0
 * JENKINS-11285 - Ability to run postbuild script on a given node
