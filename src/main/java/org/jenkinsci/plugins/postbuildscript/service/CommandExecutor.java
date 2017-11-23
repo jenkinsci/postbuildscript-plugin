@@ -66,7 +66,7 @@ public class CommandExecutor {
         FilePath script = new ScriptFilePath(workspace).resolve(command.getScriptPath());
         logger.info(Messages.PostBuildScript_ExecutingScript(script, command.getParameters()));
         LoadScriptContentCallable callable = new LoadScriptContentCallable();
-        return new Content(logger, callable).resolve(script);
+        return new Content(callable).resolve(script);
 
     }
 

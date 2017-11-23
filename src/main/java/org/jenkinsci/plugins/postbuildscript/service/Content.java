@@ -9,12 +9,9 @@ import java.io.IOException;
 
 public class Content {
 
-    private final Logger logger;
-
     private final FileCallable<String> callable;
 
-    public Content(Logger logger, FileCallable<String> callable) {
-        this.logger = logger;
+    public Content(FileCallable<String> callable) {
         this.callable = callable;
     }
 

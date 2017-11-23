@@ -71,7 +71,7 @@ public class GroovyScriptPreparer implements Serializable {
 
         FilePath filePath = new ScriptFilePath(workspace).resolve(command.getScriptPath());
         LoadScriptContentCallable callable = new LoadScriptContentCallable();
-        String scriptContent = new Content(logger, callable).resolve(filePath);
+        String scriptContent = new Content(callable).resolve(filePath);
         return evaluateScript(scriptContent, command.getParameters());
     }
 
