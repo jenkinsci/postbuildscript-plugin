@@ -64,7 +64,7 @@
                 <f:entry field="content" title="${%Groovy script}">
                     <f:textarea value="${groovyScripts.content}"
                                 codemirror-mode="groovy"
-                                codemirror-config="mode: 'text/x-groovy'"
+                                codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"
                     />
                 </f:entry>
 
