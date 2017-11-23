@@ -82,9 +82,18 @@ changes without needing to run to `package` phase.
 ## Release Notes
 
 ### Version 1.1.1
+
+Fixed some bugs that came in with the release of a new major version. Sorry for the inconvenience.
+
+* JENKINS-48177 - Even marking build as unstable when errors during script execution appear
 * JENKINS-48169 - Using better descriptions for role limitations 
 
 ### Version 1.1.0
+
+Attention: This is a major refactoring of the plugin. It hasn't been updated for years now. The configuration was changed,
+but your existing configuration will be automatically migrated to the new format. I cannot reproduce every configuration, so
+please open a bug ticket (and try to be kind, I'm doing this in my free time and don't want to harm anyone).
+
 * JENKINS-11285 - Ability to run postbuild script on a given node
 
 ### Version 1.0.0
