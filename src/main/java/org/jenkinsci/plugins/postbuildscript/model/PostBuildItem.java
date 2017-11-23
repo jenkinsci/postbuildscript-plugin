@@ -51,8 +51,12 @@ public class PostBuildItem {
     }
 
     public Object readResolve() {
-        results = new HashSet<>();
-        role = Role.BOTH;
+        if (results == null) {
+            results = new HashSet<>();
+        }
+        if (role == null) {
+            role = Role.BOTH;
+        }
         return this;
     }
 

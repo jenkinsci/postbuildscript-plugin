@@ -27,7 +27,9 @@ public class PostBuildStep extends PostBuildItem {
 
     public Object readResolve() {
         super.readResolve();
-        buildSteps = new ArrayList<>();
+        if (buildSteps == null) {
+            buildSteps = new ArrayList<>();
+        }
         return this;
     }
 
