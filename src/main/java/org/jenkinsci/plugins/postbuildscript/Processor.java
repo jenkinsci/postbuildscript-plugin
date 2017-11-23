@@ -66,7 +66,7 @@ public class Processor {
             return processScripts();
         } catch (PostBuildScriptException pse) {
             logger.error(Messages.PostBuildScript_ProblemOccured(pse.getMessage()));
-            build.setResult(Result.FAILURE);
+            failOrUnstable();
             return false;
         }
     }
@@ -74,36 +74,28 @@ public class Processor {
     private boolean processScripts() throws PostBuildScriptException {
 
         if (!processGenericScriptFiles()) {
-            return setBuildStepsResult();
+            return failOrUnstable();
         }
 
         if (!processGroovyScriptFiles()) {
-            return setBuildStepsResult();
+            return failOrUnstable();
         }
 
         if (!processGroovyScripts()) {
-            return setBuildStepsResult();
+            return failOrUnstable();
         }
 
-        return processBuildSteps() || setBuildStepsResult();
+        return processBuildSteps() || failOrUnstable();
 
     }
 
-    private boolean setBuildStepsResult() {
+    private boolean failOrUnstable() {
         if (config.isMarkBuildUnstable()) {
-            setUnstableResult();
+            build.setResult(Result.UNSTABLE);
             return true;
         }
-        setFailedResult();
-        return false;
-    }
-
-    private void setFailedResult() {
         build.setResult(Result.FAILURE);
-    }
-
-    private void setUnstableResult() {
-        build.setResult(Result.UNSTABLE);
+        return false;
     }
 
     private boolean processGenericScriptFiles()
