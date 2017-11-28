@@ -87,7 +87,7 @@ public class GroovyScriptPreparerTest {
         boolean evaluated = groovyScriptPreparer.evaluateScript(SCRIPT_CONTENT);
 
         assertThat(evaluated, is(false));
-        verify(logger).info(Messages.PostBuildScript_ProblemOccured(EXCEPTION_MESSAGE));
+        verify(logger).info(startsWith(Messages.PostBuildScript_ProblemOccured("java.lang.Exception: " + EXCEPTION_MESSAGE)));
 
     }
 
