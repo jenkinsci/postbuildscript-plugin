@@ -5,7 +5,9 @@ import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,8 +50,11 @@ public class GroovyScriptPreparer implements Serializable {
 
         try {
             return workspace.act(groovyScriptExecutorFactory.create(scriptContent, arguments));
-        } catch (Exception throwable) {
-            logger.info(Messages.PostBuildScript_ProblemOccured(throwable.getMessage()));
+        } catch (Exception exception) {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            exception.printStackTrace(printWriter);
+            logger.info(Messages.PostBuildScript_ProblemOccured(stringWriter.toString()));
             return false;
         }
 
