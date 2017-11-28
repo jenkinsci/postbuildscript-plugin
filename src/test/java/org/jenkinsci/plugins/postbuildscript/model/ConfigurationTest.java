@@ -10,6 +10,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationTest {
@@ -23,7 +24,7 @@ public class ConfigurationTest {
     @Mock
     private Script script;
 
-    private Configuration configuration = new Configuration();
+    private final Configuration configuration = new Configuration();
 
     @Test
     public void addsBuildStep() throws Exception {
@@ -58,10 +59,12 @@ public class ConfigurationTest {
     @Test
     public void addsGenericScriptFiles() throws Exception {
 
-        configuration.addGenericScriptFiles(Collections.singleton(scriptFile));
+        given(scriptFile.getScriptType()).willReturn(ScriptType.GENERIC);
 
-        assertThat(configuration.getGenericScriptFiles(), contains(scriptFile));
-        assertThat(configuration.genericScriptFileIndexOf(scriptFile), is(0));
+        configuration.addScriptFiles(Collections.singleton(scriptFile));
+
+        assertThat(configuration.getScriptFiles(ScriptType.GENERIC), contains(scriptFile));
+        assertThat(configuration.scriptFileIndexOf(scriptFile), is(0));
 
     }
 
@@ -79,10 +82,12 @@ public class ConfigurationTest {
     @Test
     public void addsGroovyScriptFiles() throws Exception {
 
-        configuration.addGroovyScriptFiles(Collections.singleton(scriptFile));
+        given(scriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
 
-        assertThat(configuration.getGroovyScriptFiles(), contains(scriptFile));
-        assertThat(configuration.groovyScriptFileIndexOf(scriptFile), is(0));
+        configuration.addScriptFiles(Collections.singleton(scriptFile));
+
+        assertThat(configuration.getScriptFiles(ScriptType.GROOVY), contains(scriptFile));
+        assertThat(configuration.scriptFileIndexOf(scriptFile), is(0));
 
     }
 

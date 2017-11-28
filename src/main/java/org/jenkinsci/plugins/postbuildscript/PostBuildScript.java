@@ -16,6 +16,7 @@ import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -64,13 +65,8 @@ public class PostBuildScript extends Notifier {
         boolean markBuildUnstable
     ) {
 
-        if (genericScriptFiles != null) {
-            config.addGenericScriptFiles(genericScriptFiles);
-        }
-
-        if (groovyScriptFiles != null) {
-            config.addGroovyScriptFiles(groovyScriptFiles);
-        }
+        addScriptFiles(genericScriptFiles, ScriptType.GENERIC);
+        addScriptFiles(groovyScriptFiles, ScriptType.GROOVY);
 
         if (groovyScripts != null) {
             config.addGroovyScripts(groovyScripts);
@@ -82,6 +78,15 @@ public class PostBuildScript extends Notifier {
 
         config.setMarkBuildUnstable(markBuildUnstable);
 
+    }
+
+    void addScriptFiles(Collection<? extends ScriptFile> scriptFiles, ScriptType scriptType) {
+        if (scriptFiles != null) {
+            for (ScriptFile genericScriptFile : scriptFiles) {
+                genericScriptFile.setScriptType(scriptType);
+            }
+            config.addScriptFiles(scriptFiles);
+        }
     }
 
     private void applyResult(Iterable<? extends PostBuildItem> postBuildItems) {
@@ -120,11 +125,11 @@ public class PostBuildScript extends Notifier {
     }
 
     public List<? extends ScriptFile> getGenericScriptFiles() {
-        return config.getGenericScriptFiles();
+        return config.getScriptFiles(ScriptType.GENERIC);
     }
 
     public List<? extends ScriptFile> getGroovyScriptFiles() {
-        return config.getGroovyScriptFiles();
+        return config.getScriptFiles(ScriptType.GROOVY);
     }
 
     public List<? extends Script> getGroovyScripts() {
@@ -146,7 +151,7 @@ public class PostBuildScript extends Notifier {
         return results;
     }
 
-    private void addBuildSteps() {
+    private void migrateBuildSteps() {
         if (buildSteps != null && !buildSteps.isEmpty()) {
             for (BuildStep step : buildSteps) {
                 List<BuildStep> steps = Collections.singletonList(step);
@@ -156,24 +161,17 @@ public class PostBuildScript extends Notifier {
         }
     }
 
-    private void addGroovyScriptContentList() {
+    private void migrateGroovyScriptContentList() {
         if (groovyScriptContentList != null && !groovyScriptContentList.isEmpty()) {
             config.addGroovyScripts(groovyScriptContentList);
             applyResult(groovyScriptContentList);
         }
     }
 
-    private void addGroovyScriptFileList() {
-        if (groovyScriptFileList != null && !groovyScriptFileList.isEmpty()) {
-            config.addGroovyScriptFiles(groovyScriptFileList);
-            applyResult(groovyScriptFileList);
-        }
-    }
-
-    private void addGenericScriptFileList() {
-        if (genericScriptFileList != null && !genericScriptFileList.isEmpty()) {
-            config.addGenericScriptFiles(genericScriptFileList);
-            applyResult(genericScriptFileList);
+    private void migrateScriptFileList(Collection<? extends ScriptFile> scriptFiles, ScriptType scriptType) {
+        if (scriptFiles != null && !scriptFiles.isEmpty()) {
+            addScriptFiles(scriptFiles, scriptType);
+            applyResult(scriptFiles);
         }
     }
 
@@ -192,10 +190,10 @@ public class PostBuildScript extends Notifier {
         if (config == null) {
             config = new Configuration();
 
-            addGenericScriptFileList();
-            addGroovyScriptFileList();
-            addGroovyScriptContentList();
-            addBuildSteps();
+            migrateScriptFileList(genericScriptFileList, ScriptType.GENERIC);
+            migrateScriptFileList(groovyScriptFileList, ScriptType.GROOVY);
+            migrateGroovyScriptContentList();
+            migrateBuildSteps();
 
             if (markBuildUnstable != null) {
                 config.setMarkBuildUnstable(markBuildUnstable);

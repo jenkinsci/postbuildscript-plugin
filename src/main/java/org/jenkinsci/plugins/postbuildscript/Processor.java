@@ -13,6 +13,7 @@ import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
 import org.jenkinsci.plugins.postbuildscript.service.Command;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory;
@@ -104,10 +105,10 @@ public class Processor {
         Optional<Result> result = Optional.ofNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
         CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
-        for (ScriptFile scriptFile : config.getGenericScriptFiles()) {
+        for (ScriptFile scriptFile : config.getScriptFiles(ScriptType.GENERIC)) {
             String filePath = scriptFile.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.genericScriptFileIndexOf(scriptFile)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.scriptFileIndexOf(scriptFile)));
                 continue;
             }
 
@@ -133,12 +134,12 @@ public class Processor {
 
         Optional<Result> result = Optional.ofNullable(build.getResult());
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
-        for (ScriptFile scriptFile : config.getGroovyScriptFiles()) {
+        for (ScriptFile scriptFile : config.getScriptFiles(ScriptType.GROOVY)) {
 
             String filePath = scriptFile.getFilePath();
 
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.groovyScriptFileIndexOf(scriptFile)));
+                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.scriptFileIndexOf(scriptFile)));
                 continue;
             }
 

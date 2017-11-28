@@ -42,7 +42,7 @@ https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin
 
 ## Contributing
 
-The plugin was created in 2011 by Gregory Boissinot. It was adopted by Daniel Heid in Oktober 2017. Feel free
+The plugin was created in 2011 by Gregory Boissinot. It was adopted by Daniel Heid in October 2017. Feel free
 to contribute as you like by forking the repository and creating pull requests.
 
 ### Reporting issues
@@ -87,6 +87,12 @@ If your IDE supports compile-on-save mode this is especially convenient since ea
 changes without needing to run to `package` phase.
 
 ## Release Notes
+
+### Version 2.0.0
+
+Refactored the way, how script files are differentiated. This ensures extensibility and helps removing redundant code.
+
+Also removed null pointer exception that occurs on executing a postbuild groovy script on an agent.
 
 ### Version 1.1.1
 

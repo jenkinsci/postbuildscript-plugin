@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Configuration {
 
+    @Deprecated
     private final List<ScriptFile> genericScriptFiles = new ArrayList<>();
+    @Deprecated
     private final List<ScriptFile> groovyScriptFiles = new ArrayList<>();
+    private List<ScriptFile> scriptFiles = new ArrayList<>();
     private final List<Script> groovyScripts = new ArrayList<>();
     private final List<PostBuildStep> buildSteps = new ArrayList<>();
     private boolean markBuildUnstable;
@@ -29,12 +33,14 @@ public class Configuration {
         this.markBuildUnstable = markBuildUnstable;
     }
 
-    public List<ScriptFile> getGenericScriptFiles() {
-        return Collections.unmodifiableList(genericScriptFiles);
+    public List<ScriptFile> getScriptFiles(ScriptType scriptType) {
+        return scriptFiles.stream()
+            .filter(scriptFile -> scriptFile.getScriptType() == scriptType)
+            .collect(Collectors.toList());
     }
 
-    public int genericScriptFileIndexOf(ScriptFile scriptFile) {
-        return genericScriptFiles.indexOf(scriptFile);
+    public int scriptFileIndexOf(ScriptFile scriptFile) {
+        return scriptFiles.indexOf(scriptFile);
     }
 
     public List<Script> getGroovyScripts() {
@@ -45,20 +51,8 @@ public class Configuration {
         return groovyScripts.indexOf(script);
     }
 
-    public List<ScriptFile> getGroovyScriptFiles() {
-        return Collections.unmodifiableList(groovyScriptFiles);
-    }
-
-    public int groovyScriptFileIndexOf(ScriptFile scriptFile) {
-        return groovyScriptFiles.indexOf(scriptFile);
-    }
-
-    public void addGenericScriptFiles(Collection<? extends ScriptFile> genericScriptFiles) {
-        this.genericScriptFiles.addAll(genericScriptFiles);
-    }
-
-    public void addGroovyScriptFiles(Collection<? extends ScriptFile> groovyScriptFiles) {
-        this.groovyScriptFiles.addAll(groovyScriptFiles);
+    public void addScriptFiles(Collection<? extends ScriptFile> scriptFiles) {
+        this.scriptFiles.addAll(scriptFiles);
     }
 
     public void addGroovyScripts(Collection<? extends Script> groovyScripts) {
@@ -71,6 +65,26 @@ public class Configuration {
 
     public void addBuildStep(PostBuildStep postBuildStep) {
         buildSteps.add(postBuildStep);
+    }
+
+    public Object readResolve() {
+        if (scriptFiles == null) {
+            scriptFiles = new ArrayList<>(
+                genericScriptFiles.size() + groovyScriptFiles.size());
+
+            for (ScriptFile scriptFile : genericScriptFiles) {
+                scriptFile.setScriptType(ScriptType.GENERIC);
+                scriptFiles.add(scriptFile);
+            }
+
+            for (ScriptFile scriptFile : groovyScriptFiles) {
+                scriptFile.setScriptType(ScriptType.GROOVY);
+                scriptFiles.add(scriptFile);
+            }
+
+        }
+
+        return this;
     }
 
 }
