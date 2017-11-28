@@ -34,13 +34,16 @@ public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Excepti
         String script = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
 
         Binding binding = new Binding();
-        FilePath workspace = build.getWorkspace();
-        if (workspace != null && workspace.getRemote() != null) {
-            binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
+        if (build != null) {
+            FilePath workspace = build.getWorkspace();
+            if (workspace != null && workspace.getRemote() != null) {
+                binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
+            }
+            binding.setVariable("build", build); //NON-NLS
         }
+
         binding.setVariable("log", log);
         binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
-        binding.setVariable("build", build); //NON-NLS
         binding.setVariable("args", arguments);
 
 
