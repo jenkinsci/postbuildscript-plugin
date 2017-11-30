@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import com.google.common.base.Strings;
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -37,7 +38,7 @@ public class Processor {
         BuildListener listener,
         Configuration config) {
         this.build = build;
-        this.launcher = launcher;
+        this.launcher = launcher.decorateByEnv(new EnvVars("BUILD_RESULT", build.getResult().toString()));
         this.listener = listener;
         this.config = config;
         logger = new Logger(listener);
