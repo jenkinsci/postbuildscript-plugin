@@ -12,6 +12,7 @@ import hudson.tasks.BuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Role;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
@@ -64,10 +65,6 @@ public class Processor {
         }
     }
 
-    private void logSkippingOfExecution(String scriptName, Set<String> targetResult) {
-        logger.info(Messages.PostBuildScript_BuildDoesNotFit(targetResult, scriptName));
-    }
-
     public boolean process() {
         logger.info(Messages.PostBuildScript_ExecutingPostBuildScripts());
         try {
@@ -115,23 +112,29 @@ public class Processor {
                 continue;
             }
 
-            if (result.isPresent() && scriptFile.shouldBeExecuted(result.get().toString()) && roleFits(scriptFile)) {
-                Command command = getResolvedCommand(filePath);
-                if (command != null) {
+            if (!roleFits(scriptFile)) {
+                logRoleDoesNotMatch(scriptFile.getRole(), filePath);
+                continue;
+            }
 
-                    if (scriptFile.getScriptType() == ScriptType.GENERIC) {
-                        int returnCode = commandExecutor.executeCommand(command);
-                        if (returnCode != 0) {
-                            return false;
-                        }
-                    } else {
-                        if (!scriptPreparer.evaluateCommand(command)) {
-                            return false;
-                        }
+            if (!result.isPresent() || !scriptFile.shouldBeExecuted(result.get().toString())) {
+                logResultDoesNotMatch(scriptFile.getResults(), filePath);
+                continue;
+            }
+
+            Command command = getResolvedCommand(filePath);
+            if (command != null) {
+
+                if (scriptFile.getScriptType() == ScriptType.GENERIC) {
+                    int returnCode = commandExecutor.executeCommand(command);
+                    if (returnCode != 0) {
+                        return false;
+                    }
+                } else {
+                    if (!scriptPreparer.evaluateCommand(command)) {
+                        return false;
                     }
                 }
-            } else {
-                logSkippingOfExecution(filePath, scriptFile.getResults());
             }
 
         }
@@ -144,17 +147,23 @@ public class Processor {
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (Script script : config.getGroovyScripts()) {
 
-            if (result.isPresent() && script.shouldBeExecuted(result.get().toString()) && roleFits(script)) {
-                String content = script.getContent();
-                if (content != null) {
-                    if (!executor.evaluateScript(content)) {
-                        return false;
-                    }
+            if (!roleFits(script)) {
+                logRoleDoesNotMatch(script.getRole(), Messages.PostBuildScript_GroovyScript(
+                    config.groovyScriptIndexOf(script)));
+                continue;
+            }
+
+            if (!result.isPresent() || !script.shouldBeExecuted(result.get().toString())) {
+                logResultDoesNotMatch(script.getResults(), Messages.PostBuildScript_GroovyScript(
+                    config.groovyScriptIndexOf(script)));
+                continue;
+            }
+
+            String content = script.getContent();
+            if (content != null) {
+                if (!executor.evaluateScript(content)) {
+                    return false;
                 }
-            } else {
-                logSkippingOfExecution(Messages.PostBuildScript_GroovyScript(config.groovyScriptIndexOf(script)),
-                    script.getResults()
-                );
             }
 
         }
@@ -174,20 +183,22 @@ public class Processor {
         try {
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
 
-                if (result.isPresent() &&
-                    postBuildStep.shouldBeExecuted(result.get().toString()) &&
-                    roleFits(postBuildStep)
-                    ) {
-                    for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
-                        if (!buildStep.perform(build, launcher, listener)) {
-                            return false;
-                        }
+                if (!roleFits(postBuildStep)) {
+                    logRoleDoesNotMatch(postBuildStep.getRole(), Messages.PostBuildScript_BuildStep(
+                        config.buildStepIndexOf(postBuildStep)));
+                    continue;
+                }
+
+                if (!result.isPresent() || !postBuildStep.shouldBeExecuted(result.get().toString())) {
+                    logResultDoesNotMatch(postBuildStep.getResults(), Messages.PostBuildScript_BuildStep(
+                        config.buildStepIndexOf(postBuildStep)));
+                    continue;
+                }
+
+                for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
+                    if (!buildStep.perform(build, launcher, listener)) {
+                        return false;
                     }
-                } else {
-                    logSkippingOfExecution(
-                        Messages.PostBuildScript_BuildStep(config.buildStepIndexOf(postBuildStep)),
-                        postBuildStep.getResults()
-                    );
                 }
 
             }
@@ -203,6 +214,14 @@ public class Processor {
             return item.shouldRunOnMaster();
         }
         return item.shouldRunOnSlave();
+    }
+
+    private void logResultDoesNotMatch(Set<String> results, String scriptName) {
+        logger.info(Messages.PostBuildScript_BuildDoesNotFit(results, scriptName));
+    }
+
+    private void logRoleDoesNotMatch(Role role, String scriptName) {
+        logger.info(Messages.PostBuildScript_NodeDoesNotHaveRole(role, scriptName));
     }
 
 }

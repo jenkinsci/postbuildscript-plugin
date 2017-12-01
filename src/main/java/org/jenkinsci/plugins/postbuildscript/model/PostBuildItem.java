@@ -50,6 +50,10 @@ public class PostBuildItem {
         return role == Role.SLAVE || role == Role.BOTH;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public Object readResolve() {
         if (results == null) {
             results = new HashSet<>();
