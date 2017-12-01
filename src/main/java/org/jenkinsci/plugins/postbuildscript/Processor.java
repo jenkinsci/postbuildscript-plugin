@@ -81,11 +81,7 @@ public class Processor {
 
     private boolean processScripts() throws PostBuildScriptException {
 
-        if (!processGenericScriptFiles()) {
-            return failOrUnstable();
-        }
-
-        if (!processGroovyScriptFiles()) {
+        if (!processScriptFiles()) {
             return failOrUnstable();
         }
 
@@ -106,13 +102,13 @@ public class Processor {
         return false;
     }
 
-    private boolean processGenericScriptFiles()
-        throws PostBuildScriptException {
+    private boolean processScriptFiles() throws PostBuildScriptException {
 
         Optional<Result> result = Optional.ofNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
-        CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
-        for (ScriptFile scriptFile : config.getScriptFiles(ScriptType.GENERIC)) {
+        CommandExecutor commandExecutor = new CommandExecutor(logger, listener, workspace, launcher);
+        GroovyScriptPreparer scriptPreparer = createGroovyScriptPreparer();
+        for (ScriptFile scriptFile : config.getScriptFiles()) {
             String filePath = scriptFile.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
                 logger.error(Messages.PostBuildScript_NoFilePathProvided(config.scriptFileIndexOf(scriptFile)));
@@ -122,39 +118,16 @@ public class Processor {
             if (result.isPresent() && scriptFile.shouldBeExecuted(result.get().toString()) && roleFits(scriptFile)) {
                 Command command = getResolvedCommand(filePath);
                 if (command != null) {
-                    int cmd = executor.executeCommand(command);
-                    if (cmd != 0) {
-                        return false;
-                    }
-                }
-            } else {
-                logSkippingOfExecution(filePath, scriptFile.getResults());
-            }
 
-
-        }
-        return true;
-    }
-
-    private boolean processGroovyScriptFiles()
-        throws PostBuildScriptException {
-
-        Optional<Result> result = Optional.ofNullable(build.getResult());
-        GroovyScriptPreparer executor = createGroovyScriptPreparer();
-        for (ScriptFile scriptFile : config.getScriptFiles(ScriptType.GROOVY)) {
-
-            String filePath = scriptFile.getFilePath();
-
-            if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
-                logger.error(Messages.PostBuildScript_NoFilePathProvided(config.scriptFileIndexOf(scriptFile)));
-                continue;
-            }
-
-            if (result.isPresent() && scriptFile.shouldBeExecuted(result.get().toString()) && roleFits(scriptFile)) {
-                Command command = getResolvedCommand(filePath);
-                if (command != null) {
-                    if (!executor.evaluateCommand(command)) {
-                        return false;
+                    if (scriptFile.getScriptType() == ScriptType.GENERIC) {
+                        int returnCode = commandExecutor.executeCommand(command);
+                        if (returnCode != 0) {
+                            return false;
+                        }
+                    } else {
+                        if (!scriptPreparer.evaluateCommand(command)) {
+                            return false;
+                        }
                     }
                 }
             } else {

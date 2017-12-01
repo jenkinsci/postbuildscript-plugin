@@ -33,6 +33,10 @@ public class Configuration {
         this.markBuildUnstable = markBuildUnstable;
     }
 
+    public List<ScriptFile> getScriptFiles() {
+        return Collections.unmodifiableList(scriptFiles);
+    }
+
     public List<ScriptFile> getScriptFiles(ScriptType scriptType) {
         return scriptFiles.stream()
             .filter(scriptFile -> scriptFile.getScriptType() == scriptType)
