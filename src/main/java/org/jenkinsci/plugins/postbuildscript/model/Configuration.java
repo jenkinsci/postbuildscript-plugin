@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 public class Configuration {
 
     @Deprecated
-    private final List<ScriptFile> genericScriptFiles = new ArrayList<>();
+    private List<ScriptFile> genericScriptFiles;
     @Deprecated
-    private final List<ScriptFile> groovyScriptFiles = new ArrayList<>();
+    private List<ScriptFile> groovyScriptFiles;
     private List<ScriptFile> scriptFiles = new ArrayList<>();
     private final List<Script> groovyScripts = new ArrayList<>();
     private final List<PostBuildStep> buildSteps = new ArrayList<>();
