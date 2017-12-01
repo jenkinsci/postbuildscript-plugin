@@ -94,7 +94,7 @@
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/postbuildscript-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/postbuildscript-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/postbuildscript-plugin/tree/${project.scm.tag}</url>
+        <url>https://github.com/jenkinsci/postbuildscript-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
