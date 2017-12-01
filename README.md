@@ -88,6 +88,10 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.1.0
+
+Dan Clayton added the BUILD_RESULT variable to allow handling script actions depending on the build result.
+
 ### Version 2.0.0
 
 Refactored the way, how script files are differentiated. This ensures extensibility and helps removing redundant code.
