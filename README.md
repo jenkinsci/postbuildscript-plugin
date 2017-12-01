@@ -72,7 +72,7 @@ Run
 Then copy the resulting ./target/postbuildscript.hpi file to the $JENKINS_HOME/plugins directory.
 Don't forget to restart Jenkins afterwards.
 
-Alternatively use the plugin management console (http://example.com:8080/pluginManager/advanced)
+Alternatively use the plugin management console (http://localhost:8080/pluginManager/advanced)
 to upload the hpi file. You have to restart Jenkins in order to find the plugin in the installed plugins list.
 
 ### Using HPI Maven plugin to test your changes locally
