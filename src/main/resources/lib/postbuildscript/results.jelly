@@ -4,7 +4,7 @@
     <f:entry title="${%If build was}" help="/plugin/postbuildscript/help/results.html">
         <select multiple="multiple" name="results" size="5">
             <f:option value="SUCCESS"
-                      selected="${values.contains('SUCCESS')}">
+                      selected="${values == null or values.contains('SUCCESS')}">
                 SUCCESS
             </f:option>
             <f:option value="UNSTABLE"

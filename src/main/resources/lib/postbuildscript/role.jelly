@@ -11,7 +11,7 @@
                  title="${%Slave}"
                  value="SLAVE"/>
         <f:radio name="role"
-                 checked="${item.shouldRunOnMaster() and item.shouldRunOnSlave()}"
+                 checked="${item == null or item.shouldRunOnMaster() and item.shouldRunOnSlave()}"
                  title="${%Both}"
                  value="BOTH"/>
     </f:entry>
