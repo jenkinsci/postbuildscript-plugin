@@ -89,6 +89,12 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.2.0
+
+Unified script file handling.
+
+There are separate messages now, if a script is not run because the build result or the role does not fit.
+
 ### Version 2.1.0
 
 Dan Clayton added the BUILD_RESULT variable to allow handling script actions depending on the build result.
