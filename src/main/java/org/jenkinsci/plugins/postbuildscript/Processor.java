@@ -38,7 +38,13 @@ public class Processor {
         BuildListener listener,
         Configuration config) {
         this.build = build;
-        this.launcher = launcher.decorateByEnv(new EnvVars("BUILD_RESULT", build.getResult().toString()));
+        Result result = build.getResult();
+        if (result == null) {
+            this.launcher = launcher;
+        } else {
+            this.launcher = launcher.decorateByEnv(
+                new EnvVars("BUILD_RESULT", result.toString())); //NON-NLS
+        }
         this.listener = listener;
         this.config = config;
         logger = new Logger(listener);
