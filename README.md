@@ -25,7 +25,8 @@ You'll find the latest HPI files of the plugin here:
 
 http://updates.jenkins-ci.org/download/plugins/postbuildscript
 
-Just put a HPI file into your plugins subdirectory of your Jenkins installation root, e.g. /var/lib/jenkins.
+Just put a HPI file into your plugins subdirectory of your Jenkins installation root, e.g. /var/lib/jenkins. Restart
+Jenkins afterwards.
 
 ## Issue Tracking
 
