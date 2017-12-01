@@ -89,6 +89,12 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.2.1
+
+Removing deprecated fields from configuration
+
+Using default values for results and roles on newly created script items.
+
 ### Version 2.2.0
 
 Unified script file handling.
