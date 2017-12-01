@@ -51,7 +51,7 @@ to contribute as you like by forking the repository and creating pull requests.
 Please first look through [Jira](https://issues.jenkins-ci.org/issues/?jql=component%20%3D%20postbuildscript-plugin). If a ticket
 already exists, please add a comment and try to explain the issue a little more further. If no ticket exists, please open a new one.
 
-In general please provide example configurations (config.xml, Job DSL scripts, ...) and also screenshots are very helpful to reproduce
+In general please _provide example configurations_ (config.xml, Job DSL scripts, ...) and also screenshots are very helpful to reproduce
 problems.
 
 Please try to be constructive. If you have a feedback, it's better to write me a direct message. 
