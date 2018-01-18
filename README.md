@@ -89,6 +89,10 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.3.0
+
+* JENKINS-48931 - PostBuildScript Execute Script Execute Shell Textbox Formatting Broken
+
 ### Version 2.2.1
 
 Removing deprecated fields from configuration

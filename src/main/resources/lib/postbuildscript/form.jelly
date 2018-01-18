@@ -62,10 +62,7 @@
             <table width="100%">
 
                 <f:entry field="content" title="${%Groovy script}">
-                    <f:textarea value="${groovyScripts.content}"
-                                codemirror-mode="groovy"
-                                codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"
-                    />
+                    <f:textarea value="${groovyScripts.content}" />
                 </f:entry>
 
                 <pbs:results values="${groovyScripts.results}"/>
