@@ -1,162 +1,116 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import hudson.Functions;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.tasks.BuildStep;
+import com.thoughtworks.xstream.XStream;
+import hudson.tasks.BatchFile;
+import org.hamcrest.Matchers;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PostBuildScriptTest {
 
-    private static final Set<String> SUCCESS_RESULTS = Collections.singleton("SUCCESS");
-
-    @Rule
-    public final JenkinsRule jenkinsRule = new JenkinsRule();
-    private File outFile;
-    private Collection<ScriptFile> scriptFiles;
     private PostBuildScript postBuildScript;
-    private FreeStyleBuild build;
+    private PostBuildScript resolvedPostBuildScript;
 
     @Test
-    public void executesShellScriptFile() throws Exception {
-        assumeFalse(Functions.isWindows());
+    public void returnsSameInstanceOnResolve() {
 
-        givenOutfile();
-        givenScriptFiles("/script.sh"); //NON-NLS
-        postBuildScript = new PostBuildScript(
-            scriptFiles,
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            false
-        );
+        givenScriptFromConfig("/v0.18_config_a.xml");
 
-        whenBuilt();
+        whenReadResolves();
 
-        thenSuccessfulBuild();
-        thenWroteHelloWorldToFile();
+        assertThat(resolvedPostBuildScript, is(postBuildScript));
+
     }
 
     @Test
-    public void executesGroovyScriptFile() throws Exception {
+    public void markBuildUnstableIsTrue() {
 
-        givenOutfile();
-        givenScriptFiles("/script.groovy"); //NON-NLS
-        postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            scriptFiles,
-            Collections.emptyList(),
-            Collections.emptyList(),
-            false
-        );
+        givenScriptFromConfig("/v0.18_config_a.xml");
 
-        whenBuilt();
+        whenReadResolves();
 
-        thenSuccessfulBuild();
-        thenWroteHelloWorldToFile();
+        assertThat(resolvedPostBuildScript.isMarkBuildUnstable(), is(true));
+
     }
 
     @Test
-    public void executesGroovyScript() throws Exception {
-        assumeFalse(Functions.isWindows());
+    public void containsBatchFileStep() {
 
-        givenOutfile();
-        String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath()); //NON-NLS
-        Script script = new Script(SUCCESS_RESULTS, scriptContent);
-        Collection<Script> scripts = Collections.singleton(script);
-        postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            Collections.emptyList(),
-            scripts,
-            Collections.emptyList(),
-            false
-        );
+        givenScriptFromConfig("/v0.18_config_a.xml");
 
-        whenBuilt();
+        whenReadResolves();
 
-        thenSuccessfulBuild();
-        thenWroteHelloWorldToFile();
+        PostBuildStep postBuildStep = resolvedPostBuildScript.getBuildSteps().get(0);
+        assertThat(postBuildStep.getBuildSteps(), contains(
+            allOf(
+                instanceOf(BatchFile.class),
+                Matchers.hasProperty("command", is("somecommand")))
+        ));
+
     }
 
     @Test
-    public void executesPostBuildStep() throws Exception {
+    public void noScriptOnlyActivatedSelectsEveryResult() {
 
-        BuildStep buildStep = mock(BuildStep.class);
-        given(buildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(true);
-        Collection<BuildStep> buildSteps = Collections.singleton(buildStep);
-        PostBuildStep step = new PostBuildStep(SUCCESS_RESULTS, buildSteps);
-        Collection<PostBuildStep> steps = Collections.singleton(step);
-        postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            steps,
-            false
-        );
+        givenScriptFromConfig("/v0.18_config_a.xml");
 
-        whenBuilt();
+        whenReadResolves();
 
-        thenSuccessfulBuild();
-        verify(buildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        PostBuildStep postBuildStep = resolvedPostBuildScript.getBuildSteps().get(0);
+        assertThat(postBuildStep.getResults(), containsInAnyOrder("SUCCESS", "UNSTABLE", "FAILURE", "NOT_BUILT", "ABORTED"));
 
     }
 
-    private void givenOutfile() throws Exception {
-        outFile = File.createTempFile(getClass().getName(), ".out");
-        outFile.deleteOnExit();
+    @Test
+    public void scriptOnlyIfSuccessSelectsSuccessResult() {
+
+        givenScriptFromConfig("/v0.18_config_b.xml");
+
+        whenReadResolves();
+
+        PostBuildStep postBuildStep = resolvedPostBuildScript.getBuildSteps().get(0);
+        assertThat(postBuildStep.getResults(), containsInAnyOrder("SUCCESS"));
+
     }
 
-    private void givenScriptFiles(String scriptFileLocation) throws URISyntaxException {
-        String scriptFilePath = getClass().getResource(scriptFileLocation).toURI().getPath();
-        String command = scriptFilePath + " " + outFile.getPath();
-        ScriptFile scriptFile = new ScriptFile(SUCCESS_RESULTS, command);
-        scriptFiles = Collections.singleton(scriptFile);
+    @Test
+    public void scriptOnlyIfFailureSelectsFailure() {
+
+        givenScriptFromConfig("/v0.18_config_c.xml");
+
+        whenReadResolves();
+
+        PostBuildStep postBuildStep = resolvedPostBuildScript.getBuildSteps().get(0);
+        assertThat(postBuildStep.getResults(), containsInAnyOrder("FAILURE"));
+
     }
 
-    private void whenBuilt() throws IOException, InterruptedException, java.util.concurrent.ExecutionException {
-        FreeStyleProject project = jenkinsRule.createFreeStyleProject();
-        project.getPublishersList().add(postBuildScript);
-        build = project.scheduleBuild2(0).get();
+    @Test
+    public void bothScriptOnlyActivatedSelectsSuccessAndFailure() {
+
+        givenScriptFromConfig("/v0.18_config_d.xml");
+
+        whenReadResolves();
+
+        PostBuildStep postBuildStep = resolvedPostBuildScript.getBuildSteps().get(0);
+        assertThat(postBuildStep.getResults(), containsInAnyOrder("SUCCESS", "FAILURE"));
+
     }
 
-    private void thenWroteHelloWorldToFile() throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(outFile.toURI()));
-        String outFileContent = new String(encoded, Charset.forName("UTF-8"));
-        assertThat(outFileContent, startsWith("Hello world"));
+    void whenReadResolves() {
+        resolvedPostBuildScript = (PostBuildScript) postBuildScript.readResolve();
     }
 
-    private void thenSuccessfulBuild() {
-        assertThat(build.getResult(), is(Result.SUCCESS));
+    void givenScriptFromConfig(String configResourceName) {
+        XStream xstream = new XStream();
+        postBuildScript = (PostBuildScript) xstream.fromXML(getClass().getResource(configResourceName));
     }
-
-
 }

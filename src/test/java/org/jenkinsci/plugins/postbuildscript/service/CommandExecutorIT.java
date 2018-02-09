@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CommandExecutorTest {
+public class CommandExecutorIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
@@ -28,7 +28,7 @@ public class CommandExecutorTest {
     public void executesCommand() throws Exception {
 
         LocalLauncher launcher = jenkinsRule.createLocalLauncher();
-        File tempFile = File.createTempFile(CommandExecutorTest.class.getName(), ".script");
+        File tempFile = File.createTempFile(CommandExecutorIT.class.getName(), ".script");
         tempFile.deleteOnExit();
         FilePath workspace = new FilePath(tempFile.getParentFile());
         TaskListener listener = jenkinsRule.createTaskListener();

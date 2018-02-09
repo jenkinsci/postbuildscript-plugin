@@ -5,3 +5,4 @@ work
 *.iws
 .idea
 jenkins-agent
+out

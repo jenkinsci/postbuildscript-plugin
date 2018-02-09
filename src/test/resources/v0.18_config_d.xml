@@ -1,0 +1,10 @@
+<org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
+    <buildSteps>
+        <hudson.tasks.BatchFile>
+            <command>somecommand</command>
+        </hudson.tasks.BatchFile>
+    </buildSteps>
+    <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
+    <scriptOnlyIfFailure>true</scriptOnlyIfFailure>
+    <markBuildUnstable>true</markBuildUnstable>
+</org.jenkinsci.plugins.postbuildscript.PostBuildScript>

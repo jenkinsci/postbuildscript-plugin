@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GroovyScriptExecutorTest {
+public class GroovyScriptExecutorIT {
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();

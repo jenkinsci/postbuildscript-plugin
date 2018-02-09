@@ -89,6 +89,14 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.4.0
+
+The old option to build only on success or on failure will now be migrated differently: If both is not selected, the
+behavior of versions previous to 1.0.0 was to build it independent of the actual build result. Previous versions (after
+1.0.0) simply migrate that to do nothing. With version 2.4.0 every build result will be selected in such cases.
+
+* JENKINS-49423 - Upgrade from 0.17 incomplete when scriptOnlyIfSuccess and scriptOnlyIfFailure are both false
+
 ### Version 2.3.0
 
 * JENKINS-48931 - PostBuildScript Execute Script Execute Shell Textbox Formatting Broken

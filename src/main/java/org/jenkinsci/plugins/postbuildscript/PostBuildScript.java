@@ -148,6 +148,13 @@ public class PostBuildScript extends Notifier {
         if (scriptOnlyIfSuccess != null && scriptOnlyIfSuccess) {
             results.add(Result.SUCCESS.toString());
         }
+        if (scriptOnlyIfFailure != null && scriptOnlyIfSuccess != null && !scriptOnlyIfSuccess && !scriptOnlyIfFailure) {
+            results.add(Result.SUCCESS.toString());
+            results.add(Result.UNSTABLE.toString());
+            results.add(Result.FAILURE.toString());
+            results.add(Result.NOT_BUILT.toString());
+            results.add(Result.ABORTED.toString());
+        }
         return results;
     }
 
