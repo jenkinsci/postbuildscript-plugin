@@ -150,12 +150,13 @@ public class PostBuildScriptTest {
 
     }
 
-    void whenReadResolves() {
-        resolvedPostBuildScript = (PostBuildScript) postBuildScript.readResolve();
-    }
-
-    void givenScriptFromConfig(String configResourceName) {
+    private void givenScriptFromConfig(String configResourceName) {
         XStream xstream = new XStream();
         postBuildScript = (PostBuildScript) xstream.fromXML(getClass().getResource(configResourceName));
     }
+
+    private void whenReadResolves() {
+        resolvedPostBuildScript = (PostBuildScript) postBuildScript.readResolve();
+    }
+
 }

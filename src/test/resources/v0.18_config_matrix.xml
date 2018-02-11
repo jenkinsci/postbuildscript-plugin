@@ -1,0 +1,8 @@
+<org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript plugin="postbuildscript@0.17">
+    <buildSteps>
+        <hudson.tasks.BatchFile>
+            <command>somecommand</command>
+        </hudson.tasks.BatchFile>
+    </buildSteps>
+    <executeOn>MATRIX</executeOn>
+</org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript>

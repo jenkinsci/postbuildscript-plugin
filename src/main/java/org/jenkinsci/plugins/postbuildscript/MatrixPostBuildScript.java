@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.postbuildscript;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
+import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
@@ -43,7 +44,7 @@ public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggr
     }
 
     @Override
-    public hudson.matrix.MatrixAggregator createAggregator(
+    public MatrixAggregator createAggregator(
         MatrixBuild build,
         Launcher launcher,
         BuildListener listener
