@@ -7,15 +7,15 @@ public class PostBuildScriptException extends Exception {
 
     private static final long serialVersionUID = 8656827646635596263L;
 
-    public PostBuildScriptException(String s) {
-        super(s);
+    public PostBuildScriptException(String message) {
+        super(message);
     }
 
-    public PostBuildScriptException(String s, Throwable throwable) {
-        super(s, throwable);
+    public PostBuildScriptException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public PostBuildScriptException(Throwable throwable) {
-        super(throwable);
+    public PostBuildScriptException(Throwable cause) {
+        super(cause);
     }
 }
