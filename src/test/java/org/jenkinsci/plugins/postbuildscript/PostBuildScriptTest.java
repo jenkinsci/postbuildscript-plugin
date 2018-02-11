@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,7 +28,10 @@ public class PostBuildScriptTest {
     private Script script;
 
     @Mock
-    private ScriptFile scriptFile;
+    private ScriptFile genericScriptFile;
+
+    @Mock
+    private ScriptFile groovyScriptFile;
 
     @Mock
     private PostBuildStep postBuildStep;
@@ -38,21 +42,25 @@ public class PostBuildScriptTest {
     @Test
     public void keepsPostBuildItems() {
 
+        given(genericScriptFile.getScriptType()).willReturn(ScriptType.GENERIC);
+        given(groovyScriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
+
         postBuildScript = new PostBuildScript(
-            Collections.singleton(scriptFile),
-            Collections.singleton(scriptFile),
+            Collections.singleton(genericScriptFile),
+            Collections.singleton(groovyScriptFile),
             Collections.singleton(script),
             Collections.singleton(postBuildStep),
             true
         );
 
-        postBuildScript.getGenericScriptFiles().contains(scriptFile);
-        postBuildScript.getGroovyScriptFiles().contains(scriptFile);
-        postBuildScript.getGroovyScripts().contains(script);
-        postBuildScript.getBuildSteps().contains(postBuildStep);
+        assertThat(postBuildScript.getGenericScriptFiles(), contains(genericScriptFile));
+        assertThat(postBuildScript.getGroovyScriptFiles(), contains(groovyScriptFile));
+        assertThat(postBuildScript.getGroovyScripts(), contains(script));
+        assertThat(postBuildScript.getBuildSteps(), contains(postBuildStep));
+        assertThat(postBuildScript.isMarkBuildUnstable(), is(true));
 
-        verify(scriptFile).setScriptType(ScriptType.GENERIC);
-        verify(scriptFile).setScriptType(ScriptType.GROOVY);
+        verify(genericScriptFile).setScriptType(ScriptType.GENERIC);
+        verify(groovyScriptFile).setScriptType(ScriptType.GROOVY);
 
     }
 
