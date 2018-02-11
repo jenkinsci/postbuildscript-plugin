@@ -35,12 +35,12 @@ public class RoleRuleTest {
     public void allowsRunningOnSlaveWhenBuiltStrIsDefined() {
 
         given(build.getBuiltOnStr()).willReturn("builtOnStr");
-        given(item.shouldRunOnMaster()).willReturn(false);
         given(item.shouldRunOnSlave()).willReturn(true);
 
         boolean actual = roleRule.allows(item, true);
 
         assertThat(actual, is(true));
+        verify(item, never()).shouldRunOnMaster();
 
     }
 
@@ -61,11 +61,11 @@ public class RoleRuleTest {
     public void allowsRunningOnMasterWhenBuiltStrIsUndefined() {
 
         given(item.shouldRunOnMaster()).willReturn(true);
-        given(item.shouldRunOnSlave()).willReturn(false);
 
         boolean actual = roleRule.allows(item, true);
 
         assertThat(actual, is(true));
+        verify(item, never()).shouldRunOnSlave();
 
     }
 
