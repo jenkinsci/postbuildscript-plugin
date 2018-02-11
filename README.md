@@ -93,7 +93,11 @@ changes without needing to run to `package` phase.
 
 This version introduces the ability to run Groovy scripts in a sandbox when activated using the checkbox in the configuration view.
 
+Now you can also select for each script whether it should be executed on each axe or on the whole matrix.
+
 * JENKINS-48014 - Allow sandboxing for Groovy scripts
+* JENKINS-22489 - Add the ability to specify where each script executes instead of all of the scripts when
+added to a matrix job.
 
 ### Version 2.4.0
 

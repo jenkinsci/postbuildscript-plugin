@@ -1,6 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:pbs="/lib/postbuildscript">
 
+    <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.model.ExecuteOn"
+                    method="values"/>
+
     <f:entry title="" help="/plugin/postbuildscript/help/generic-script-file.html">
         <f:repeatable var="genericScriptFiles"
                       items="${instance.genericScriptFiles}"
@@ -14,6 +17,16 @@
                 <pbs:results values="${genericScriptFiles.results}"/>
 
                 <pbs:role item="${genericScriptFiles}"/>
+
+                <j:if test="${matrix}">
+                    <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
+                        <select name="executeOn">
+                            <j:forEach items="${values}" var="value">
+                                <f:option selected="${genericScriptFiles.executeOn == value}">${value}</f:option>
+                            </j:forEach>
+                        </select>
+                    </f:entry>
+                </j:if>
 
                 <f:block>
                     <div align="right">
@@ -46,6 +59,16 @@
                     <f:checkbox checked="${groovyScriptFiles.sandboxed}" title="${%Run in Groovy Sandbox}"/>
                 </f:entry>
 
+                <j:if test="${matrix}">
+                    <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
+                        <select name="executeOn">
+                            <j:forEach items="${values}" var="value">
+                                <f:option selected="${groovyScriptFiles.executeOn == value}">${value}</f:option>
+                            </j:forEach>
+                        </select>
+                    </f:entry>
+                </j:if>
+
                 <f:block>
                     <div align="right">
                         <f:repeatableDeleteButton/>
@@ -76,6 +99,16 @@
                 <f:entry title="" field="sandboxed" help="/plugin/postbuildscript/help/sandbox.html">
                     <f:checkbox checked="${groovyScripts.sandboxed}" title="${%Run in Groovy Sandbox}" />
                 </f:entry>
+
+                <j:if test="${matrix}">
+                    <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
+                        <select name="executeOn">
+                            <j:forEach items="${values}" var="value">
+                                <f:option selected="${groovyScripts.executeOn == value}">${value}</f:option>
+                            </j:forEach>
+                        </select>
+                    </f:entry>
+                </j:if>
 
                 <f:block>
                     <div align="right">
@@ -110,6 +143,16 @@
                 <pbs:results values="${buildSteps.results}"/>
 
                 <pbs:role item="${buildSteps}"/>
+
+                <j:if test="${matrix}">
+                    <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
+                        <select name="executeOn">
+                            <j:forEach items="${values}" var="value">
+                                <f:option selected="${buildSteps.executeOn == value}">${value}</f:option>
+                            </j:forEach>
+                        </select>
+                    </f:entry>
+                </j:if>
 
                 <f:block>
                     <div align="right">

@@ -5,6 +5,8 @@ import java.io.IOException;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.model.BuildListener;
+import org.jenkinsci.plugins.postbuildscript.processor.Processor;
+import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,37 +38,10 @@ public class ConfigurableMatrixAggregatorTest {
     private boolean processed;
 
     @Test
-    public void doesNotProcessIfExecutedOnAxes() throws Exception {
+    public void runsProcessorWithEndOfMatrixBuildEnabled() {
 
         givenProcessor();
-        givenAggregator(ExecuteOn.AXES);
-        givenWillProcess();
-
-        whenBuildEnd();
-
-        thenContinuesBuild();
-
-    }
-
-    @Test
-    public void processesIfExecutionOnBoth() throws Exception {
-
-        givenProcessor();
-        givenAggregator(ExecuteOn.BOTH);
-        givenWillProcess();
-
-        whenBuildEnd();
-
-        thenProcesses();
-        thenContinuesBuild();
-
-    }
-
-    @Test
-    public void processesIfExecutionOnMatrix() throws Exception {
-
-        givenProcessor();
-        givenAggregator(ExecuteOn.MATRIX);
+        givenAggregator();
         givenWillProcess();
 
         whenBuildEnd();
@@ -77,29 +52,28 @@ public class ConfigurableMatrixAggregatorTest {
     }
 
     private void thenProcesses() {
-        verify(processor).process();
+        verify(processor).process(true);
     }
 
-    private void whenBuildEnd() throws InterruptedException, IOException {
+    private void whenBuildEnd() {
         processed = aggregator.endBuild();
     }
 
-    private void givenAggregator(ExecuteOn executeOn) {
+    private void givenAggregator() {
         aggregator = new ConfigurableMatrixAggregator(
             build,
             launcher,
             listener,
-            processorFactory,
-            executeOn
+            processorFactory
         );
     }
 
     private void givenWillProcess() {
-        given(processor.process()).willReturn(true);
+        given(processor.process(true)).willReturn(true);
     }
 
     private void givenProcessor() {
-        given(processorFactory.create(build, launcher, listener)).willReturn(processor);
+        given(processorFactory.createMatrixProcessor(build, launcher, listener)).willReturn(processor);
     }
 
     private void thenContinuesBuild() {

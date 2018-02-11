@@ -15,6 +15,8 @@ public class PostBuildItem {
 
     private Role role = Role.BOTH;
 
+    private ExecuteOn executeOn;
+
     public PostBuildItem(@Nullable Collection<String> results) {
         if (results != null) {
             this.results.addAll(results);
@@ -54,12 +56,24 @@ public class PostBuildItem {
         return role;
     }
 
+    public ExecuteOn getExecuteOn() {
+        return executeOn;
+    }
+
+    @DataBoundSetter
+    public void setExecuteOn(ExecuteOn executeOn) {
+        this.executeOn = executeOn;
+    }
+
     public Object readResolve() {
         if (results == null) {
             results = new HashSet<>();
         }
         if (role == null) {
             role = Role.BOTH;
+        }
+        if (executeOn == null) {
+            executeOn = ExecuteOn.BOTH;
         }
         return this;
     }

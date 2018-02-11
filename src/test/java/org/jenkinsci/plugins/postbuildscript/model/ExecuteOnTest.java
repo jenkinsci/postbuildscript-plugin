@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.postbuildscript;
+package org.jenkinsci.plugins.postbuildscript.model;
 
 import org.junit.Test;
 
@@ -8,45 +8,33 @@ import static org.junit.Assert.assertThat;
 public class ExecuteOnTest {
 
     @Test
-    public void bothAxesIsTrue() throws Exception {
-
+    public void bothAxesIsTrue() {
         assertThat(ExecuteOn.BOTH.axes(), is(true));
-
     }
 
     @Test
-    public void bothMatrixIsTrue() throws Exception {
-
+    public void bothMatrixIsTrue() {
         assertThat(ExecuteOn.BOTH.matrix(), is(true));
-
     }
 
     @Test
-    public void matrixAxesIsFalse() throws Exception {
-
+    public void matrixAxesIsFalse() {
         assertThat(ExecuteOn.MATRIX.axes(), is(false));
-
     }
 
     @Test
-    public void matrixMatrixIsTrue() throws Exception {
-
+    public void matrixMatrixIsTrue() {
         assertThat(ExecuteOn.MATRIX.matrix(), is(true));
-
     }
 
     @Test
-    public void axesMatrixIsFalse() throws Exception {
-
+    public void axesMatrixIsFalse() {
         assertThat(ExecuteOn.AXES.matrix(), is(false));
-
     }
 
     @Test
-    public void axesAxesIsTrue() throws Exception {
-
+    public void axesAxesIsTrue() {
         assertThat(ExecuteOn.AXES.axes(), is(true));
-
     }
 
 }

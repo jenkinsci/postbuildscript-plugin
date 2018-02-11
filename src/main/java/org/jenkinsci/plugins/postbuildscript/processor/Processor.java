@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.postbuildscript;
+package org.jenkinsci.plugins.postbuildscript.processor;
 
 import com.google.common.base.Strings;
 import hudson.EnvVars;
@@ -9,21 +9,24 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
+import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.Messages;
+import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Role;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import org.jenkinsci.plugins.postbuildscript.processor.rules.ExecutionRule;
 import org.jenkinsci.plugins.postbuildscript.service.Command;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptPreparer;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Processor {
 
@@ -32,6 +35,7 @@ public class Processor {
     private final BuildListener listener;
     private final Configuration config;
     private final Logger logger;
+    private final Collection<ExecutionRule> rules = new ArrayList<>();
 
     public Processor(
         AbstractBuild<?, ?> build,
@@ -51,6 +55,10 @@ public class Processor {
         logger = new Logger(listener);
     }
 
+    public void addRule(ExecutionRule rule) {
+        rules.add(rule);
+    }
+
     private Command getResolvedCommand(String command) throws PostBuildScriptException {
         if (command == null) {
             return null;
@@ -66,9 +74,13 @@ public class Processor {
     }
 
     public boolean process() {
+        return process(false);
+    }
+
+    public boolean process(boolean endOfMatrixBuild) {
         logger.info(Messages.PostBuildScript_ExecutingPostBuildScripts());
         try {
-            return processScripts();
+            return processScripts(endOfMatrixBuild);
         } catch (PostBuildScriptException pse) {
             logger.error(Messages.PostBuildScript_ProblemOccured(pse.getMessage()));
             failOrUnstable();
@@ -76,17 +88,17 @@ public class Processor {
         }
     }
 
-    private boolean processScripts() throws PostBuildScriptException {
+    private boolean processScripts(boolean endOfMatrixBuild) throws PostBuildScriptException {
 
-        if (!processScriptFiles()) {
+        if (!processScriptFiles(endOfMatrixBuild)) {
             return failOrUnstable();
         }
 
-        if (!processGroovyScripts()) {
+        if (!processGroovyScripts(endOfMatrixBuild)) {
             return failOrUnstable();
         }
 
-        return processBuildSteps() || failOrUnstable();
+        return processBuildSteps(endOfMatrixBuild) || failOrUnstable();
 
     }
 
@@ -99,9 +111,8 @@ public class Processor {
         return false;
     }
 
-    private boolean processScriptFiles() throws PostBuildScriptException {
+    private boolean processScriptFiles(boolean endOfMatrixBuild) throws PostBuildScriptException {
 
-        Optional<Result> result = Optional.ofNullable(build.getResult());
         FilePath workspace = build.getWorkspace();
         CommandExecutor commandExecutor = new CommandExecutor(logger, listener, workspace, launcher);
         GroovyScriptPreparer scriptPreparer = createGroovyScriptPreparer();
@@ -112,13 +123,7 @@ public class Processor {
                 continue;
             }
 
-            if (!roleFits(scriptFile)) {
-                logRoleDoesNotMatch(scriptFile.getRole(), filePath);
-                continue;
-            }
-
-            if (!result.isPresent() || !scriptFile.shouldBeExecuted(result.get().toString())) {
-                logResultDoesNotMatch(scriptFile.getResults(), filePath);
+            if (violatesAnyRule(scriptFile, filePath, endOfMatrixBuild)) {
                 continue;
             }
 
@@ -136,26 +141,17 @@ public class Processor {
                     }
                 }
             }
-
         }
         return true;
     }
 
-    private boolean processGroovyScripts() {
+    private boolean processGroovyScripts(boolean endOfMatrixBuild) {
 
-        Optional<Result> result = Optional.ofNullable(build.getResult());
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
         for (Script script : config.getGroovyScripts()) {
 
-            if (!roleFits(script)) {
-                logRoleDoesNotMatch(script.getRole(), Messages.PostBuildScript_GroovyScript(
-                    config.groovyScriptIndexOf(script)));
-                continue;
-            }
-
-            if (!result.isPresent() || !script.shouldBeExecuted(result.get().toString())) {
-                logResultDoesNotMatch(script.getResults(), Messages.PostBuildScript_GroovyScript(
-                    config.groovyScriptIndexOf(script)));
+            String scriptName = Messages.PostBuildScript_GroovyScript(config.groovyScriptIndexOf(script));
+            if (violatesAnyRule(script, scriptName, endOfMatrixBuild)) {
                 continue;
             }
 
@@ -172,26 +168,19 @@ public class Processor {
 
     private GroovyScriptPreparer createGroovyScriptPreparer() {
         FilePath workspace = build.getWorkspace();
-        GroovyScriptExecutorFactory groovyScriptExecutorFactory =
+        GroovyScriptExecutorFactory executorFactory =
             new GroovyScriptExecutorFactory(build, logger);
-        return new GroovyScriptPreparer(logger, workspace, groovyScriptExecutorFactory);
+        return new GroovyScriptPreparer(logger, workspace, executorFactory);
     }
 
-    private boolean processBuildSteps() throws PostBuildScriptException {
+    private boolean processBuildSteps(boolean endOfMatrixBuild) throws PostBuildScriptException {
 
-        Optional<Result> result = Optional.ofNullable(build.getResult());
         try {
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
 
-                if (!roleFits(postBuildStep)) {
-                    logRoleDoesNotMatch(postBuildStep.getRole(), Messages.PostBuildScript_BuildStep(
-                        config.buildStepIndexOf(postBuildStep)));
-                    continue;
-                }
-
-                if (!result.isPresent() || !postBuildStep.shouldBeExecuted(result.get().toString())) {
-                    logResultDoesNotMatch(postBuildStep.getResults(), Messages.PostBuildScript_BuildStep(
-                        config.buildStepIndexOf(postBuildStep)));
+                String scriptName = Messages.PostBuildScript_BuildStep(
+                    config.buildStepIndexOf(postBuildStep));
+                if (violatesAnyRule(postBuildStep, scriptName, endOfMatrixBuild)) {
                     continue;
                 }
 
@@ -208,20 +197,19 @@ public class Processor {
         }
     }
 
-    private boolean roleFits(PostBuildItem item) {
-        boolean runsOnMaster = build.getBuiltOnStr() == null || build.getBuiltOnStr().isEmpty();
-        if (runsOnMaster) {
-            return item.shouldRunOnMaster();
+    private boolean violatesAnyRule(PostBuildItem item, String scriptName, boolean endOfMatrixBuild) {
+        for (ExecutionRule rule : rules) {
+            if (!rule.allows(item, endOfMatrixBuild)) {
+                logger.info(
+                    rule.formatViolationMessage(
+                        item,
+                        scriptName
+                    )
+                );
+                return true;
+            }
         }
-        return item.shouldRunOnSlave();
-    }
-
-    private void logResultDoesNotMatch(Set<String> results, String scriptName) {
-        logger.info(Messages.PostBuildScript_BuildDoesNotFit(results, scriptName));
-    }
-
-    private void logRoleDoesNotMatch(Role role, String scriptName) {
-        logger.info(Messages.PostBuildScript_NodeDoesNotHaveRole(role, scriptName));
+        return false;
     }
 
 }

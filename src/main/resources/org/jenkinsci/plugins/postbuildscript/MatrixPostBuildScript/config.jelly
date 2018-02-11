@@ -1,19 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:pbs="/lib/postbuildscript">
 
-    <pbs:form/>
-
-    <j:if test="${descriptor.isMatrixProject(it)}">
-        <f:entry help="/plugin/postbuildscript/help/execute-on.html">
-            ${%Execute scripts on}
-            <select name="executeOn">
-                <j:invokeStatic var="values" className="org.jenkinsci.plugins.postbuildscript.ExecuteOn"
-                                method="values"/>
-                <j:forEach items="${values}" var="value">
-                    <f:option selected="${instance.executeOn == value}">${value}</f:option>
-                </j:forEach>
-            </select>
-        </f:entry>
-    </j:if>
+    <pbs:form matrix="true" />
 
 </j:jelly>

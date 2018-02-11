@@ -17,10 +17,11 @@ import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import org.jenkinsci.plugins.postbuildscript.processor.Processor;
+import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -108,16 +109,14 @@ public class PostBuildScript extends Notifier {
         AbstractBuild<?, ?> build,
         Launcher launcher,
         BuildListener listener
-    ) throws InterruptedException, IOException {
-
+    ) {
         Processor processor = createProcessor(build, launcher, listener);
         return processor.process();
-
     }
 
-    Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+    private Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         ProcessorFactory processorFactory = createProcessorFactory();
-        return processorFactory.create(build, launcher, listener);
+        return processorFactory.createDefaultProcessor(build, launcher, listener);
     }
 
     ProcessorFactory createProcessorFactory() {
