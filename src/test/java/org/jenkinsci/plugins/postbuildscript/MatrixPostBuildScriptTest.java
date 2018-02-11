@@ -4,6 +4,8 @@ import com.thoughtworks.xstream.XStream;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixProject;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
@@ -52,6 +54,7 @@ public class MatrixPostBuildScriptTest {
     private MatrixPostBuildScript resolvedMatrixPostBuildScript;
 
     private MatrixPostBuildScript matrixPostBuildScript;
+    private MatrixPostBuildScript.DescriptorImpl descriptor;
 
     @Before
     public void setUp() {
@@ -100,6 +103,25 @@ public class MatrixPostBuildScriptTest {
 
     }
 
+    @Test
+    public void containsHelpFile() {
+
+        givenDescriptor();
+
+        assertThat(descriptor.getHelpFile(), is("/plugin/postbuildscript/help/postbuildscript.html"));
+
+    }
+
+    @Test
+    public void appliesToMatrixJob() {
+
+        givenDescriptor();
+
+        Class<? extends AbstractProject> jobType = MatrixProject.class;
+        assertThat(descriptor.isApplicable(jobType), is(true));
+
+    }
+
     private void givenMatrixPostBuildScript() {
         matrixPostBuildScript = new MatrixPostBuildScript(
             Collections.singleton(genericScriptFile),
@@ -113,6 +135,11 @@ public class MatrixPostBuildScriptTest {
     private void givenScriptFromConfig(String configResourceName) {
         XStream xstream = new XStream();
         matrixPostBuildScript = (MatrixPostBuildScript) xstream.fromXML(getClass().getResource(configResourceName));
+    }
+
+
+    private void givenDescriptor() {
+        descriptor = new MatrixPostBuildScript.DescriptorImpl();
     }
 
     private void whenReadResolves() {
