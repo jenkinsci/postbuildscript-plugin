@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
@@ -16,6 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurableMatrixAggregatorTest {
@@ -34,6 +37,13 @@ public class ConfigurableMatrixAggregatorTest {
 
     @Mock
     private Processor processor;
+
+    @Mock
+    private PrintStream logger;
+
+    @Mock
+    private MatrixRun run;
+
     private ConfigurableMatrixAggregator aggregator;
     private boolean processed;
 
@@ -48,6 +58,21 @@ public class ConfigurableMatrixAggregatorTest {
 
         thenProcesses();
         thenContinuesBuild();
+
+    }
+
+    @Test
+    public void addsNewLineToLoggerAfterRun() throws IOException, InterruptedException {
+
+        given(listener.getLogger()).willReturn(logger);
+
+        givenAggregator();
+
+        boolean canContinue = aggregator.endRun(run);
+
+        assertThat(canContinue, is(true));
+        verify(logger).println();
+        verifyNoMoreInteractions(run);
 
     }
 
