@@ -42,6 +42,10 @@
 
                 <pbs:role item="${groovyScriptFiles}"/>
 
+                <f:entry title="" field="sandboxed" help="/plugin/postbuildscript/help/sandbox.html">
+                    <f:checkbox checked="${groovyScriptFiles.sandboxed}" title="${%Run in Groovy Sandbox}"/>
+                </f:entry>
+
                 <f:block>
                     <div align="right">
                         <f:repeatableDeleteButton/>
@@ -68,6 +72,10 @@
                 <pbs:results values="${groovyScripts.results}"/>
 
                 <pbs:role item="${groovyScripts}"/>
+
+                <f:entry title="" field="sandboxed" help="/plugin/postbuildscript/help/sandbox.html">
+                    <f:checkbox checked="${groovyScripts.sandboxed}" title="${%Run in Groovy Sandbox}" />
+                </f:entry>
 
                 <f:block>
                     <div align="right">

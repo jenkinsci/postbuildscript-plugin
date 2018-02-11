@@ -7,6 +7,7 @@ import hudson.Util;
 import hudson.model.AbstractBuild;
 import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 import java.io.File;
@@ -16,13 +17,15 @@ import java.util.List;
 public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Exception> {
 
     private static final long serialVersionUID = 3874477459736242748L;
-    private final String scriptContent;
+    private final String script;
+    private final boolean sandbox;
     private final List<String> arguments;
     private final transient AbstractBuild<?, ?> build;
     private final Logger log;
 
-    public GroovyScriptExecutor(String scriptContent, List<String> arguments, AbstractBuild<?, ?> build, Logger log) {
-        this.scriptContent = scriptContent;
+    public GroovyScriptExecutor(Script script, List<String> arguments, AbstractBuild<?, ?> build, Logger log) {
+        this.script = script.getContent();
+        this.sandbox = script.isSandboxed();
         this.arguments = new ArrayList<>(arguments);
         this.build = build;
         this.log = log;
@@ -30,8 +33,6 @@ public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Excepti
 
     @Override
     public Boolean call() throws Exception {
-
-        String script = Util.replaceMacro(scriptContent, EnvVars.masterEnvVars);
 
         Binding binding = new Binding();
         if (build != null) {
@@ -42,15 +43,16 @@ public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Excepti
             binding.setVariable("build", build); //NON-NLS
         }
 
-        binding.setVariable("log", log);
+        binding.setVariable("log", log); //NON-NLS
         binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
-        binding.setVariable("args", arguments);
-
+        binding.setVariable("args", arguments); //NON-NLS
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-        SecureGroovyScript groovyScript = new SecureGroovyScript(script, false, null);
+        String enrichedScript = Util.replaceMacro(script, EnvVars.masterEnvVars);
+        SecureGroovyScript groovyScript = new SecureGroovyScript(enrichedScript, sandbox, null);
         groovyScript.configuringWithNonKeyItem();
+
         groovyScript.evaluate(classLoader, binding);
 
         return true;

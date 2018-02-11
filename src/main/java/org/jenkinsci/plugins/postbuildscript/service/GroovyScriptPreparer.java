@@ -4,6 +4,8 @@ import hudson.FilePath;
 import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -34,13 +36,13 @@ public class GroovyScriptPreparer implements Serializable {
         this.groovyScriptExecutorFactory = groovyScriptExecutorFactory;
     }
 
-    public boolean evaluateScript(String scriptContent) {
-        return evaluateScript(scriptContent, Collections.emptyList());
+    public boolean evaluateScript(Script script) {
+        return evaluateScript(script, Collections.emptyList());
     }
 
-    public boolean evaluateScript(String scriptContent, List<String> arguments) {
+    public boolean evaluateScript(Script script, List<String> arguments) {
 
-        if (scriptContent == null) {
+        if (script == null || script.getContent() == null) {
             throw new IllegalArgumentException("The script content object must be set.");
         }
 
@@ -49,7 +51,7 @@ public class GroovyScriptPreparer implements Serializable {
         }
 
         try {
-            return workspace.act(groovyScriptExecutorFactory.create(scriptContent, arguments));
+            return workspace.act(groovyScriptExecutorFactory.create(script, arguments));
         } catch (Exception exception) {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -68,7 +70,7 @@ public class GroovyScriptPreparer implements Serializable {
         return false;
     }
 
-    public boolean evaluateCommand(Command command) throws PostBuildScriptException {
+    public boolean evaluateCommand(ScriptFile scriptFile, Command command) throws PostBuildScriptException {
 
         if (ensureWorkspaceNotNull(workspace)) {
             return false;
@@ -77,7 +79,10 @@ public class GroovyScriptPreparer implements Serializable {
         FilePath filePath = new ScriptFilePath(workspace).resolve(command.getScriptPath());
         LoadScriptContentCallable callable = new LoadScriptContentCallable();
         String scriptContent = new Content(callable).resolve(filePath);
-        return evaluateScript(scriptContent, command.getParameters());
+        Script script = new Script(scriptFile.getResults(), scriptContent);
+        script.setSandboxed(scriptFile.isSandboxed());
+        return evaluateScript(script, command.getParameters());
+
     }
 
 }

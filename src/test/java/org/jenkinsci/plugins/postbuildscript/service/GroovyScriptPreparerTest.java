@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.postbuildscript.service;
 import hudson.FilePath;
 import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,7 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.BDDMockito.given;
@@ -36,14 +39,23 @@ public class GroovyScriptPreparerTest {
     @Mock
     private GroovyScriptExecutor executor;
 
+    @Mock
+    private Script script;
+
+    @Mock
+    private ScriptFile scriptFile;
+
     private GroovyScriptPreparer groovyScriptPreparer;
 
-    private File scriptFile;
+    private File file;
+
+    public GroovyScriptPreparerTest() {
+    }
 
     @Before
     public void initPreparer() throws IOException, URISyntaxException {
-        scriptFile = new File(getClass().getResource("/test_script").toURI());
-        FilePath workspace = new FilePath(scriptFile.getParentFile());
+        file = new File(getClass().getResource("/test_script").toURI());
+        FilePath workspace = new FilePath(file.getParentFile());
         groovyScriptPreparer = new GroovyScriptPreparer(logger, workspace, executorFactory);
     }
 
@@ -56,10 +68,10 @@ public class GroovyScriptPreparerTest {
 
     @Test
     public void doesNotExecuteScriptIfWorkspaceIsNull() throws Exception {
-
+        given(script.getContent()).willReturn(SCRIPT_CONTENT);
         GroovyScriptPreparer groovyScriptPreparer = new GroovyScriptPreparer(logger, null, executorFactory);
 
-        boolean evaluated = groovyScriptPreparer.evaluateScript(SCRIPT_CONTENT);
+        boolean evaluated = groovyScriptPreparer.evaluateScript(script);
 
         assertThat(evaluated, is(false));
 
@@ -67,11 +79,11 @@ public class GroovyScriptPreparerTest {
 
     @Test
     public void createsExecutorAndActsOnWorkspace() throws Exception {
-
-        given(executorFactory.create(SCRIPT_CONTENT, Collections.emptyList())).willReturn(executor);
+        given(script.getContent()).willReturn(SCRIPT_CONTENT);
+        given(executorFactory.create(script, Collections.emptyList())).willReturn(executor);
         given(executor.call()).willReturn(true);
 
-        boolean evaluated = groovyScriptPreparer.evaluateScript(SCRIPT_CONTENT);
+        boolean evaluated = groovyScriptPreparer.evaluateScript(script);
 
         assertThat(evaluated, is(true));
         verify(executor).call();
@@ -80,11 +92,11 @@ public class GroovyScriptPreparerTest {
 
     @Test
     public void logsExecutionFailAndReturnsFalse() throws Exception {
-
-        given(executorFactory.create(SCRIPT_CONTENT, Collections.emptyList())).willReturn(executor);
+        given(script.getContent()).willReturn(SCRIPT_CONTENT);
+        given(executorFactory.create(script, Collections.emptyList())).willReturn(executor);
         given(executor.call()).willThrow(new Exception(EXCEPTION_MESSAGE));
 
-        boolean evaluated = groovyScriptPreparer.evaluateScript(SCRIPT_CONTENT);
+        boolean evaluated = groovyScriptPreparer.evaluateScript(script);
 
         assertThat(evaluated, is(false));
         verify(logger).info(startsWith(Messages.PostBuildScript_ProblemOccured("java.lang.Exception: " + EXCEPTION_MESSAGE)));
@@ -94,12 +106,12 @@ public class GroovyScriptPreparerTest {
     @Test
     public void evaluatesFile() throws Exception {
 
-        given(executorFactory.create(startsWith("Hello world"), eq(Collections.emptyList()))).willReturn(executor);
+        given(executorFactory.create(any(Script.class), eq(Collections.emptyList()))).willReturn(executor);
         given(executor.call()).willReturn(true);
 
-        boolean evaluated = groovyScriptPreparer.evaluateCommand(new Command(scriptFile.getName()));
+        boolean evaluated = groovyScriptPreparer.evaluateCommand(scriptFile, new Command(file.getName()));
 
-        verify(executorFactory).create(startsWith("Hello world"), eq(Collections.emptyList()));
+        verify(executorFactory).create(any(Script.class), eq(Collections.emptyList()));
         verify(executor).call();
         assertThat(evaluated, is(true));
 
@@ -110,7 +122,7 @@ public class GroovyScriptPreparerTest {
 
         GroovyScriptPreparer groovyScriptPreparer = new GroovyScriptPreparer(logger, null, executorFactory);
 
-        boolean evaluated = groovyScriptPreparer.evaluateCommand(new Command(scriptFile.getName()));
+        boolean evaluated = groovyScriptPreparer.evaluateCommand(scriptFile, new Command(file.getName()));
 
         assertThat(evaluated, is(false));
 

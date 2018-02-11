@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,13 +24,16 @@ public class GroovyScriptExecutorFactoryTest {
     @Mock
     private AbstractBuild<?, ?> build;
 
+    @Mock
+    private Script script;
+
     @InjectMocks
     private GroovyScriptExecutorFactory executorFactory;
 
     @Test
     public void createsExecutor() throws Exception {
 
-        GroovyScriptExecutor executor = executorFactory.create("scriptContent", Collections.emptyList());
+        GroovyScriptExecutor executor = executorFactory.create(script, Collections.emptyList());
 
         assertThat(executor, is(notNullValue()));
 

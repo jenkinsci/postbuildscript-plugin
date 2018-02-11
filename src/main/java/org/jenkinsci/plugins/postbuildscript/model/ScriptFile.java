@@ -10,6 +10,7 @@ public class ScriptFile extends PostBuildItem {
     private final String filePath;
 
     private ScriptType scriptType;
+    private boolean sandboxed;
 
     @DataBoundConstructor
     public ScriptFile(Collection<String> results, String filePath) {
@@ -28,5 +29,14 @@ public class ScriptFile extends PostBuildItem {
     @DataBoundSetter
     public void setScriptType(ScriptType scriptType) {
         this.scriptType = scriptType;
+    }
+
+    public boolean isSandboxed() {
+        return sandboxed;
+    }
+
+    @DataBoundSetter
+    public void setSandboxed(boolean sandboxed) {
+        this.sandboxed = sandboxed;
     }
 }

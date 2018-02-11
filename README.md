@@ -89,6 +89,12 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.5.0
+
+This version introduces the ability to run Groovy scripts in a sandbox when activated using the checkbox in the configuration view.
+
+* JENKINS-48014 - Allow sandboxing for Groovy scripts
+
 ### Version 2.4.0
 
 The old option to build only on success or on failure will now be migrated differently: If both is not selected, the

@@ -131,7 +131,7 @@ public class Processor {
                         return false;
                     }
                 } else {
-                    if (!scriptPreparer.evaluateCommand(command)) {
+                    if (!scriptPreparer.evaluateCommand(scriptFile, command)) {
                         return false;
                     }
                 }
@@ -161,7 +161,7 @@ public class Processor {
 
             String content = script.getContent();
             if (content != null) {
-                if (!executor.evaluateScript(content)) {
+                if (!executor.evaluateScript(script)) {
                     return false;
                 }
             }
