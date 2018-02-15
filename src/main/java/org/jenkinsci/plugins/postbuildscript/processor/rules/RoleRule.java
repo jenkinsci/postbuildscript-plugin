@@ -12,6 +12,7 @@ public class RoleRule implements ExecutionRule {
         this.build = build;
     }
 
+    @Override
     public boolean allows(PostBuildItem item, boolean endOfMatrixBuild) {
         boolean runsOnMaster = build.getBuiltOnStr() == null || build.getBuiltOnStr().isEmpty();
         if (runsOnMaster) {
