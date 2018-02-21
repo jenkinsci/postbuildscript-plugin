@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -23,20 +24,39 @@ public class CommandExecutorIT {
     public JenkinsRule jenkinsRule = new JenkinsRule();
     @Mock
     private Logger logger;
+    private File scriptFile;
+    private CommandExecutor executor;
 
     @Test
     public void executesCommand() throws Exception {
 
-        LocalLauncher launcher = jenkinsRule.createLocalLauncher();
-        File tempFile = File.createTempFile(CommandExecutorIT.class.getName(), ".script");
-        tempFile.deleteOnExit();
-        FilePath workspace = new FilePath(tempFile.getParentFile());
-        TaskListener listener = jenkinsRule.createTaskListener();
-        CommandExecutor executor = new CommandExecutor(logger, listener, workspace, launcher);
+        scriptFile = File.createTempFile(CommandExecutorIT.class.getName(), ".script");
+        scriptFile.deleteOnExit();
+        givenExecutor();
 
-        int command = executor.executeCommand(new Command(tempFile.getName() + " param1 param2"));
+        int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
 
         assertThat(command, is(0));
 
     }
+
+    @Test
+    public void supportsShebangWithSpacesInFrontOfInterpreter() throws Exception {
+
+        scriptFile = new File(getClass().getResource("/shebang_with_spaces.sh").toURI());
+        givenExecutor();
+
+        int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
+
+        assertThat(command, is(0));
+
+    }
+
+    private void givenExecutor() throws IOException {
+        LocalLauncher launcher = jenkinsRule.createLocalLauncher();
+        FilePath workspace = new FilePath(scriptFile.getParentFile());
+        TaskListener listener = jenkinsRule.createTaskListener();
+        executor = new CommandExecutor(logger, listener, workspace, launcher);
+    }
+
 }

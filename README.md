@@ -12,11 +12,11 @@ This plugin allows you to run the following actions after a build:
 * Groovy scripts
 * Build steps
 
-You can configure these actions depending on the build status (i.e., only run when build is successful).
+You can configure these actions depending on the build status (i.e., only run when build is successful). 
+Scripts can also be executed on the master, on slaves or both. On matrix projects, the build can be executed on
+each axis.
 
-With version 1.1.0 scripts can be executed on the master, on slaves or both.
-
-Please refer to the [plugin description](https://wiki.jenkins.io/display/JENKINS/PostBuildScript+Plugin) for further
+Please refer to the [plugin description](https://plugins.jenkins.io/postbuildscript) for further
 information.
 
 ## Downloads
@@ -39,7 +39,6 @@ to report new bugs or request features.
 Each commit is built by the official Jenkins CI. The current build status is accessible here:
 
 https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin
-
 
 ## Contributing
 
@@ -88,6 +87,12 @@ If your IDE supports compile-on-save mode this is especially convenient since ea
 changes without needing to run to `package` phase.
 
 ## Release Notes
+
+### Version 2.5.1
+
+If the shebang contains a space in front of the interpreter, it will be stripped out.
+
+* JENKINS-49681 - Scripts always fail when run in build, but succeed from command line
 
 ### Version 2.5.0
 

@@ -14,8 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class CommandExecutor {
+
+    private static final Pattern SHEBANG_WITH_SPACES = Pattern.compile("^#!\\s+");
 
     private final TaskListener listener;
 
@@ -32,9 +35,8 @@ public class CommandExecutor {
         this.launcher = launcher;
     }
 
-
     public int executeCommand(Command command) throws PostBuildScriptException {
-        String scriptContent = resolveScriptContent(command);
+        String scriptContent = removeSpaceInFrontOfInterpreter(resolveScriptContent(command));
         try {
             List<String> arguments = buildArguments(command, scriptContent);
             return launcher.launch().cmds(arguments).stdout(listener).pwd(workspace).join();
@@ -42,6 +44,13 @@ public class CommandExecutor {
             throw new PostBuildScriptException("Error while executing script", exception);
         }
 
+    }
+
+    private static String removeSpaceInFrontOfInterpreter(String scriptContent) {
+        if (scriptContent.startsWith("#!")) {
+            return SHEBANG_WITH_SPACES.matcher(scriptContent).replaceFirst("#!");
+        }
+        return scriptContent;
     }
 
     private List<String> buildArguments(Command command, String scriptContent)
@@ -66,7 +75,9 @@ public class CommandExecutor {
         FilePath script = new ScriptFilePath(workspace).resolve(command.getScriptPath());
         logger.info(Messages.PostBuildScript_ExecutingScript(script, command.getParameters()));
         LoadScriptContentCallable callable = new LoadScriptContentCallable();
-        return new Content(callable).resolve(script);
+        Content content = new Content(callable);
+        String resolvedContent = content.resolve(script);
+        return resolvedContent.trim();
 
     }
 
