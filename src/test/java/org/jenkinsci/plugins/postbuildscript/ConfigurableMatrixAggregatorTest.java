@@ -1,8 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import java.io.IOException;
-import java.io.PrintStream;
-
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
@@ -13,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.PrintStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -62,7 +61,7 @@ public class ConfigurableMatrixAggregatorTest {
     }
 
     @Test
-    public void addsNewLineToLoggerAfterRun() throws IOException, InterruptedException {
+    public void addsNewLineToLoggerAfterRun() throws Exception {
 
         given(listener.getLogger()).willReturn(logger);
 

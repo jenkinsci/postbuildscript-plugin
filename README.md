@@ -88,6 +88,14 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.6.0
+
+Removed access to workspace on master for Groovy script execution, because secure groovy scripts cannot be configured
+on slaves when using a master-to-slave callable. Groovy scripts may not access files of the master's workspace as a
+result. However Groovy scripts can be run on slaves again. Thanks to John David for reporting this issue.
+
+* JENKINS-49952 - Groovy post-build script in matrix job throws exception
+
 ### Version 2.5.1
 
 If the shebang contains a space in front of the interpreter, it will be stripped out.

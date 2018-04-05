@@ -33,7 +33,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void prefixesInfoMessages() throws Exception {
+    public void prefixesInfoMessages() {
 
         logger.info(MESSAGE);
 
@@ -42,7 +42,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void prefixesErrorMessages() throws Exception {
+    public void prefixesErrorMessages() {
 
         logger.error(MESSAGE);
 

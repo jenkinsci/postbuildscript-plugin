@@ -46,12 +46,13 @@ public class GroovyScriptPreparer implements Serializable {
             throw new IllegalArgumentException("The script content object must be set.");
         }
 
-        if (ensureWorkspaceNotNull(workspace)) {
+        if (workspaceIsNull()) {
             return false;
         }
 
         try {
-            return workspace.act(groovyScriptExecutorFactory.create(script, arguments));
+            GroovyScriptExecutor groovyScriptExecutor = groovyScriptExecutorFactory.create(script, arguments);
+            groovyScriptExecutor.execute();
         } catch (Exception exception) {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -60,9 +61,10 @@ public class GroovyScriptPreparer implements Serializable {
             return false;
         }
 
+        return true;
     }
 
-    private boolean ensureWorkspaceNotNull(FilePath workspace) {
+    private boolean workspaceIsNull() {
         if (workspace == null) {
             logger.info(Messages.PostBuildScript_WorkspaceEmpty());
             return true;
@@ -72,7 +74,7 @@ public class GroovyScriptPreparer implements Serializable {
 
     public boolean evaluateCommand(ScriptFile scriptFile, Command command) throws PostBuildScriptException {
 
-        if (ensureWorkspaceNotNull(workspace)) {
+        if (workspaceIsNull()) {
             return false;
         }
 

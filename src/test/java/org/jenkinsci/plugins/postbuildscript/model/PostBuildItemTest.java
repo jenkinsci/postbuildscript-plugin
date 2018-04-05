@@ -17,12 +17,12 @@ public class PostBuildItemTest {
     private PostBuildItem postBuildItem;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         postBuildItem = new PostBuildItem(Collections.singleton(SUCCESS));
     }
 
     @Test
-    public void doesNotHaveResultOnNullResult() throws Exception {
+    public void doesNotHaveResultOnNullResult() {
 
         PostBuildItem postBuildItem = new PostBuildItem(null);
         assertThat(postBuildItem.hasResult(), is(false));
@@ -30,7 +30,7 @@ public class PostBuildItemTest {
     }
 
     @Test
-    public void doesNotHaveResultOnEmptyResults() throws Exception {
+    public void doesNotHaveResultOnEmptyResults() {
 
         PostBuildItem postBuildItem = new PostBuildItem(Collections.emptySet());
         assertThat(postBuildItem.hasResult(), is(false));
@@ -39,28 +39,28 @@ public class PostBuildItemTest {
 
 
     @Test
-    public void allowsExecutionWhenContainsResults() throws Exception {
+    public void allowsExecutionWhenContainsResults() {
 
         assertThat(postBuildItem.shouldBeExecuted(SUCCESS), is(true));
 
     }
 
     @Test
-    public void deniesExecutionWhenDoesNotContainResults() throws Exception {
+    public void deniesExecutionWhenDoesNotContainResults() {
 
         assertThat(postBuildItem.shouldBeExecuted(FAILURE), is(false));
 
     }
 
     @Test
-    public void deniesExecutionOnNull() throws Exception {
+    public void deniesExecutionOnNull() {
 
         assertThat(postBuildItem.shouldBeExecuted(null), is(false));
 
     }
 
     @Test
-    public void addsResultsWhenInitialized() throws Exception {
+    public void addsResultsWhenInitialized() {
 
         postBuildItem.addResults(Collections.singleton(FAILURE));
 

@@ -20,7 +20,7 @@ public class PostBuildStepTest {
     private BuildStep buildStep;
 
     @Test
-    public void containsBuildSteps() throws Exception {
+    public void containsBuildSteps() {
 
         PostBuildStep postBuildStep = new PostBuildStep(
             Collections.singleton(RESULT), Collections.singleton(buildStep));

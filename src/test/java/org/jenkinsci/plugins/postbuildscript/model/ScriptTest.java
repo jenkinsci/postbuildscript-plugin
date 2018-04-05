@@ -14,7 +14,7 @@ public class ScriptTest {
     private static final String CONTENT = "println 'Hello World'";
 
     @Test
-    public void containsScript() throws Exception {
+    public void containsScript() {
 
         Script script = new Script(
             Collections.singleton(RESULT), CONTENT);
@@ -24,7 +24,7 @@ public class ScriptTest {
     }
 
     @Test
-    public void containsNullOnEmptyScript() throws Exception {
+    public void containsNullOnEmptyScript() {
 
         Script script = new Script(
             Collections.singleton(RESULT), "");

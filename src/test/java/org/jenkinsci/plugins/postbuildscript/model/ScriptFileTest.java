@@ -13,7 +13,7 @@ public class ScriptFileTest {
     private static final String FILE_PATH = "println 'Hello World'";
 
     @Test
-    public void containsFilePath() throws Exception {
+    public void containsFilePath() {
 
         ScriptFile scriptFile = new ScriptFile(
             Collections.singleton(RESULT), FILE_PATH);

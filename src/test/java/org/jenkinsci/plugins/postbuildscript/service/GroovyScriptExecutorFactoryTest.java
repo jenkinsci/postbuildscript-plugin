@@ -14,6 +14,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GroovyScriptExecutorFactoryTest {
@@ -31,7 +32,10 @@ public class GroovyScriptExecutorFactoryTest {
     private GroovyScriptExecutorFactory executorFactory;
 
     @Test
-    public void createsExecutor() throws Exception {
+    public void createsExecutor() {
+
+        given(script.getContent()).willReturn("scriptContent");
+        given(script.isSandboxed()).willReturn(true);
 
         GroovyScriptExecutor executor = executorFactory.create(script, Collections.emptyList());
 

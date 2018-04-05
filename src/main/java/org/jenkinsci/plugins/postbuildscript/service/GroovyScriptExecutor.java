@@ -5,7 +5,6 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
-import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -14,25 +13,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Exception> {
+public class GroovyScriptExecutor {
 
     private static final long serialVersionUID = 3874477459736242748L;
-    private final String script;
-    private final boolean sandbox;
     private final List<String> arguments;
     private final transient AbstractBuild<?, ?> build;
     private final Logger log;
+    private final SecureGroovyScript secureGroovyScript;
 
     public GroovyScriptExecutor(Script script, List<String> arguments, AbstractBuild<?, ?> build, Logger log) {
-        this.script = script.getContent();
-        this.sandbox = script.isSandboxed();
         this.arguments = new ArrayList<>(arguments);
         this.build = build;
         this.log = log;
+        String enrichedScript = Util.replaceMacro(script.getContent(), EnvVars.masterEnvVars);
+        secureGroovyScript = new SecureGroovyScript(enrichedScript, script.isSandboxed(), null);
+        secureGroovyScript.configuringWithNonKeyItem();
     }
 
-    @Override
-    public Boolean call() throws Exception {
+    public void execute() throws Exception {
 
         Binding binding = new Binding();
         if (build != null) {
@@ -48,13 +46,6 @@ public class GroovyScriptExecutor extends MasterToSlaveCallable<Boolean, Excepti
         binding.setVariable("args", arguments); //NON-NLS
 
         ClassLoader classLoader = getClass().getClassLoader();
-
-        String enrichedScript = Util.replaceMacro(script, EnvVars.masterEnvVars);
-        SecureGroovyScript groovyScript = new SecureGroovyScript(enrichedScript, sandbox, null);
-        groovyScript.configuringWithNonKeyItem();
-
-        groovyScript.evaluate(classLoader, binding);
-
-        return true;
+        secureGroovyScript.evaluate(classLoader, binding);
     }
 }

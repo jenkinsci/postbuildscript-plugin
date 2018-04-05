@@ -11,7 +11,7 @@ public class LoadScriptContentCallable extends MasterToSlaveFileCallable<String>
     private static final long serialVersionUID = -8106062333861360484L;
 
     @Override
-    public String invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
+    public String invoke(File f, VirtualChannel channel) throws IOException {
         return Util.loadFile(f);
     }
 }

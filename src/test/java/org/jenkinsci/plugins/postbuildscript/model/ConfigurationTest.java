@@ -27,7 +27,7 @@ public class ConfigurationTest {
     private final Configuration configuration = new Configuration();
 
     @Test
-    public void addsBuildStep() throws Exception {
+    public void addsBuildStep() {
 
         configuration.addBuildStep(postBuildStep);
 
@@ -38,7 +38,7 @@ public class ConfigurationTest {
 
 
     @Test
-    public void addsBuildSteps() throws Exception {
+    public void addsBuildSteps() {
 
         configuration.addBuildSteps(Collections.singleton(postBuildStep));
 
@@ -48,7 +48,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void storesMarkBuildUnstable() throws Exception {
+    public void storesMarkBuildUnstable() {
 
         configuration.setMarkBuildUnstable(true);
 
@@ -57,7 +57,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void addsGenericScriptFiles() throws Exception {
+    public void addsGenericScriptFiles() {
 
         given(scriptFile.getScriptType()).willReturn(ScriptType.GENERIC);
 
@@ -70,7 +70,7 @@ public class ConfigurationTest {
 
 
     @Test
-    public void addsGroovyScripts() throws Exception {
+    public void addsGroovyScripts() {
 
         configuration.addGroovyScripts(Collections.singleton(script));
 
@@ -80,7 +80,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void addsGroovyScriptFiles() throws Exception {
+    public void addsGroovyScriptFiles() {
 
         given(scriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
 

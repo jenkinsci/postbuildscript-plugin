@@ -16,8 +16,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.PrintStream;
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -52,9 +50,8 @@ public class GroovyScriptExecutorIT {
 
         GroovyScriptExecutor callable = new GroovyScriptExecutor(
             script, Collections.emptyList(), executable, log);
-        Boolean result = callable.call();
+        callable.execute();
 
-        assertThat(result, is(true));
         verify(log).info("hello world");
         verify(printStream).println(executable.getId());
 

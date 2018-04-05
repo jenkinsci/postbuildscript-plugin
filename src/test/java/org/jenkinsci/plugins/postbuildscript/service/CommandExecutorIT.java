@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +51,7 @@ public class CommandExecutorIT {
 
     }
 
-    private void givenExecutor() throws IOException {
+    private void givenExecutor() {
         LocalLauncher launcher = jenkinsRule.createLocalLauncher();
         FilePath workspace = new FilePath(scriptFile.getParentFile());
         TaskListener listener = jenkinsRule.createTaskListener();
