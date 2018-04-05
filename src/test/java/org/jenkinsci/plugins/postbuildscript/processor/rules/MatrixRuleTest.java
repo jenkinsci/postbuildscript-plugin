@@ -9,13 +9,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MatrixRuleTest {
 
-    private MatrixRule matrixRule = new MatrixRule();
+    private final MatrixRule matrixRule = new MatrixRule();
 
     @Mock
     private PostBuildItem item;

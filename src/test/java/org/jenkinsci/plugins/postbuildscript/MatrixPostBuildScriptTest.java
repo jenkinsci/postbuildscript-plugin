@@ -7,6 +7,7 @@ import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript.DescriptorImpl;
 import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
@@ -54,7 +55,7 @@ public class MatrixPostBuildScriptTest {
     private MatrixPostBuildScript resolvedMatrixPostBuildScript;
 
     private MatrixPostBuildScript matrixPostBuildScript;
-    private MatrixPostBuildScript.DescriptorImpl descriptor;
+    private DescriptorImpl descriptor;
 
     @Before
     public void setUp() {
@@ -139,7 +140,7 @@ public class MatrixPostBuildScriptTest {
 
 
     private void givenDescriptor() {
-        descriptor = new MatrixPostBuildScript.DescriptorImpl();
+        descriptor = new DescriptorImpl();
     }
 
     private void whenReadResolves() {
