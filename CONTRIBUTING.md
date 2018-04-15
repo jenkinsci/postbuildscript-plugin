@@ -3,7 +3,17 @@
 The plugin was created in 2011 by Gregory Boissinot. It was adopted by Daniel Heid in October 2017. Feel free
 to contribute as you like by forking the repository and creating pull requests.
 
+## Continuous Integration
+
+Each commit is built by the official Jenkins CI. The current build status is accessible here:
+
+https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin
+
 ## Reporting issues
+
+Please use the
+[official Jenkins Jira project and issue tracking software](https://issues.jenkins-ci.org/issues/?jql=component%20%3D%20postbuildscript-plugin)
+to report new bugs or request features.
 
 Please first look through [Jira](https://issues.jenkins-ci.org/issues/?jql=component%20%3D%20postbuildscript-plugin). If a ticket
 already exists, please add a comment and try to explain the issue a little more further. If no ticket exists, please open a new one.
