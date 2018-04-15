@@ -88,6 +88,10 @@ changes without needing to run to `package` phase.
 
 ## Release Notes
 
+### Version 2.7.0
+
+* JENKINS-50799 - Skips script when flagged to run when failing
+
 ### Version 2.6.0
 
 Removed access to workspace on master for Groovy script execution, because secure groovy scripts cannot be configured

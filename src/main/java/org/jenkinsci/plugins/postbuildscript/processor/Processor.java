@@ -89,17 +89,11 @@ public class Processor {
     }
 
     private boolean processScripts(boolean endOfMatrixBuild) throws PostBuildScriptException {
-
-        if (!processScriptFiles(endOfMatrixBuild)) {
-            return failOrUnstable();
-        }
-
-        if (!processGroovyScripts(endOfMatrixBuild)) {
-            return failOrUnstable();
-        }
-
-        return processBuildSteps(endOfMatrixBuild) || failOrUnstable();
-
+        @SuppressWarnings("NonShortCircuitBooleanExpression")
+        boolean everyScriptSuccessful = processScriptFiles(endOfMatrixBuild)
+            & processGroovyScripts(endOfMatrixBuild)
+            & processBuildSteps(endOfMatrixBuild);
+        return everyScriptSuccessful || failOrUnstable();
     }
 
     private boolean failOrUnstable() {
@@ -116,6 +110,7 @@ public class Processor {
         FilePath workspace = build.getWorkspace();
         CommandExecutor commandExecutor = new CommandExecutor(logger, listener, workspace, launcher);
         GroovyScriptPreparer scriptPreparer = createGroovyScriptPreparer();
+        boolean everyStepSuccessful = true;
         for (ScriptFile scriptFile : config.getScriptFiles()) {
             String filePath = scriptFile.getFilePath();
             if (Strings.nullToEmpty(filePath).trim().isEmpty()) {
@@ -133,21 +128,22 @@ public class Processor {
                 if (scriptFile.getScriptType() == ScriptType.GENERIC) {
                     int returnCode = commandExecutor.executeCommand(command);
                     if (returnCode != 0) {
-                        return false;
+                        everyStepSuccessful = false;
                     }
                 } else {
                     if (!scriptPreparer.evaluateCommand(scriptFile, command)) {
-                        return false;
+                        everyStepSuccessful = false;
                     }
                 }
             }
         }
-        return true;
+        return everyStepSuccessful;
     }
 
     private boolean processGroovyScripts(boolean endOfMatrixBuild) {
 
         GroovyScriptPreparer executor = createGroovyScriptPreparer();
+        boolean everyStepSuccessful = true;
         for (Script script : config.getGroovyScripts()) {
 
             String scriptName = Messages.PostBuildScript_GroovyScript(config.groovyScriptIndexOf(script));
@@ -158,12 +154,12 @@ public class Processor {
             String content = script.getContent();
             if (content != null) {
                 if (!executor.evaluateScript(script)) {
-                    return false;
+                    everyStepSuccessful = false;
                 }
             }
 
         }
-        return true;
+        return everyStepSuccessful;
     }
 
     private GroovyScriptPreparer createGroovyScriptPreparer() {
@@ -176,6 +172,7 @@ public class Processor {
     private boolean processBuildSteps(boolean endOfMatrixBuild) throws PostBuildScriptException {
 
         try {
+            boolean everyStepSuccessful = true;
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
 
                 String scriptName = Messages.PostBuildScript_BuildStep(
@@ -186,12 +183,11 @@ public class Processor {
 
                 for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
                     if (!buildStep.perform(build, launcher, listener)) {
-                        return false;
+                        everyStepSuccessful = false;
                     }
                 }
-
             }
-            return true;
+            return everyStepSuccessful;
         } catch (IOException | InterruptedException ioe) {
             throw new PostBuildScriptException(ioe);
         }
