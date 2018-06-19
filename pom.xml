@@ -11,7 +11,7 @@
     <packaging>hpi</packaging>
     <name>Jenkins PostBuildScript Plugin</name>
     <version>2.7.1-SNAPSHOT</version>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin</url>
+    <url>https://plugins.jenkins.io/postbuildscript</url>
     <inceptionYear>2011</inceptionYear>
 
     <properties>
