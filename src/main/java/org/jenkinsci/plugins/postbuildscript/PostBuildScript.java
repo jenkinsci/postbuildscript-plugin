@@ -2,6 +2,9 @@ package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.matrix.MatrixAggregatable;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -32,7 +35,10 @@ import java.util.Set;
 /**
  * @author Gregory Boissinot
  */
-public class PostBuildScript extends Notifier {
+public class PostBuildScript extends Notifier
+    // MatrixAggregatable is needed for migration of old plugin version configurations (< 1.0.0), see JENKINS-53691
+    // TODO Remove, if there are no 0.18.x installations left
+    implements MatrixAggregatable {
 
     private Configuration config = new Configuration();
 
@@ -56,6 +62,15 @@ public class PostBuildScript extends Notifier {
 
     @Deprecated
     private Boolean markBuildUnstable;
+
+    // TODO Remove, if there are no 0.18.x installations left
+    /**
+     * needed for migration (JENKINS-53691)
+     *
+     * @deprecated can now be selected individually for each step
+     */
+    @Deprecated
+    private ExecuteOn executeOn;
 
     @DataBoundConstructor
     public PostBuildScript(
@@ -114,9 +129,12 @@ public class PostBuildScript extends Notifier {
         return processor.process();
     }
 
-    private Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-        ProcessorFactory processorFactory = createProcessorFactory();
-        return processorFactory.createDefaultProcessor(build, launcher, listener);
+    /**
+     * @deprecated needed for migration (JENKINS-53691)
+     */
+    @Deprecated
+    private static org.jenkinsci.plugins.postbuildscript.model.ExecuteOn translate(ExecuteOn executeOn) {
+        return org.jenkinsci.plugins.postbuildscript.model.ExecuteOn.valueOf(executeOn.name());
     }
 
     ProcessorFactory createProcessorFactory() {
@@ -188,9 +206,34 @@ public class PostBuildScript extends Notifier {
         config.addBuildStep(new PostBuildStep(results, steps));
     }
 
+    private Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+        ProcessorFactory processorFactory = createProcessorFactory();
+        // should be createDefaultProcessor, but createMatrixProcessor is currently needed for migration (JENKINS-53691)
+        // TODO Remove, if there are no 0.18.x installations left
+        return processorFactory.createMatrixProcessor(build, launcher, listener);
+    }
+
     public boolean isMarkBuildUnstable() {
         return config.isMarkBuildUnstable();
     }
+
+    @Override
+    public MatrixAggregator createAggregator(
+        MatrixBuild build,
+        Launcher launcher,
+        BuildListener listener
+    ) {
+        ProcessorFactory processorFactory = createProcessorFactory();
+        return new ConfigurableMatrixAggregator(
+            build,
+            launcher,
+            listener,
+            processorFactory,
+            getClass()
+        );
+    }
+
+    // TODO Remove, if there are no 0.18.x installations left
 
     public Object readResolve() {
         if (config == null) {
@@ -205,8 +248,27 @@ public class PostBuildScript extends Notifier {
                 config.setMarkBuildUnstable(markBuildUnstable);
             }
         }
-
+        // needed for migration (JENKINS-53691)
+        // TODO Remove, if there are no 0.18.x installations left
+        if (executeOn != null) {
+            applyExecuteOn(getGenericScriptFiles());
+            applyExecuteOn(getGroovyScriptFiles());
+            applyExecuteOn(getGroovyScripts());
+            applyExecuteOn(getBuildSteps());
+        }
         return this;
+    }
+
+    // TODO Remove, if there are no 0.18.x installations left
+
+    /**
+     * @deprecated needed for migration (JENKINS-53691)
+     */
+    @Deprecated
+    private void applyExecuteOn(Iterable<? extends PostBuildItem> items) {
+        for (PostBuildItem item : items) {
+            item.setExecuteOn(translate(executeOn));
+        }
     }
 
     @Extension

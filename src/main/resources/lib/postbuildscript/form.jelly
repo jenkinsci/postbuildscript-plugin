@@ -18,7 +18,7 @@
 
                 <pbs:role item="${genericScriptFiles}"/>
 
-                <j:if test="${matrix}">
+                <j:if test="${matrix || genericScriptFiles.executeOn != null}">
                     <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
                         <select name="executeOn">
                             <j:forEach items="${values}" var="value">
@@ -59,7 +59,7 @@
                     <f:checkbox checked="${groovyScriptFiles.sandboxed}" title="${%Run in Groovy Sandbox}"/>
                 </f:entry>
 
-                <j:if test="${matrix}">
+                <j:if test="${matrix || groovyScriptFiles.executeOn != null}">
                     <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
                         <select name="executeOn">
                             <j:forEach items="${values}" var="value">
@@ -100,7 +100,7 @@
                     <f:checkbox checked="${groovyScripts.sandboxed}" title="${%Run in Groovy Sandbox}" />
                 </f:entry>
 
-                <j:if test="${matrix}">
+                <j:if test="${matrix || groovyScripts.executeOn != null}">
                     <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
                         <select name="executeOn">
                             <j:forEach items="${values}" var="value">
@@ -144,7 +144,7 @@
 
                 <pbs:role item="${buildSteps}"/>
 
-                <j:if test="${matrix}">
+                <j:if test="${matrix || buildSteps.executeOn != null}">
                     <f:entry help="/plugin/postbuildscript/help/execute-on.html" title="${%Matrix target}">
                         <select name="executeOn">
                             <j:forEach items="${values}" var="value">

@@ -88,7 +88,8 @@ public class ConfigurableMatrixAggregatorTest {
             build,
             launcher,
             listener,
-            processorFactory
+            processorFactory,
+            MatrixPostBuildScript.class
         );
     }
 

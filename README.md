@@ -51,6 +51,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 2.8.0
+
+* JENKINS-53691 - Implemented mechanism to migrate old matrix project post-build actions
+
 ### Version 2.7.0
 
 * JENKINS-50799 - Skips script when flagged to run when failing

@@ -41,7 +41,8 @@ public class Processor {
         AbstractBuild<?, ?> build,
         Launcher launcher,
         BuildListener listener,
-        Configuration config) {
+        Configuration config
+    ) {
         this.build = build;
         Result result = build.getResult();
         if (result == null) {

@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
@@ -11,7 +10,6 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
@@ -21,16 +19,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.List;
 
-public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggregatable {
-
-    /**
-     * Can now be selected individually, see
-     * @return
-     */
-    @Deprecated
-    private ExecuteOn executeOn;
+public class MatrixPostBuildScript extends PostBuildScript {
 
     @DataBoundConstructor
     public MatrixPostBuildScript(
@@ -54,7 +44,8 @@ public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggr
             build,
             launcher,
             listener,
-            processorFactory
+            processorFactory,
+            getClass()
         );
     }
 
@@ -67,28 +58,6 @@ public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggr
         ProcessorFactory processorFactory = createProcessorFactory();
         Processor processor = processorFactory.createMatrixProcessor(build, launcher, listener);
         return processor.process();
-    }
-
-
-    public Object readResolve() {
-        super.readResolve();
-        if (executeOn != null) {
-            applyExecuteOn(getGenericScriptFiles());
-            applyExecuteOn(getGroovyScriptFiles());
-            applyExecuteOn(getGroovyScripts());
-            applyExecuteOn(getBuildSteps());
-        }
-        return this;
-    }
-
-    private void applyExecuteOn(Iterable<? extends PostBuildItem> items) {
-        for (PostBuildItem item : items) {
-            item.setExecuteOn(translate(executeOn));
-        }
-    }
-
-    private static org.jenkinsci.plugins.postbuildscript.model.ExecuteOn translate(ExecuteOn executeOn) {
-        return org.jenkinsci.plugins.postbuildscript.model.ExecuteOn.valueOf(executeOn.name());
     }
 
     @Extension(optional = true)
@@ -109,8 +78,6 @@ public class MatrixPostBuildScript extends PostBuildScript implements MatrixAggr
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return MatrixProject.class.isAssignableFrom(jobType);
         }
-
     }
-
 
 }

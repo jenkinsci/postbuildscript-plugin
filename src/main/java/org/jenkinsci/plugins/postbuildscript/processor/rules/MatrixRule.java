@@ -8,11 +8,21 @@ public class MatrixRule implements ExecutionRule {
 
     @Override
     public boolean allows(PostBuildItem item, boolean endOfMatrixBuild) {
+
         ExecuteOn executeOn = item.getExecuteOn();
+
+        // TODO Remove, if there are no 0.18.x installations left
+        // needed for migration (JENKINS-53691)
+        if (executeOn == null) {
+            return true;
+        }
+
         if (endOfMatrixBuild) {
             return executeOn.matrix();
         }
+
         return executeOn.axes();
+
     }
 
     @Override

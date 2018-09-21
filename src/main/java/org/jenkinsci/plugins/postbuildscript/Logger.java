@@ -24,6 +24,10 @@ public class Logger implements Serializable {
         log(Messages.PostBuildScript_ErrorPrefix(message));
     }
 
+    public void warn(String message) {
+        log(Messages.PostBuildScript_WarnPrefix(message));
+    }
+
     public void info(String message) {
         log(message);
     }
