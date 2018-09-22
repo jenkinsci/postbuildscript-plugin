@@ -4,7 +4,7 @@ import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.remoting.LocalChannel;
 import hudson.remoting.VirtualChannel;
-import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;

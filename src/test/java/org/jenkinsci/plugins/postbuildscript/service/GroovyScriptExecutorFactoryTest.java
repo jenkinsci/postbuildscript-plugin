@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.junit.Test;
 import org.junit.runner.RunWith;

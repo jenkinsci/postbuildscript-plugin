@@ -1,15 +1,13 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
-import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,10 +52,7 @@ public class GroovyScriptPreparer implements Serializable {
             GroovyScriptExecutor groovyScriptExecutor = groovyScriptExecutorFactory.create(script, arguments);
             groovyScriptExecutor.execute();
         } catch (Exception exception) {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            exception.printStackTrace(printWriter);
-            logger.info(Messages.PostBuildScript_ProblemOccured(stringWriter.toString()));
+            logger.info(Messages.PostBuildScript_ProblemOccured(), exception);
             return false;
         }
 

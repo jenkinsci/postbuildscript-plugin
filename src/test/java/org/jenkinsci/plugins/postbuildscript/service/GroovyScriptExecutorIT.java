@@ -4,7 +4,7 @@ import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.junit.Rule;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.postbuildscript.service;
 import hudson.FilePath;
 import hudson.Launcher.LocalLauncher;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

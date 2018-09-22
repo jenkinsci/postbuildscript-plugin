@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
-import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
 import java.io.IOException;

@@ -5,6 +5,7 @@ import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 
@@ -27,7 +28,7 @@ public class ConfigurableMatrixAggregator extends MatrixAggregator {
         super(build, launcher, listener);
         this.initiator = initiator;
         processor = processorFactory.createMatrixProcessor(build, launcher, listener);
-        logger = new Logger(listener);
+        logger = new Logger(listener, build);
     }
 
     @Override
@@ -36,6 +37,7 @@ public class ConfigurableMatrixAggregator extends MatrixAggregator {
         if (!MatrixPostBuildScript.class.isAssignableFrom(initiator)) {
             logger.warn(Messages.PostBuildScript_DeprecatedUsageOfMatrixOptions());
         }
+        logger.debug("endRun", run);
         listener.getLogger().println();
         return super.endRun(run);
     }
@@ -46,6 +48,7 @@ public class ConfigurableMatrixAggregator extends MatrixAggregator {
         if (!MatrixPostBuildScript.class.isAssignableFrom(initiator)) {
             logger.warn(Messages.PostBuildScript_DeprecatedUsageOfMatrixOptions());
         }
+        logger.debug("endBuild");
         return processor.process(true);
     }
 }

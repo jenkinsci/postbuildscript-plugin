@@ -1,8 +1,8 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
-import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.junit.Before;
@@ -19,7 +19,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
@@ -93,12 +92,13 @@ public class GroovyScriptPreparerTest {
     public void logsExecutionFailAndReturnsFalse() throws Exception {
         given(script.getContent()).willReturn(SCRIPT_CONTENT);
         given(executorFactory.create(script, Collections.emptyList())).willReturn(executor);
-        willThrow(new Exception(EXCEPTION_MESSAGE)).given(executor).execute();
+        Exception exception = new Exception(EXCEPTION_MESSAGE);
+        willThrow(exception).given(executor).execute();
 
         boolean evaluated = groovyScriptPreparer.evaluateScript(script);
 
         assertThat(evaluated, is(false));
-        verify(logger).info(startsWith(Messages.PostBuildScript_ProblemOccured("java.lang.Exception: " + EXCEPTION_MESSAGE)));
+        verify(logger).info(Messages.PostBuildScript_ProblemOccured(), exception);
 
     }
 

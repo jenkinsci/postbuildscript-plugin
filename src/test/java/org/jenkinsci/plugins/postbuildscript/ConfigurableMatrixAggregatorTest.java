@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,11 +45,14 @@ public class ConfigurableMatrixAggregatorTest {
     @Mock
     private MatrixRun run;
 
+    @Mock
+    private EnvVars envVars;
+
     private ConfigurableMatrixAggregator aggregator;
     private boolean processed;
 
     @Test
-    public void runsProcessorWithEndOfMatrixBuildEnabled() {
+    public void runsProcessorWithEndOfMatrixBuildEnabled() throws IOException, InterruptedException {
 
         givenProcessor();
         givenAggregator();
@@ -62,8 +67,6 @@ public class ConfigurableMatrixAggregatorTest {
 
     @Test
     public void addsNewLineToLoggerAfterRun() throws Exception {
-
-        given(listener.getLogger()).willReturn(logger);
 
         givenAggregator();
 
@@ -83,7 +86,10 @@ public class ConfigurableMatrixAggregatorTest {
         processed = aggregator.endBuild();
     }
 
-    private void givenAggregator() {
+    private void givenAggregator() throws IOException, InterruptedException {
+        given(build.getEnvironment(listener)).willReturn(envVars);
+        given(envVars.get("POSTBUILDSCRIPT_VERBOSE", "false")).willReturn("true");
+        given(listener.getLogger()).willReturn(logger);
         aggregator = new ConfigurableMatrixAggregator(
             build,
             launcher,

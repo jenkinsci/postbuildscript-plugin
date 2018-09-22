@@ -9,9 +9,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
-import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Configuration;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
@@ -53,7 +53,7 @@ public class Processor {
         }
         this.listener = listener;
         this.config = config;
-        logger = new Logger(listener);
+        logger = new Logger(listener, build);
     }
 
     public void addRule(ExecutionRule rule) {
@@ -83,7 +83,7 @@ public class Processor {
         try {
             return processScripts(endOfMatrixBuild);
         } catch (PostBuildScriptException pse) {
-            logger.error(Messages.PostBuildScript_ProblemOccured(pse.getMessage()));
+            logger.error(Messages.PostBuildScript_ProblemOccured(), pse);
             failOrUnstable();
             return false;
         }

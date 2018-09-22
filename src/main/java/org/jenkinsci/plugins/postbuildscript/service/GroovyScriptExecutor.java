@@ -5,7 +5,7 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.postbuildscript.Logger;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 

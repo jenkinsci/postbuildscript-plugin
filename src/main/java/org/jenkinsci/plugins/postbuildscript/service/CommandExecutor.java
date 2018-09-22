@@ -6,9 +6,9 @@ import hudson.model.TaskListener;
 import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
-import org.jenkinsci.plugins.postbuildscript.Logger;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;

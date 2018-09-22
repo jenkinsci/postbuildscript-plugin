@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import com.thoughtworks.xstream.XStream;
+import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
@@ -19,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -52,6 +55,12 @@ public class MatrixPostBuildScriptTest {
     @Mock
     private BuildListener listener;
 
+    @Mock
+    private EnvVars envVars;
+
+    @Mock
+    private PrintStream logger;
+
     private MatrixPostBuildScript resolvedMatrixPostBuildScript;
 
     private MatrixPostBuildScript matrixPostBuildScript;
@@ -82,8 +91,10 @@ public class MatrixPostBuildScriptTest {
     }
 
     @Test
-    public void createsAggregator() {
+    public void createsAggregator() throws IOException, InterruptedException {
 
+        given(matrixBuild.getEnvironment(listener)).willReturn(envVars);
+        given(envVars.get("POSTBUILDSCRIPT_VERBOSE", "false")).willReturn("true");
         givenMatrixPostBuildScript();
 
         MatrixAggregator aggregator = matrixPostBuildScript.createAggregator(matrixBuild, launcher, listener);
