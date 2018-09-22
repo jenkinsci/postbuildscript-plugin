@@ -37,7 +37,7 @@ public class ConfigurableMatrixAggregator extends MatrixAggregator {
         if (!MatrixPostBuildScript.class.isAssignableFrom(initiator)) {
             logger.warn(Messages.PostBuildScript_DeprecatedUsageOfMatrixOptions());
         }
-        logger.debug("endRun", run);
+        logger.debug("endRun: {}", run);
         listener.getLogger().println();
         return super.endRun(run);
     }
