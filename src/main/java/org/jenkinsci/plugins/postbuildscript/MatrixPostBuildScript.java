@@ -60,7 +60,7 @@ public class MatrixPostBuildScript extends PostBuildScript {
         return processor.process();
     }
 
-    @Extension(optional = true)
+    @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         @Nonnull
