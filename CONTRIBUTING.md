@@ -32,6 +32,11 @@ the PR from the JIRA issue.
 
 ## Building and installing a snapshot version
 
+Currently you need to build with Java 8. To let Maven use Java 8, please set your JAVA_HOME environment variable, e.g.
+on macOS:
+
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home
+
 Run
 
 	mvn clean package
