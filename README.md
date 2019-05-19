@@ -51,6 +51,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 2.9.0
+
+* JENKINS-57545 - Java 11 support
+
 ### Version 2.8.1
 
 * JENKINS-53446 - Allows to save post-build script steps without actual build steps

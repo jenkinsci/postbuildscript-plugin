@@ -1,10 +1,1 @@
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                buildPlugin()
-            }
-        }
-    }
-}
+buildPlugin(configurations: buildPlugin.recommendedConfigurations())
