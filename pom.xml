@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.43</version>
+        <version>3.49</version>
     </parent>
 
     <artifactId>postbuildscript</artifactId>
@@ -13,7 +13,7 @@
     <version>2.9.0-SNAPSHOT</version>
     <url>https://plugins.jenkins.io/postbuildscript</url>
     <inceptionYear>2011</inceptionYear>
-    <description>&gt;A plugin for the Jenkins CI to run several configurable actions after
+    <description>A plugin for the Jenkins CI to run several configurable actions after
         a build, depending on the build result.
     </description>
 
