@@ -51,6 +51,11 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+
+### Version 2.10.0
+
+* Upgrade to parent POM version 4. It will at least support Jenkins 2.200
+
 ### Version 2.9.1
 
 * JENKINS-57545 - Java 11 support
