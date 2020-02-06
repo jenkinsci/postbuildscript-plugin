@@ -51,7 +51,7 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
-### Version 2.9.0
+### Version 2.9.1
 
 * JENKINS-57545 - Java 11 support
 
