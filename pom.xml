@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.0-beta-4</version>
+        <version>4.4</version>
     </parent>
 
     <artifactId>postbuildscript</artifactId>
@@ -31,7 +31,7 @@
         <url>https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/</url>
         <notifiers>
             <notifier>
-                <address>dheid@posteo.de</address>
+                <address>mail@daniel-heid.de</address>
             </notifier>
         </notifiers>
     </ciManagement>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.14</version>
+            <version>1.17</version>
         </dependency>
 
         <dependency>
