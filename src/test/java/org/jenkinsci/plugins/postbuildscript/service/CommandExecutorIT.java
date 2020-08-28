@@ -5,7 +5,6 @@ import hudson.Functions;
 import hudson.Launcher.LocalLauncher;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
-import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,6 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandExecutorIT {
