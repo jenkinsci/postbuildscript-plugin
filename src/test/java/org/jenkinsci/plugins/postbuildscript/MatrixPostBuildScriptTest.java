@@ -10,10 +10,7 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript.DescriptorImpl;
 import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import org.jenkinsci.plugins.postbuildscript.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +23,8 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 

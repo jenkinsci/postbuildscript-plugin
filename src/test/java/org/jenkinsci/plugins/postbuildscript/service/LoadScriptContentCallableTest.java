@@ -6,7 +6,7 @@ import java.io.File;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LoadScriptContentCallableTest {
 
