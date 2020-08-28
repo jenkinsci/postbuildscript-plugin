@@ -14,9 +14,12 @@ public class PostBuildStep extends PostBuildItem {
 
     private List<BuildStep> buildSteps = new ArrayList<>();
 
+    private boolean stopOnFailure;
+
     @DataBoundConstructor
-    public PostBuildStep(@Nullable Collection<String> results, @Nullable Collection<BuildStep> buildSteps) {
+    public PostBuildStep(@Nullable Collection<String> results, @Nullable Collection<BuildStep> buildSteps, boolean stopOnFailure) {
         super(results);
+        this.stopOnFailure = stopOnFailure;
         if (buildSteps != null) {
             this.buildSteps.addAll(buildSteps);
         }
@@ -26,6 +29,15 @@ public class PostBuildStep extends PostBuildItem {
         return Collections.unmodifiableCollection(buildSteps);
     }
 
+    public boolean isStopOnFailure() {
+        return stopOnFailure;
+    }
+
+    public void setStopOnFailure(boolean stopOnFailure) {
+        this.stopOnFailure = stopOnFailure;
+    }
+
+    @Override
     public Object readResolve() {
         super.readResolve();
         if (buildSteps == null) {
@@ -33,6 +45,5 @@ public class PostBuildStep extends PostBuildItem {
         }
         return this;
     }
-
 
 }

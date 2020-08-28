@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -28,8 +29,7 @@ import static org.junit.Assume.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class PostBuildScriptIT {
 
@@ -41,6 +41,9 @@ public class PostBuildScriptIT {
     private Collection<ScriptFile> scriptFiles;
     private PostBuildScript postBuildScript;
     private FreeStyleBuild build;
+    private final Collection<BuildStep> buildSteps = new ArrayList<>();
+    private BuildStep firstBuildStep;
+    private BuildStep secondBuildStep;
 
     @Test
     public void executesShellScriptFile() throws Exception {
@@ -106,10 +109,65 @@ public class PostBuildScriptIT {
     @Test
     public void executesPostBuildStep() throws Exception {
 
-        BuildStep buildStep = mock(BuildStep.class);
-        given(buildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(true);
-        Collection<BuildStep> buildSteps = Collections.singleton(buildStep);
-        PostBuildStep step = new PostBuildStep(SUCCESS_RESULTS, buildSteps);
+        givenSuccessfulFirstBuildStep();
+        givenPostBuildStep(false);
+
+        whenBuilt();
+
+        thenSuccessfulBuild();
+        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+
+    }
+
+    @Test
+    public void executesPostBuildStepRegardlessOfFailures() throws Exception {
+
+        givenFailingFirstBuildStep();
+        givenSecondBuildStep();
+        givenPostBuildStep(false);
+
+        whenBuilt();
+
+        thenFailedBuild();
+        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        verify(secondBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+
+    }
+
+    @Test
+    public void stopOnBuildStepFailure() throws Exception {
+
+        givenFailingFirstBuildStep();
+        givenSecondBuildStep();
+        givenPostBuildStep(true);
+
+        whenBuilt();
+
+        thenFailedBuild();
+        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        verify(secondBuildStep, never()).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+
+    }
+
+    private void givenSuccessfulFirstBuildStep() throws InterruptedException, IOException {
+        firstBuildStep = mock(BuildStep.class);
+        given(firstBuildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(true);
+        buildSteps.add(firstBuildStep);
+    }
+
+    private void givenFailingFirstBuildStep() throws InterruptedException, IOException {
+        firstBuildStep = mock(BuildStep.class);
+        given(firstBuildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(false);
+        buildSteps.add(firstBuildStep);
+    }
+
+    private void givenSecondBuildStep() {
+        secondBuildStep = mock(BuildStep.class);
+        buildSteps.add(secondBuildStep);
+    }
+
+    private void givenPostBuildStep(boolean stopOnFailure) {
+        PostBuildStep step = new PostBuildStep(SUCCESS_RESULTS, buildSteps, stopOnFailure);
         Collection<PostBuildStep> steps = Collections.singleton(step);
         postBuildScript = new PostBuildScript(
             Collections.emptyList(),
@@ -118,12 +176,6 @@ public class PostBuildScriptIT {
             steps,
             false
         );
-
-        whenBuilt();
-
-        thenSuccessfulBuild();
-        verify(buildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
-
     }
 
     private void givenOutfile() throws Exception {
@@ -152,6 +204,10 @@ public class PostBuildScriptIT {
 
     private void thenSuccessfulBuild() {
         assertThat(build.getResult(), is(Result.SUCCESS));
+    }
+
+    private void thenFailedBuild() {
+        assertThat(build.getResult(), is(Result.FAILURE));
     }
 
 

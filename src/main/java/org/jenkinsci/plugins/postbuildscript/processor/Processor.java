@@ -12,12 +12,7 @@ import hudson.tasks.BuildStep;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
-import org.jenkinsci.plugins.postbuildscript.model.Configuration;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import org.jenkinsci.plugins.postbuildscript.model.*;
 import org.jenkinsci.plugins.postbuildscript.processor.rules.ExecutionRule;
 import org.jenkinsci.plugins.postbuildscript.service.Command;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
@@ -175,7 +170,6 @@ public class Processor {
         try {
             boolean everyStepSuccessful = true;
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
-
                 String scriptName = Messages.PostBuildScript_BuildStep(
                     config.buildStepIndexOf(postBuildStep));
                 if (violatesAnyRule(postBuildStep, scriptName, endOfMatrixBuild)) {
@@ -185,6 +179,9 @@ public class Processor {
                 for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
                     if (!buildStep.perform(build, launcher, listener)) {
                         everyStepSuccessful = false;
+                        if (postBuildStep.isStopOnFailure()) {
+                            return false;
+                        }
                     }
                 }
             }

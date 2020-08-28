@@ -142,6 +142,8 @@
 
                 <pbs:results values="${buildSteps.results}"/>
 
+                <pbs:stop item="${buildSteps}"/>
+
                 <pbs:role item="${buildSteps}"/>
 
                 <j:if test="${matrix || buildSteps.executeOn != null}">

@@ -25,7 +25,10 @@ public class PostBuildStepTest {
     public void containsBuildSteps() {
 
         PostBuildStep postBuildStep = new PostBuildStep(
-            Collections.singleton(RESULT), Collections.singleton(buildStep));
+            Collections.singleton(RESULT),
+            Collections.singleton(buildStep),
+            false
+        );
 
         assertThat(postBuildStep.getBuildSteps(), contains(buildStep));
     }
@@ -35,7 +38,10 @@ public class PostBuildStepTest {
     public void allowsEmptyBuildSteps() {
 
         PostBuildStep postBuildStep = new PostBuildStep(
-            Collections.singleton(RESULT), null);
+            Collections.singleton(RESULT),
+            null,
+            false
+        );
 
         assertThat(postBuildStep.getBuildSteps(), is(Matchers.emptyIterable()));
 

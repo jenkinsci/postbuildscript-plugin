@@ -9,27 +9,14 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.tasks.BuildStep;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Notifier;
-import hudson.tasks.Publisher;
-import org.jenkinsci.plugins.postbuildscript.model.Configuration;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import hudson.tasks.*;
+import org.jenkinsci.plugins.postbuildscript.model.*;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -203,7 +190,7 @@ public class PostBuildScript extends Notifier
         List<BuildStep> steps,
         Set<String> results
     ) {
-        config.addBuildStep(new PostBuildStep(results, steps));
+        config.addBuildStep(new PostBuildStep(results, steps, false));
     }
 
     private Processor createProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
