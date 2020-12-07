@@ -16,6 +16,8 @@ You can configure these actions depending on the build status (i.e., only run wh
 Scripts can also be executed on the master, on slaves or both. On matrix projects, the build can be executed on
 each axis.
 
+![User Interface](screenshot.png)
+
 Please refer to the [plugin description](https://plugins.jenkins.io/postbuildscript) for further
 information.
 
