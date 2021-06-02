@@ -37,7 +37,7 @@
     </ciManagement>
 
     <distributionManagement>
-        <downloadUrl>http://updates.jenkins-ci.org/download/plugins/postbuildscript</downloadUrl>
+        <downloadUrl>https://updates.jenkins-ci.org/download/plugins/postbuildscript</downloadUrl>
     </distributionManagement>
 
     <licenses>
@@ -71,7 +71,7 @@
     <contributors>
         <contributor>
             <name>Nicolas De loof</name>
-            <url>http://blog.loof.fr</url>
+            <url>https://blog.loof.fr</url>
             <organization>CloudBees</organization>
             <organizationUrl>https://www.cloudbees.com/</organizationUrl>
         </contributor>
@@ -89,7 +89,7 @@
         </contributor>
         <contributor>
             <name>Markus Alexander Kuppe</name>
-            <url>http://www.lemmster.de/</url>
+            <url>https://www.lemmster.de/</url>
         </contributor>
         <contributor>
             <name>Dan Clayton</name>

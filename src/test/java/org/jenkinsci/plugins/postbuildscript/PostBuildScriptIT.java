@@ -14,13 +14,13 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -29,7 +29,9 @@ import static org.junit.Assume.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class PostBuildScriptIT {
 
@@ -86,10 +88,9 @@ public class PostBuildScriptIT {
 
     @Test
     public void executesGroovyScript() throws Exception {
-        assumeFalse(Functions.isWindows());
 
         givenOutfile();
-        String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath()); //NON-NLS
+        String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath().replace("\\", "\\\\")); //NON-NLS
         Script script = new Script(SUCCESS_RESULTS, scriptContent);
         Collection<Script> scripts = Collections.singleton(script);
         postBuildScript = new PostBuildScript(
@@ -183,14 +184,15 @@ public class PostBuildScriptIT {
         outFile.deleteOnExit();
     }
 
-    private void givenScriptFiles(String scriptFileLocation) throws URISyntaxException {
-        String scriptFilePath = getClass().getResource(scriptFileLocation).toURI().getPath();
-        String command = scriptFilePath + " " + outFile.getPath();
+    private void givenScriptFiles(String scriptFileLocation) throws Exception {
+        Path scriptFilePath = Files.createTempFile("script", ".groovy");
+        Files.copy(getClass().getResourceAsStream(scriptFileLocation), scriptFilePath, StandardCopyOption.REPLACE_EXISTING);
+        String command = '"' + scriptFilePath.toString() + "\" " + outFile.getPath();
         ScriptFile scriptFile = new ScriptFile(SUCCESS_RESULTS, command);
         scriptFiles = Collections.singleton(scriptFile);
     }
 
-    private void whenBuilt() throws IOException, InterruptedException, java.util.concurrent.ExecutionException {
+    private void whenBuilt() throws IOException, InterruptedException, ExecutionException {
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         project.getPublishersList().add(postBuildScript);
         build = project.scheduleBuild2(0).get();
@@ -198,7 +200,7 @@ public class PostBuildScriptIT {
 
     private void thenWroteHelloWorldToFile() throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(outFile.toURI()));
-        String outFileContent = new String(encoded, Charset.forName("UTF-8"));
+        String outFileContent = new String(encoded, StandardCharsets.UTF_8);
         assertThat(outFileContent, startsWith("Hello world"));
     }
 

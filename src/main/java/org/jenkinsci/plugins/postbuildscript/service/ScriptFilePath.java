@@ -5,11 +5,11 @@ import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 public class ScriptFilePath {
-
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     private final FilePath workspace;
 
@@ -17,14 +17,12 @@ public class ScriptFilePath {
         this.workspace = workspace;
     }
 
-    public FilePath resolve(CharSequence command) throws PostBuildScriptException {
+    public FilePath resolve(String command) throws PostBuildScriptException {
 
-        String scriptFilePath = WHITESPACE_PATTERN.split(command)[0];
-
-        FilePath filePath = getFilePath(scriptFilePath);
+        FilePath filePath = getFilePath(command);
         if (filePath == null) {
             throw new PostBuildScriptException(
-                Messages.PostBuildScript_ScriptFilePathDoesNotExist(scriptFilePath));
+                Messages.PostBuildScript_ScriptFilePathDoesNotExist(command));
         }
 
         return filePath;

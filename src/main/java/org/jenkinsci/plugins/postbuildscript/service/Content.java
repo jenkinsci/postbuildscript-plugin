@@ -18,7 +18,7 @@ public class Content {
         try {
             return filePath.act(callable);
         } catch (IOException | InterruptedException ioe) {
-            throw new PostBuildScriptException("Error to resolve environment variables", ioe);
+            throw new PostBuildScriptException("Error calling file", ioe);
         }
     }
 

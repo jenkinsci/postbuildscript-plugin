@@ -53,6 +53,11 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 2.11.1
+
+* Updates Jenkins Plugin Parent
+* Fix problem with script file path determination using Windows
+
 ### Version 2.11.0
 
 * JENKINS-63529 - Allows to configure, whether to stop a post build step if any of its steps fails. 
