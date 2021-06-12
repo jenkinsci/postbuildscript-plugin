@@ -55,7 +55,7 @@ the PR from the JIRA issue.
 
 ### Version 3.0.0
 
-I removed several configuration parts in this version. They were deprecated long time ago.
+I removed several deprecated configuration parts in this version. They were deprecated long time ago on very old versions.
 On https://stats.jenkins.io/plugin-installation-trend/postbuildscript.stats.json
 you can see, that most installations use version 2.11.0 of this plugin now. Most versions silently upgrade to a newer configuration,
 so I recommend to first upgrade minors and save your job configurations. For most users there won't be a problem, but users of very old 
