@@ -10,7 +10,7 @@
     <artifactId>postbuildscript</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins PostBuildScript Plugin</name>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>${revision}${changelist}</version>
     <url>https://plugins.jenkins.io/postbuildscript</url>
     <inceptionYear>2011</inceptionYear>
     <description>A plugin for the Jenkins CI to run several configurable actions after
@@ -18,6 +18,9 @@
     </description>
 
     <properties>
+        <revision>3.0.0</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
         <java.level>8</java.level>
         <jenkins.version>2.277.1</jenkins.version>
     </properties>
@@ -98,10 +101,10 @@
     </contributors>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/postbuildscript-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/postbuildscript-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/postbuildscript-plugin</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
+        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+        <url>https://github.com/${gitHubRepo}</url>
+        <tag>${scmTag}</tag>
     </scm>
 
     <dependencies>
