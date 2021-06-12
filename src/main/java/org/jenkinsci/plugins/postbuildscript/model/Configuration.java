@@ -8,10 +8,6 @@ import java.util.stream.Collectors;
 
 public class Configuration {
 
-    @Deprecated
-    private List<ScriptFile> genericScriptFiles;
-    @Deprecated
-    private List<ScriptFile> groovyScriptFiles;
     private List<ScriptFile> scriptFiles = new ArrayList<>();
     private final List<Script> groovyScripts = new ArrayList<>();
     private final List<PostBuildStep> buildSteps = new ArrayList<>();
@@ -69,26 +65,6 @@ public class Configuration {
 
     public void addBuildStep(PostBuildStep postBuildStep) {
         buildSteps.add(postBuildStep);
-    }
-
-    public Object readResolve() {
-        if (scriptFiles == null) {
-            scriptFiles = new ArrayList<>(
-                genericScriptFiles.size() + groovyScriptFiles.size());
-
-            for (ScriptFile scriptFile : genericScriptFiles) {
-                scriptFile.setScriptType(ScriptType.GENERIC);
-                scriptFiles.add(scriptFile);
-            }
-
-            for (ScriptFile scriptFile : groovyScriptFiles) {
-                scriptFile.setScriptType(ScriptType.GROOVY);
-                scriptFiles.add(scriptFile);
-            }
-
-        }
-
-        return this;
     }
 
 }

@@ -101,18 +101,6 @@ public class MatrixPostBuildScriptTest {
     }
 
     @Test
-    public void readResolveAppliesExecuteOnOnEachItem() {
-
-        givenScriptFromConfig("/v0.18_config_matrix.xml");
-
-        whenReadResolves();
-
-        PostBuildStep postBuildStep = resolvedMatrixPostBuildScript.getBuildSteps().get(0);
-        assertThat(postBuildStep.getExecuteOn(), is(ExecuteOn.MATRIX));
-
-    }
-
-    @Test
     public void containsHelpFile() {
 
         givenDescriptor();
@@ -149,10 +137,6 @@ public class MatrixPostBuildScriptTest {
 
     private void givenDescriptor() {
         descriptor = new DescriptorImpl();
-    }
-
-    private void whenReadResolves() {
-        resolvedMatrixPostBuildScript = (MatrixPostBuildScript) matrixPostBuildScript.readResolve();
     }
 
 }

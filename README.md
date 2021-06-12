@@ -55,6 +55,12 @@ the PR from the JIRA issue.
 
 ### Version 3.0.0
 
+I removed several configuration parts in this version. They were deprecated long time ago.
+On https://stats.jenkins.io/plugin-installation-trend/postbuildscript.stats.json
+you can see, that most installations use version 2.11.0 of this plugin now. Most versions silently upgrade to a newer configuration,
+so I recommend to first upgrade minors and save your job configurations. For most users there won't be a problem, but users of very old 
+plugin versions < 2.8.0 should first upgrade to at least 2.8.0 and save their job configurations.
+
 * JENKINS-65797 Due to major changes in the job configuration, this plugin version is now based on Jenkins 2.277.1 and therefore requires
 a new Jenkins version. I also cannot guarantee, that old job configurations will work. Please mind potential broken configurations when
 upgrading and make sure, that you backed up your files. I recommend you to check your build jobs carefully.

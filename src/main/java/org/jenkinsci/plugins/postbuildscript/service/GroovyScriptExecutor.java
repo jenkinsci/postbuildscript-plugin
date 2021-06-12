@@ -46,6 +46,6 @@ public class GroovyScriptExecutor {
         binding.setVariable("args", arguments); //NON-NLS
 
         ClassLoader classLoader = getClass().getClassLoader();
-        secureGroovyScript.evaluate(classLoader, binding);
+        secureGroovyScript.evaluate(classLoader, binding, log.getListener());
     }
 }

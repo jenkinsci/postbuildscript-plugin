@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.19</version>
+            <version>1.18</version>
         </dependency>
 
         <dependency>
@@ -141,7 +141,7 @@
                 <artifactId>maven-hpi-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <compatibleSinceVersion>1.0.0</compatibleSinceVersion>
+                    <compatibleSinceVersion>3.0.0</compatibleSinceVersion>
                 </configuration>
             </plugin>
             <plugin>
