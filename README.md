@@ -53,6 +53,12 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.0.0
+
+* JENKINS-65797 Due to major changes in the job configuration, this plugin version is now based on Jenkins 2.277.1 and therefore requires
+a new Jenkins version. I also cannot guarantee, that old job configurations will work. Please mind potential broken configurations when
+upgrading and make sure, that you backed up your files. I recommend you to check your build jobs carefully.
+
 ### Version 2.11.1
 
 * Updates Jenkins Plugin Parent

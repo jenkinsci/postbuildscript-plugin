@@ -70,6 +70,8 @@ public class PostBuildScriptIT {
     @Test
     public void executesGroovyScriptFile() throws Exception {
 
+        assumeFalse(Functions.isWindows());
+
         givenOutfile();
         givenScriptFiles("/script.groovy"); //NON-NLS
         postBuildScript = new PostBuildScript(

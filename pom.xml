@@ -10,7 +10,7 @@
     <artifactId>postbuildscript</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins PostBuildScript Plugin</name>
-    <version>2.11.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <url>https://plugins.jenkins.io/postbuildscript</url>
     <inceptionYear>2011</inceptionYear>
     <description>A plugin for the Jenkins CI to run several configurable actions after
@@ -19,6 +19,7 @@
 
     <properties>
         <java.level>8</java.level>
+        <jenkins.version>2.277.1</jenkins.version>
     </properties>
 
     <issueManagement>
