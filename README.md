@@ -69,7 +69,7 @@ upgrading and make sure, that you backed up your files. I recommend you to check
 
 ### Version 2.11.0
 
-* JENKINS-63529 - Allows to configure, whether to stop a post build step if any of its steps fails. 
+* JENKINS-63529 - Allows configuring, whether to stop a post build step if any of its steps fails. 
 
 ### Version 2.10.0
 
@@ -81,7 +81,7 @@ upgrading and make sure, that you backed up your files. I recommend you to check
 
 ### Version 2.8.1
 
-* JENKINS-53446 - Allows to save post-build script steps without actual build steps
+* JENKINS-53446 - Allows saving post-build script steps without actual build steps
 
 ### Version 2.8.0
 
