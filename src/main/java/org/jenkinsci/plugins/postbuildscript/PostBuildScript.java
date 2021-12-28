@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
@@ -15,7 +16,6 @@ import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 
@@ -127,7 +127,7 @@ public class PostBuildScript extends Notifier
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.PostBuildScript_DisplayName();

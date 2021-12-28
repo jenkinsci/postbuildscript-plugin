@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -17,7 +18,6 @@ import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public class MatrixPostBuildScript extends PostBuildScript {
@@ -63,7 +63,7 @@ public class MatrixPostBuildScript extends PostBuildScript {
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.MatrixPostBuildScript_DisplayName();

@@ -1,9 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,7 +35,7 @@ public class PostBuildItem {
         return !results.isEmpty();
     }
 
-    public void addResults(@Nonnull Collection<String> results) {
+    public void addResults(@NonNull Collection<String> results) {
         this.results.addAll(results);
     }
 

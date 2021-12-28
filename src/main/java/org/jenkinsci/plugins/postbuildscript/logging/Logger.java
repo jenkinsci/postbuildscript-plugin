@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript.logging;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
 
-import javax.annotation.Nullable;
 import java.io.PrintStream;
 
 /**
