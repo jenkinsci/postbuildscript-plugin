@@ -53,9 +53,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
-### Version 3.0.1
+### Version 3.1.0
 
-Updated Jenkins Plugin Parent to Version 4.32 to ensure, that no Log4j issues exist.
+Updated Jenkins Plugin Parent to Version 4.32 to ensure, that no Log4j issues exist. Also updated Matrix Project dependency
+to 1.19, which requires at least Jenkins 2.282. Therefore switched to Jenkins version 2.289.
 
 ### Version 3.0.0
 

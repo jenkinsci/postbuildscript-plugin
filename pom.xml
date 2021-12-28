@@ -18,11 +18,11 @@
     </description>
 
     <properties>
-        <revision>3.0.1</revision>
+        <revision>3.1.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
         <java.level>8</java.level>
-        <jenkins.version>2.277.1</jenkins.version>
+        <jenkins.version>2.289.3</jenkins.version>
     </properties>
 
     <issueManagement>
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.18</version>
+            <version>1.19</version>
         </dependency>
 
         <dependency>
@@ -122,6 +122,23 @@
         </dependency>
 
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.289.x</artifactId>
+                <version>987.v4ade2e49fe70</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <repositories>
         <repository>
