@@ -53,6 +53,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.0.1
+
+Updated Jenkins Plugin Parent to Version 4.32 to ensure, that no Log4j issues exist.
+
 ### Version 3.0.0
 
 I removed several deprecated configuration parts in this version. They were deprecated long time ago on very old versions.
