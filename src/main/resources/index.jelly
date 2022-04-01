@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+      A plugin for the Jenkins CI to run several configurable actions after a build, depending on the build result.
+</div>
