@@ -2,7 +2,7 @@
 
 # PostBuildScript Jenkins plugin
 
-[![Build Status](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/main/badge/icon)](https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/job/master/)
 [![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/postbuildscript.svg)](http://updates.jenkins-ci.org/download/plugins/postbuildscript)
 [![GitHub contributors](https://img.shields.io/github/contributors/jenkinsci/postbuildscript-plugin.svg)]()
 
