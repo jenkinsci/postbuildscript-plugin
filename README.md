@@ -55,7 +55,7 @@ the PR from the JIRA issue.
 
 ### Version 3.2.0
 
-Dependencies require Jenkins 2.359 and Java 11, so this will be the new base for the PostBuildScript plugin.
+Dependencies require Jenkins 2.359, so this will be the new base version for the PostBuildScript plugin.
 
 ### Version 3.1.0
 
