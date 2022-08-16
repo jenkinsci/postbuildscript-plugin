@@ -53,6 +53,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.2.0
+
+Dependencies require Jenkins 2.359, so this will be the new base version for the PostBuildScript plugin.
+
 ### Version 3.1.0
 
 Updated Jenkins Plugin Parent to Version 4.32 to ensure, that no Log4j issues exist. Also updated Matrix Project dependency
