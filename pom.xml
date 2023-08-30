@@ -21,8 +21,8 @@
         <revision>3.2.0</revision>
         <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-        <java.level>8</java.level>
-        <jenkins.version>2.359</jenkins.version>
+        <jenkins.version>2.414.1</jenkins.version>
+        <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
     </properties>
 
     <issueManagement>
@@ -101,7 +101,7 @@
     </contributors>
 
     <scm>
-        <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
+        <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
         <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
         <url>https://github.com/${gitHubRepo}</url>
         <tag>${scmTag}</tag>
@@ -112,7 +112,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>808.v5a_b_5f56d6966</version>
         </dependency>
 
         <dependency>
@@ -127,8 +126,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.346.x</artifactId>
-                <version>1763.v092b_8980a_f5e</version>
+                <artifactId>bom-2.414.x</artifactId>
+                <version>2378.v3e03930028f2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -151,14 +150,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.jenkins-ci.tools</groupId>
-                <artifactId>maven-hpi-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <compatibleSinceVersion>3.0.0</compatibleSinceVersion>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
