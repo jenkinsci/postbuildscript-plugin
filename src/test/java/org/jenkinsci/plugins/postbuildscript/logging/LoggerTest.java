@@ -75,4 +75,12 @@ public class LoggerTest {
 
     }
 
+    @Test
+    public void fullyQualifiedCallerNameIsClassName() {
+
+        String fullyQualifiedCallerName = logger.getFullyQualifiedCallerName();
+
+        assertThat(fullyQualifiedCallerName, is("org.jenkinsci.plugins.postbuildscript.logging.Logger"));
+
+    }
 }
