@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -61,6 +62,16 @@ public class LoggerTest {
 
         out.flush();
         assertThat(out.toString(), is("[PostBuildScript] - [ERROR] message" + NEW_LINE));
+
+    }
+
+    @Test
+    public void addsThrowable() throws IOException {
+
+        logger.error(MESSAGE, new RuntimeException("Test exception message"));
+
+        out.flush();
+        assertThat(out.toString(), startsWith("[PostBuildScript] - [ERROR] message" + NEW_LINE + "java.lang.RuntimeException: Test exception message"));
 
     }
 
