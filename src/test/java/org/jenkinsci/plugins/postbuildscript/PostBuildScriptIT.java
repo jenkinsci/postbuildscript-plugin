@@ -4,12 +4,14 @@ import hudson.Functions;
 import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.BuildStep;
+import hudson.tasks.Builder;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.TestBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +27,8 @@ import java.util.concurrent.ExecutionException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 public class PostBuildScriptIT {
 
@@ -44,8 +41,8 @@ public class PostBuildScriptIT {
     private PostBuildScript postBuildScript;
     private FreeStyleBuild build;
     private final Collection<BuildStep> buildSteps = new ArrayList<>();
-    private BuildStep firstBuildStep;
-    private BuildStep secondBuildStep;
+    private TestBuildStep firstBuildStep;
+    private TestBuildStep secondBuildStep;
 
     @Test
     public void executesShellScriptFile() throws Exception {
@@ -118,7 +115,7 @@ public class PostBuildScriptIT {
         whenBuilt();
 
         thenSuccessfulBuild();
-        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        assertEquals(1, firstBuildStep.getInvocations());
 
     }
 
@@ -132,8 +129,8 @@ public class PostBuildScriptIT {
         whenBuilt();
 
         thenFailedBuild();
-        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
-        verify(secondBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        assertEquals(1, firstBuildStep.getInvocations());
+        assertEquals(1, secondBuildStep.getInvocations());
 
     }
 
@@ -147,25 +144,23 @@ public class PostBuildScriptIT {
         whenBuilt();
 
         thenFailedBuild();
-        verify(firstBuildStep).perform(eq(build), any(Launcher.class), any(BuildListener.class));
-        verify(secondBuildStep, never()).perform(eq(build), any(Launcher.class), any(BuildListener.class));
+        assertEquals(1, firstBuildStep.getInvocations());
+        assertEquals(0, secondBuildStep.getInvocations());
 
     }
 
     private void givenSuccessfulFirstBuildStep() throws InterruptedException, IOException {
-        firstBuildStep = mock(BuildStep.class);
-        given(firstBuildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(true);
+        firstBuildStep = new TestBuildStep(true);
         buildSteps.add(firstBuildStep);
     }
 
     private void givenFailingFirstBuildStep() throws InterruptedException, IOException {
-        firstBuildStep = mock(BuildStep.class);
-        given(firstBuildStep.perform(any(AbstractBuild.class), any(Launcher.class), any(BuildListener.class))).willReturn(false);
+        firstBuildStep = new TestBuildStep(false);
         buildSteps.add(firstBuildStep);
     }
 
     private void givenSecondBuildStep() {
-        secondBuildStep = mock(BuildStep.class);
+        secondBuildStep = new TestBuildStep(false);
         buildSteps.add(secondBuildStep);
     }
 
@@ -214,5 +209,22 @@ public class PostBuildScriptIT {
         assertThat(build.getResult(), is(Result.FAILURE));
     }
 
+    private static class TestBuildStep extends TestBuilder {
+        private final boolean result;
+        private volatile int invocations;
 
+        public TestBuildStep(boolean result) {
+            this.result = result;
+        }
+
+        public int getInvocations() {
+            return invocations;
+        }
+
+        @Override
+        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+            invocations += 1;
+            return result;
+        }
+    }
 }
