@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.postbuildscript;
 
-import com.thoughtworks.xstream.XStream;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -128,12 +127,6 @@ public class MatrixPostBuildScriptTest {
             true
         );
     }
-
-    private void givenScriptFromConfig(String configResourceName) {
-        XStream xstream = new XStream();
-        matrixPostBuildScript = (MatrixPostBuildScript) xstream.fromXML(getClass().getResource(configResourceName));
-    }
-
 
     private void givenDescriptor() {
         descriptor = new DescriptorImpl();
