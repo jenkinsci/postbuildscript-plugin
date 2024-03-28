@@ -21,7 +21,7 @@
         <revision>3.2.0</revision>
         <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-        <jenkins.version>2.414.1</jenkins.version>
+        <jenkins.version>2.414.3</jenkins.version>
         <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
     </properties>
 
