@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URL;

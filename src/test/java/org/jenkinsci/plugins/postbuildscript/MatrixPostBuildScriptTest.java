@@ -8,13 +8,14 @@ import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript.DescriptorImpl;
-import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
-import org.jenkinsci.plugins.postbuildscript.model.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -27,7 +28,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MatrixPostBuildScriptTest {
 
     @Mock
@@ -62,17 +63,11 @@ public class MatrixPostBuildScriptTest {
     private MatrixPostBuildScript matrixPostBuildScript;
     private DescriptorImpl descriptor;
 
-    @Before
-    public void setUp() {
-
-        given(genericScriptFile.getScriptType()).willReturn(ScriptType.GENERIC);
-        given(groovyScriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
-
-    }
-
     @Test
     public void keepsPostBuildItems() {
 
+        given(genericScriptFile.getScriptType()).willReturn(ScriptType.GENERIC);
+        given(groovyScriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
         givenMatrixPostBuildScript();
 
         assertThat(matrixPostBuildScript.getGenericScriptFiles(), contains(genericScriptFile));

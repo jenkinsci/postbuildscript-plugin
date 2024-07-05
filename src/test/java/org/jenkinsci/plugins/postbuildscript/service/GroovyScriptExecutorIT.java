@@ -6,12 +6,12 @@ import hudson.model.FreeStyleProject;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.PrintStream;
 import java.util.Collections;
@@ -19,11 +19,9 @@ import java.util.Collections;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@WithJenkins
 public class GroovyScriptExecutorIT {
-
-    @Rule
-    public JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Mock
     private Logger log;
@@ -38,7 +36,7 @@ public class GroovyScriptExecutorIT {
     private Script script;
 
     @Test
-    public void runsGroovyScriptWithVariablesAndBindings() throws Exception {
+    public void runsGroovyScriptWithVariablesAndBindings(JenkinsRule jenkinsRule) throws Exception {
         given(script.getContent()).willReturn("log.info('hello $envVar1'); out.println(build.id)");
 
         FreeStyleProject freeStyleProject = jenkinsRule.createFreeStyleProject();

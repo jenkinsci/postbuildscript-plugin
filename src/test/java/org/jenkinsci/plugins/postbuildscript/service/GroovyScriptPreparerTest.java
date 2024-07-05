@@ -5,11 +5,11 @@ import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -17,13 +17,14 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GroovyScriptPreparerTest {
 
     private static final String SCRIPT_CONTENT = "scriptContent";
@@ -51,17 +52,17 @@ public class GroovyScriptPreparerTest {
     public GroovyScriptPreparerTest() {
     }
 
-    @Before
+    @BeforeEach
     public void initPreparer() throws URISyntaxException {
         file = new File(getClass().getResource("/test_script").toURI());
         FilePath workspace = new FilePath(file.getParentFile());
         groovyScriptPreparer = new GroovyScriptPreparer(logger, workspace, executorFactory);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void failsIfNoScriptContent() {
 
-        groovyScriptPreparer.evaluateScript(null);
+        assertThrows(IllegalArgumentException.class, () -> groovyScriptPreparer.evaluateScript(null));
 
     }
 

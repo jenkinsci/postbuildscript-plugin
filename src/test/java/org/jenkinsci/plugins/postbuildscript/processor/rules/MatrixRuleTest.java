@@ -2,17 +2,17 @@ package org.jenkinsci.plugins.postbuildscript.processor.rules;
 
 import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MatrixRuleTest {
 
     private final MatrixRule matrixRule = new MatrixRule();

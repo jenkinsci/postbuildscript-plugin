@@ -3,22 +3,23 @@ package org.jenkinsci.plugins.postbuildscript.logging;
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LoggerTest {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
@@ -35,18 +36,20 @@ public class LoggerTest {
     @Mock
     private EnvVars envVars;
 
-    @Before
+    @BeforeEach
     public void letTaskListenerReturnStream() throws IOException, InterruptedException {
         given(build.getEnvironment(taskListener)).willReturn(envVars);
         given(envVars.get("POSTBUILDSCRIPT_VERBOSE", "false")).willReturn("true");
-        PrintStream printStream = new PrintStream(out, false, "UTF-8");
-        given(taskListener.getLogger()).willReturn(printStream);
 
         logger = new Logger(taskListener, build);
     }
 
+
+
     @Test
     public void prefixesInfoMessages() throws IOException {
+
+        givenPrintStream();
 
         logger.info(MESSAGE);
 
@@ -58,6 +61,8 @@ public class LoggerTest {
     @Test
     public void prefixesErrorMessages() throws IOException {
 
+        givenPrintStream();
+
         logger.error(MESSAGE);
 
         out.flush();
@@ -67,6 +72,8 @@ public class LoggerTest {
 
     @Test
     public void addsThrowable() throws IOException {
+
+        givenPrintStream();
 
         logger.error(MESSAGE, new RuntimeException("Test exception message"));
 
@@ -83,4 +90,9 @@ public class LoggerTest {
         assertThat(fullyQualifiedCallerName, is("org.jenkinsci.plugins.postbuildscript.logging.Logger"));
 
     }
+
+    private void givenPrintStream()  {
+        given(taskListener.getLogger()).willReturn(new PrintStream(out, false, StandardCharsets.UTF_8));
+    }
+
 }

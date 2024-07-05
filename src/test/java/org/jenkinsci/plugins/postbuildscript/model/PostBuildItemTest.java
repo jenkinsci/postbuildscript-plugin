@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
@@ -16,7 +16,7 @@ public class PostBuildItemTest {
 
     private PostBuildItem postBuildItem;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         postBuildItem = new PostBuildItem(Collections.singleton(SUCCESS));
     }

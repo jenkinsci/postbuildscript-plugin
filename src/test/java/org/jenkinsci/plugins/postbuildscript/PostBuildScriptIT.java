@@ -4,20 +4,23 @@ import hudson.Functions;
 import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.BuildStep;
-import hudson.tasks.Builder;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestBuilder;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,15 +30,12 @@ import java.util.concurrent.ExecutionException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeFalse;
 
+@WithJenkins
 public class PostBuildScriptIT {
 
     private static final Set<String> SUCCESS_RESULTS = Collections.singleton("SUCCESS");
 
-    @Rule
-    public final JenkinsRule jenkinsRule = new JenkinsRule();
     private File outFile;
     private Collection<ScriptFile> scriptFiles;
     private PostBuildScript postBuildScript;
@@ -45,8 +45,8 @@ public class PostBuildScriptIT {
     private TestBuildStep secondBuildStep;
 
     @Test
-    public void executesShellScriptFile() throws Exception {
-        assumeFalse(Functions.isWindows());
+    public void executesShellScriptFile(JenkinsRule jenkinsRule) throws Exception {
+        Assumptions.assumeFalse(Functions.isWindows());
 
         givenOutfile();
         givenScriptFiles("/script.sh"); //NON-NLS
@@ -58,16 +58,16 @@ public class PostBuildScriptIT {
             false
         );
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenSuccessfulBuild();
         thenWroteHelloWorldToFile();
     }
 
     @Test
-    public void executesGroovyScriptFile() throws Exception {
+    public void executesGroovyScriptFile(JenkinsRule jenkinsRule) throws Exception {
 
-        assumeFalse(Functions.isWindows());
+        Assumptions.assumeFalse(Functions.isWindows());
 
         givenOutfile();
         givenScriptFiles("/script.groovy"); //NON-NLS
@@ -79,14 +79,14 @@ public class PostBuildScriptIT {
             false
         );
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenSuccessfulBuild();
         thenWroteHelloWorldToFile();
     }
 
     @Test
-    public void executesGroovyScript() throws Exception {
+    public void executesGroovyScript(JenkinsRule jenkinsRule) throws Exception {
 
         givenOutfile();
         String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath().replace("\\", "\\\\")); //NON-NLS
@@ -100,61 +100,61 @@ public class PostBuildScriptIT {
             false
         );
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenSuccessfulBuild();
         thenWroteHelloWorldToFile();
     }
 
     @Test
-    public void executesPostBuildStep() throws Exception {
+    public void executesPostBuildStep(JenkinsRule jenkinsRule) throws Exception {
 
         givenSuccessfulFirstBuildStep();
         givenPostBuildStep(false);
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenSuccessfulBuild();
-        assertEquals(1, firstBuildStep.getInvocations());
+        Assertions.assertEquals(1, firstBuildStep.getInvocations());
 
     }
 
     @Test
-    public void executesPostBuildStepRegardlessOfFailures() throws Exception {
+    public void executesPostBuildStepRegardlessOfFailures(JenkinsRule jenkinsRule) throws Exception {
 
         givenFailingFirstBuildStep();
         givenSecondBuildStep();
         givenPostBuildStep(false);
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenFailedBuild();
-        assertEquals(1, firstBuildStep.getInvocations());
-        assertEquals(1, secondBuildStep.getInvocations());
+        Assertions.assertEquals(1, firstBuildStep.getInvocations());
+        Assertions.assertEquals(1, secondBuildStep.getInvocations());
 
     }
 
     @Test
-    public void stopOnBuildStepFailure() throws Exception {
+    public void stopOnBuildStepFailure(JenkinsRule jenkinsRule) throws Exception {
 
         givenFailingFirstBuildStep();
         givenSecondBuildStep();
         givenPostBuildStep(true);
 
-        whenBuilt();
+        whenBuilt(jenkinsRule);
 
         thenFailedBuild();
-        assertEquals(1, firstBuildStep.getInvocations());
-        assertEquals(0, secondBuildStep.getInvocations());
+        Assertions.assertEquals(1, firstBuildStep.getInvocations());
+        Assertions.assertEquals(0, secondBuildStep.getInvocations());
 
     }
 
-    private void givenSuccessfulFirstBuildStep() throws InterruptedException, IOException {
+    private void givenSuccessfulFirstBuildStep() {
         firstBuildStep = new TestBuildStep(true);
         buildSteps.add(firstBuildStep);
     }
 
-    private void givenFailingFirstBuildStep() throws InterruptedException, IOException {
+    private void givenFailingFirstBuildStep() {
         firstBuildStep = new TestBuildStep(false);
         buildSteps.add(firstBuildStep);
     }
@@ -189,7 +189,7 @@ public class PostBuildScriptIT {
         scriptFiles = Collections.singleton(scriptFile);
     }
 
-    private void whenBuilt() throws IOException, InterruptedException, ExecutionException {
+    private void whenBuilt(JenkinsRule jenkinsRule) throws IOException, InterruptedException, ExecutionException {
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
         project.getPublishersList().add(postBuildScript);
         build = project.scheduleBuild2(0).get();
@@ -222,7 +222,7 @@ public class PostBuildScriptIT {
         }
 
         @Override
-        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
             invocations += 1;
             return result;
         }

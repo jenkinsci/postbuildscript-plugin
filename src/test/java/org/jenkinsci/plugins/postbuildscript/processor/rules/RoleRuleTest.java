@@ -3,11 +3,11 @@ package org.jenkinsci.plugins.postbuildscript.processor.rules;
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.Role;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -16,7 +16,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RoleRuleTest {
 
     @InjectMocks

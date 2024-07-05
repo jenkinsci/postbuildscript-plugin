@@ -53,6 +53,11 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.3.0
+
+* Upgraded to Jenkins 2.452
+* Upgraded to JUnit 5
+
 ### Version 3.2.0
 
 Dependencies require Jenkins 2.359, so this will be the new base version for the PostBuildScript plugin.

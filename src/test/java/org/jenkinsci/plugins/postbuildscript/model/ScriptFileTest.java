@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 

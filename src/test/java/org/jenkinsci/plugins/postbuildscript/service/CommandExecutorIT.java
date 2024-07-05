@@ -5,35 +5,34 @@ import hudson.Functions;
 import hudson.Launcher.LocalLauncher;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeFalse;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@WithJenkins
 public class CommandExecutorIT {
 
-    @Rule
-    public JenkinsRule jenkinsRule = new JenkinsRule();
     @Mock
     private Logger logger;
     private File scriptFile;
     private CommandExecutor executor;
 
     @Test
-    public void executesCommand() throws Exception {
+    public void executesCommand(JenkinsRule jenkinsRule) throws Exception {
 
         scriptFile = File.createTempFile(CommandExecutorIT.class.getName(), ".script");
         scriptFile.deleteOnExit();
-        givenExecutor();
+        givenExecutor(jenkinsRule);
 
         int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
 
@@ -42,11 +41,11 @@ public class CommandExecutorIT {
     }
 
     @Test
-    public void supportsShebangWithSpacesInFrontOfInterpreter() throws Exception {
+    public void supportsShebangWithSpacesInFrontOfInterpreter(JenkinsRule jenkinsRule) throws Exception {
 
-        assumeFalse(Functions.isWindows());
+        Assumptions.assumeFalse(Functions.isWindows());
         scriptFile = new File(getClass().getResource("/shebang_with_spaces.sh").toURI());
-        givenExecutor();
+        givenExecutor(jenkinsRule);
 
         int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
 
@@ -54,7 +53,7 @@ public class CommandExecutorIT {
 
     }
 
-    private void givenExecutor() {
+    private void givenExecutor(JenkinsRule jenkinsRule) {
         LocalLauncher launcher = jenkinsRule.createLocalLauncher();
         FilePath workspace = new FilePath(scriptFile.getParentFile());
         TaskListener listener = jenkinsRule.createTaskListener();

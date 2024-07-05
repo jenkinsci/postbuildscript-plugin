@@ -7,10 +7,10 @@ import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ConfigurableMatrixAggregatorTest {
 
     @Mock
