@@ -18,10 +18,10 @@
     </description>
 
     <properties>
-        <revision>3.2.0</revision>
+        <revision>3.3.0</revision>
         <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-        <jenkins.version>2.414.3</jenkins.version>
+        <jenkins.version>2.452.2</jenkins.version>
         <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
     </properties>
 
@@ -126,8 +126,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.414.x</artifactId>
-                <version>2982.vdce2153031a_0</version>
+                <artifactId>bom-2.452.x</artifactId>
+                <version>3157.vb_3e8b_8a_d185d</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
