@@ -6,7 +6,7 @@
 [![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/postbuildscript.svg)](http://updates.jenkins-ci.org/download/plugins/postbuildscript)
 [![GitHub contributors](https://img.shields.io/github/contributors/jenkinsci/postbuildscript-plugin.svg)]()
 
-This plugin allows you to run the following actions after a build:
+The PostBuildScript plugin allows you to run the following actions after a build:
 
 * Batch or shell scripts
 * Groovy scripts
