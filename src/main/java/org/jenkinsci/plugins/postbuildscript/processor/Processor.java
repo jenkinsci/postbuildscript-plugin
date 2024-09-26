@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.postbuildscript.processor;
 
 import com.google.common.base.Strings;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -177,11 +178,16 @@ public class Processor {
                 }
 
                 for (BuildStep buildStep : postBuildStep.getBuildSteps()) {
-                    if (!buildStep.perform(build, launcher, listener)) {
-                        everyStepSuccessful = false;
-                        if (postBuildStep.isStopOnFailure()) {
-                            return false;
-                        }
+                    boolean buildSucceed;
+                    try {
+                        buildSucceed = buildStep.perform(build, launcher, listener);
+                    } catch (AbortException e) {
+                        buildSucceed = false;
+                    }
+                    everyStepSuccessful &= buildSucceed;
+
+                    if (!buildSucceed && postBuildStep.isStopOnFailure()) {
+                        return false;
                     }
                 }
             }
