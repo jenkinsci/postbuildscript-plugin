@@ -1,20 +1,19 @@
 package org.jenkinsci.plugins.postbuildscript.processor.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
+import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class ResultRuleTest {
@@ -37,7 +36,6 @@ public class ResultRuleTest {
         boolean actual = resultRule.allows(item, true);
 
         assertThat(actual, is(true));
-
     }
 
     @Test
@@ -48,7 +46,6 @@ public class ResultRuleTest {
         boolean actual = resultRule.allows(item, true);
 
         assertThat(actual, is(false));
-
     }
 
     @Test
@@ -57,7 +54,6 @@ public class ResultRuleTest {
         boolean actual = resultRule.allows(item, true);
 
         assertThat(actual, is(false));
-
     }
 
     @Test
@@ -69,7 +65,5 @@ public class ResultRuleTest {
 
         assertThat(violationMessage, containsString("scriptName"));
         assertThat(violationMessage, containsString("RESULT"));
-
     }
-
 }

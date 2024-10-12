@@ -2,9 +2,8 @@ package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
-import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
-
 import java.io.IOException;
+import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 
 public class Content {
 
@@ -21,5 +20,4 @@ public class Content {
             throw new PostBuildScriptException("Error calling file", ioe);
         }
     }
-
 }

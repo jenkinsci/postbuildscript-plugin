@@ -1,6 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import hudson.model.AbstractBuild;
+import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.junit.jupiter.api.Test;
@@ -8,13 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class GroovyScriptExecutorFactoryTest {
@@ -40,6 +39,5 @@ public class GroovyScriptExecutorFactoryTest {
         GroovyScriptExecutor executor = executorFactory.create(script, Collections.emptyList());
 
         assertThat(executor, is(notNullValue()));
-
     }
 }

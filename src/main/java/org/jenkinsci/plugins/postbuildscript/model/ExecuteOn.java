@@ -4,7 +4,6 @@ package org.jenkinsci.plugins.postbuildscript.model;
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public enum ExecuteOn {
-
     BOTH,
     MATRIX,
     AXES;
@@ -16,5 +15,4 @@ public enum ExecuteOn {
     public boolean axes() {
         return this == AXES || this == BOTH;
     }
-
 }

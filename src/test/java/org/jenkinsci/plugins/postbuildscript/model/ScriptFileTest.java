@@ -1,11 +1,10 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Collections;
+import org.junit.jupiter.api.Test;
 
 public class ScriptFileTest {
 
@@ -15,11 +14,8 @@ public class ScriptFileTest {
     @Test
     public void containsFilePath() {
 
-        ScriptFile scriptFile = new ScriptFile(
-            Collections.singleton(RESULT), FILE_PATH);
+        ScriptFile scriptFile = new ScriptFile(Collections.singleton(RESULT), FILE_PATH);
 
         assertThat(scriptFile.getFilePath(), is(FILE_PATH));
-
     }
-
 }

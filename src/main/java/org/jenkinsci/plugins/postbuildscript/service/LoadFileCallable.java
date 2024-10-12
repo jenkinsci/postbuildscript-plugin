@@ -2,10 +2,9 @@ package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
-import jenkins.MasterToSlaveFileCallable;
-
 import java.io.File;
 import java.io.IOException;
+import jenkins.MasterToSlaveFileCallable;
 
 public class LoadFileCallable extends MasterToSlaveFileCallable<FilePath> {
     private static final long serialVersionUID = -7079515863020025724L;

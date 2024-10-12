@@ -1,5 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -7,6 +14,9 @@ import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript.DescriptorImpl;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
@@ -16,17 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class MatrixPostBuildScriptTest {
@@ -78,7 +77,6 @@ public class MatrixPostBuildScriptTest {
 
         verify(genericScriptFile).setScriptType(ScriptType.GENERIC);
         verify(groovyScriptFile).setScriptType(ScriptType.GROOVY);
-
     }
 
     @Test
@@ -91,7 +89,6 @@ public class MatrixPostBuildScriptTest {
         MatrixAggregator aggregator = matrixPostBuildScript.createAggregator(matrixBuild, launcher, listener);
 
         assertThat(aggregator, is(notNullValue()));
-
     }
 
     @Test
@@ -100,7 +97,6 @@ public class MatrixPostBuildScriptTest {
         givenDescriptor();
 
         assertThat(descriptor.getHelpFile(), is("/plugin/postbuildscript/help/postbuildscript.html"));
-
     }
 
     @Test
@@ -110,21 +106,18 @@ public class MatrixPostBuildScriptTest {
 
         Class<? extends AbstractProject> jobType = MatrixProject.class;
         assertThat(descriptor.isApplicable(jobType), is(true));
-
     }
 
     private void givenMatrixPostBuildScript() {
         matrixPostBuildScript = new MatrixPostBuildScript(
-            Collections.singleton(genericScriptFile),
-            Collections.singleton(groovyScriptFile),
-            Collections.singleton(script),
-            Collections.singleton(postBuildStep),
-            true
-        );
+                Collections.singleton(genericScriptFile),
+                Collections.singleton(groovyScriptFile),
+                Collections.singleton(script),
+                Collections.singleton(postBuildStep),
+                true);
     }
 
     private void givenDescriptor() {
         descriptor = new DescriptorImpl();
     }
-
 }

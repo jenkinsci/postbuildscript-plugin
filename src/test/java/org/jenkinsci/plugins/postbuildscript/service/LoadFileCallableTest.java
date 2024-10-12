@@ -1,17 +1,16 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
+import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class LoadFileCallableTest {
@@ -22,22 +21,19 @@ public class LoadFileCallableTest {
     @Test
     public void fileExists() throws Exception {
 
-        File tempFile = File.createTempFile(LoadFileCallableTest.class.getName(),
-            ".txt");
+        File tempFile = File.createTempFile(LoadFileCallableTest.class.getName(), ".txt");
         tempFile.deleteOnExit();
 
         LoadFileCallable callable = new LoadFileCallable(tempFile.getPath(), null);
         FilePath filePath = callable.invoke(null, virtualChannel);
 
         assertThat(filePath.getRemote(), is(tempFile.getPath()));
-
     }
 
     @Test
     public void fileExistsInWorkspace() throws Exception {
 
-        File tempFile = File.createTempFile(LoadFileCallableTest.class.getName(),
-            ".txt");
+        File tempFile = File.createTempFile(LoadFileCallableTest.class.getName(), ".txt");
         tempFile.deleteOnExit();
 
         FilePath workspace = new FilePath(tempFile.getParentFile());
@@ -46,7 +42,6 @@ public class LoadFileCallableTest {
         FilePath filePath = callable.invoke(null, virtualChannel);
 
         assertThat(filePath.getRemote(), is(tempFile.getPath()));
-
     }
 
     @Test
@@ -58,7 +53,5 @@ public class LoadFileCallableTest {
         FilePath filePath = callable.invoke(null, virtualChannel);
 
         assertThat(filePath, is(nullValue()));
-
     }
-
 }

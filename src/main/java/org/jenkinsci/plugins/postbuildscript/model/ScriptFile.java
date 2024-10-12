@@ -1,9 +1,8 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
+import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import java.util.Collection;
 
 public class ScriptFile extends PostBuildItem {
 

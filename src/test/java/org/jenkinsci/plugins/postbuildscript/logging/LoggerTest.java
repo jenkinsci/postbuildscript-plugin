@@ -1,23 +1,22 @@
 package org.jenkinsci.plugins.postbuildscript.logging;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class LoggerTest {
@@ -28,11 +27,14 @@ public class LoggerTest {
 
     @Mock
     private TaskListener taskListener;
+
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
     @Mock
     private AbstractBuild<?, ?> build;
 
     private Logger logger;
+
     @Mock
     private EnvVars envVars;
 
@@ -44,8 +46,6 @@ public class LoggerTest {
         logger = new Logger(taskListener, build);
     }
 
-
-
     @Test
     public void prefixesInfoMessages() throws IOException {
 
@@ -55,7 +55,6 @@ public class LoggerTest {
 
         out.flush();
         assertThat(out.toString(), is("[PostBuildScript] - [INFO] message" + NEW_LINE));
-
     }
 
     @Test
@@ -67,7 +66,6 @@ public class LoggerTest {
 
         out.flush();
         assertThat(out.toString(), is("[PostBuildScript] - [ERROR] message" + NEW_LINE));
-
     }
 
     @Test
@@ -78,8 +76,10 @@ public class LoggerTest {
         logger.error(MESSAGE, new RuntimeException("Test exception message"));
 
         out.flush();
-        assertThat(out.toString(), startsWith("[PostBuildScript] - [ERROR] message" + NEW_LINE + "java.lang.RuntimeException: Test exception message"));
-
+        assertThat(
+                out.toString(),
+                startsWith("[PostBuildScript] - [ERROR] message" + NEW_LINE
+                        + "java.lang.RuntimeException: Test exception message"));
     }
 
     @Test
@@ -88,11 +88,9 @@ public class LoggerTest {
         String fullyQualifiedCallerName = logger.getFullyQualifiedCallerName();
 
         assertThat(fullyQualifiedCallerName, is("org.jenkinsci.plugins.postbuildscript.logging.Logger"));
-
     }
 
-    private void givenPrintStream()  {
+    private void givenPrintStream() {
         given(taskListener.getLogger()).willReturn(new PrintStream(out, false, StandardCharsets.UTF_8));
     }
-
 }

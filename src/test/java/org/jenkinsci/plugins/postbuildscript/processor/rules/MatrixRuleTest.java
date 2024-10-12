@@ -1,16 +1,16 @@
 package org.jenkinsci.plugins.postbuildscript.processor.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import org.jenkinsci.plugins.postbuildscript.model.ExecuteOn;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class MatrixRuleTest {
@@ -28,7 +28,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, false);
 
         assertThat(actual, is(true));
-
     }
 
     @Test
@@ -39,7 +38,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, true);
 
         assertThat(actual, is(true));
-
     }
 
     @Test
@@ -50,7 +48,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, false);
 
         assertThat(actual, is(true));
-
     }
 
     @Test
@@ -61,7 +58,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, true);
 
         assertThat(actual, is(true));
-
     }
 
     @Test
@@ -72,7 +68,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, true);
 
         assertThat(actual, is(false));
-
     }
 
     @Test
@@ -83,7 +78,6 @@ public class MatrixRuleTest {
         boolean actual = matrixRule.allows(item, false);
 
         assertThat(actual, is(false));
-
     }
 
     @Test
@@ -95,7 +89,6 @@ public class MatrixRuleTest {
 
         assertThat(violationMessage, containsString("scriptName"));
         assertThat(violationMessage, containsString("MATRIX"));
-
     }
 
     @Test
@@ -107,7 +100,5 @@ public class MatrixRuleTest {
 
         assertThat(violationMessage, containsString("scriptName"));
         assertThat(violationMessage, containsString("AXES"));
-
     }
-
 }

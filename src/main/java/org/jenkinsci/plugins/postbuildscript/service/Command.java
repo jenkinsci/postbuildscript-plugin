@@ -1,9 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 public class Command {
 
@@ -65,7 +68,7 @@ public class Command {
             throw new IllegalArgumentException("Missing closing \" in " + command + " -- " + tokens);
         }
         if (index == command.length() && singleHyphenOpen) {
-            throw new IllegalArgumentException("Missing closing ' in " + command  + " -- " + tokens);
+            throw new IllegalArgumentException("Missing closing ' in " + command + " -- " + tokens);
         }
         if (currentToken.length() > 0) {
             tokens.add(currentToken.toString());

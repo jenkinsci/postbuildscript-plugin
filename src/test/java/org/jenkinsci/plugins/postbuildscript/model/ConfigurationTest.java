@@ -1,16 +1,15 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.BDDMockito.given;
+
+import java.util.Collections;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class ConfigurationTest {
@@ -33,9 +32,7 @@ public class ConfigurationTest {
 
         assertThat(configuration.getBuildSteps(), contains(postBuildStep));
         assertThat(configuration.buildStepIndexOf(postBuildStep), is(0));
-
     }
-
 
     @Test
     public void addsBuildSteps() {
@@ -44,7 +41,6 @@ public class ConfigurationTest {
 
         assertThat(configuration.getBuildSteps(), contains(postBuildStep));
         assertThat(configuration.buildStepIndexOf(postBuildStep), is(0));
-
     }
 
     @Test
@@ -53,7 +49,6 @@ public class ConfigurationTest {
         configuration.setMarkBuildUnstable(true);
 
         assertThat(configuration.isMarkBuildUnstable(), is(true));
-
     }
 
     @Test
@@ -65,9 +60,7 @@ public class ConfigurationTest {
 
         assertThat(configuration.getScriptFiles(ScriptType.GENERIC), contains(scriptFile));
         assertThat(configuration.scriptFileIndexOf(scriptFile), is(0));
-
     }
-
 
     @Test
     public void addsGroovyScripts() {
@@ -76,7 +69,6 @@ public class ConfigurationTest {
 
         assertThat(configuration.getGroovyScripts(), contains(script));
         assertThat(configuration.groovyScriptIndexOf(script), is(0));
-
     }
 
     @Test
@@ -88,8 +80,5 @@ public class ConfigurationTest {
 
         assertThat(configuration.getScriptFiles(ScriptType.GROOVY), contains(scriptFile));
         assertThat(configuration.scriptFileIndexOf(scriptFile), is(0));
-
     }
-
-
 }

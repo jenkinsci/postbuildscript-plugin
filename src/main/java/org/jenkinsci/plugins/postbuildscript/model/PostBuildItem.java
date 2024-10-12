@@ -2,12 +2,11 @@ package org.jenkinsci.plugins.postbuildscript.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.kohsuke.stapler.DataBoundSetter;
 
 public class PostBuildItem {
 
@@ -77,5 +76,4 @@ public class PostBuildItem {
         }
         return this;
     }
-
 }

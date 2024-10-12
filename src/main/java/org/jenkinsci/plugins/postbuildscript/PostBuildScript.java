@@ -9,34 +9,38 @@ import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.tasks.*;
-import org.jenkinsci.plugins.postbuildscript.model.*;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
+import hudson.tasks.Publisher;
+import java.util.Collection;
+import java.util.List;
+import org.jenkinsci.plugins.postbuildscript.model.Configuration;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.util.*;
-
 
 /**
  * @author Gregory Boissinot
  */
 public class PostBuildScript extends Notifier
-    // MatrixAggregatable is needed for migration of old plugin version configurations (< 1.0.0), see JENKINS-53691
-    // TODO Remove, if there are no 0.18.x installations left
-    implements MatrixAggregatable {
+        // MatrixAggregatable is needed for migration of old plugin version configurations (< 1.0.0), see JENKINS-53691
+        // TODO Remove, if there are no 0.18.x installations left
+        implements MatrixAggregatable {
 
     private Configuration config = new Configuration();
 
     @DataBoundConstructor
     public PostBuildScript(
-        Collection<ScriptFile> genericScriptFiles,
-        Collection<ScriptFile> groovyScriptFiles,
-        Collection<Script> groovyScripts,
-        Collection<PostBuildStep> buildSteps,
-        boolean markBuildUnstable
-    ) {
+            Collection<ScriptFile> genericScriptFiles,
+            Collection<ScriptFile> groovyScriptFiles,
+            Collection<Script> groovyScripts,
+            Collection<PostBuildStep> buildSteps,
+            boolean markBuildUnstable) {
 
         addScriptFiles(genericScriptFiles, ScriptType.GENERIC);
         addScriptFiles(groovyScriptFiles, ScriptType.GROOVY);
@@ -50,7 +54,6 @@ public class PostBuildScript extends Notifier
         }
 
         config.setMarkBuildUnstable(markBuildUnstable);
-
     }
 
     void addScriptFiles(Collection<? extends ScriptFile> scriptFiles, ScriptType scriptType) {
@@ -68,11 +71,7 @@ public class PostBuildScript extends Notifier
     }
 
     @Override
-    public boolean perform(
-        AbstractBuild<?, ?> build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         Processor processor = createProcessor(build, launcher, listener);
         return processor.process();
     }
@@ -109,19 +108,9 @@ public class PostBuildScript extends Notifier
     }
 
     @Override
-    public MatrixAggregator createAggregator(
-        MatrixBuild build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
         ProcessorFactory processorFactory = createProcessorFactory();
-        return new ConfigurableMatrixAggregator(
-            build,
-            launcher,
-            listener,
-            processorFactory,
-            getClass()
-        );
+        return new ConfigurableMatrixAggregator(build, launcher, listener, processorFactory, getClass());
     }
 
     @Extension
@@ -135,15 +124,12 @@ public class PostBuildScript extends Notifier
 
         @Override
         public String getHelpFile() {
-            return "/plugin/postbuildscript/help/postbuildscript.html"; //NON-NLS
+            return "/plugin/postbuildscript/help/postbuildscript.html"; // NON-NLS
         }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
-
     }
-
 }
-

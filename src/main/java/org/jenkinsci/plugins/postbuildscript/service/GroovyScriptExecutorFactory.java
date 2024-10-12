@@ -1,10 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.model.AbstractBuild;
+import java.util.List;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
-
-import java.util.List;
 
 public class GroovyScriptExecutorFactory {
 

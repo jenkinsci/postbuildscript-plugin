@@ -1,25 +1,24 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
+import java.io.IOException;
+import java.io.PrintStream;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.IOException;
-import java.io.PrintStream;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 public class ConfigurableMatrixAggregatorTest {
@@ -62,7 +61,6 @@ public class ConfigurableMatrixAggregatorTest {
 
         thenProcesses();
         thenContinuesBuild();
-
     }
 
     @Test
@@ -75,7 +73,6 @@ public class ConfigurableMatrixAggregatorTest {
         assertThat(canContinue, is(true));
         verify(logger).println();
         verifyNoMoreInteractions(run);
-
     }
 
     private void thenProcesses() {
@@ -91,12 +88,7 @@ public class ConfigurableMatrixAggregatorTest {
         given(envVars.get("POSTBUILDSCRIPT_VERBOSE", "false")).willReturn("true");
         given(listener.getLogger()).willReturn(logger);
         aggregator = new ConfigurableMatrixAggregator(
-            build,
-            launcher,
-            listener,
-            processorFactory,
-            MatrixPostBuildScript.class
-        );
+                build, launcher, listener, processorFactory, MatrixPostBuildScript.class);
     }
 
     private void givenWillProcess() {
@@ -110,5 +102,4 @@ public class ConfigurableMatrixAggregatorTest {
     private void thenContinuesBuild() {
         assertThat(processed, is(true));
     }
-
 }
