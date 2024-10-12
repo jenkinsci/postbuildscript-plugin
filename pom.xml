@@ -100,7 +100,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>3.4.0</revision>
+    <revision>3.4.1</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
     <jenkins.version>2.462.3</jenkins.version>

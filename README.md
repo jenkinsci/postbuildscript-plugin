@@ -53,6 +53,10 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.4.1
+
+* [Allows to cancel the job without build failure](https://github.com/jenkinsci/postbuildscript-plugin/pull/219)
+
 ### Version 3.4.0
 
 * Upgraded to Jenkins Plugin POM 5.1
