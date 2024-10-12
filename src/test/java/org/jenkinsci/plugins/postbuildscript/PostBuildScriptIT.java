@@ -1,9 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import hudson.AbortException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import hudson.Functions;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -46,6 +46,7 @@ public class PostBuildScriptIT {
     private final Collection<BuildStep> buildSteps = new ArrayList<>();
     private TestBuildStep firstBuildStep;
     private TestBuildStep secondBuildStep;
+    private TestAbortingBuildStep abortingBuildStep;
 
     @Test
     public void executesShellScriptFile(JenkinsRule jenkinsRule) throws Exception {
@@ -111,6 +112,7 @@ public class PostBuildScriptIT {
     @Test
     public void executesPostBuildStepRegardlessOfFailures(JenkinsRule jenkinsRule) throws Exception {
 
+        givenAbortingBuildStep();
         givenFailingFirstBuildStep();
         givenSecondBuildStep();
         givenPostBuildStep(false);
@@ -136,6 +138,19 @@ public class PostBuildScriptIT {
         Assertions.assertEquals(0, secondBuildStep.getInvocations());
     }
 
+    @Test
+    public void handlesAbortException(JenkinsRule jenkinsRule) throws Exception {
+        givenAbortingBuildStep();
+        givenSecondBuildStep();
+        givenPostBuildStep(true);
+
+        whenBuilt(jenkinsRule);
+
+        thenNoProblemOccured(jenkinsRule);
+        thenFailedBuild();
+        Assertions.assertEquals(0, secondBuildStep.getInvocations());
+    }
+
     private void givenSuccessfulFirstBuildStep() {
         firstBuildStep = new TestBuildStep(true);
         buildSteps.add(firstBuildStep);
@@ -149,6 +164,11 @@ public class PostBuildScriptIT {
     private void givenSecondBuildStep() {
         secondBuildStep = new TestBuildStep(false);
         buildSteps.add(secondBuildStep);
+    }
+
+    private void givenAbortingBuildStep() {
+        abortingBuildStep = new TestAbortingBuildStep();
+        buildSteps.add( abortingBuildStep );
     }
 
     private void givenPostBuildStep(boolean stopOnFailure) {
@@ -194,6 +214,10 @@ public class PostBuildScriptIT {
         assertThat(build.getResult(), is(Result.FAILURE));
     }
 
+    private void thenNoProblemOccured(JenkinsRule jenkinsRule) throws IOException {
+        jenkinsRule.assertLogNotContains(Messages.PostBuildScript_ProblemOccured(), build);
+    }
+
     private static class TestBuildStep extends TestBuilder {
         private final boolean result;
         private volatile int invocations;
@@ -211,5 +235,14 @@ public class PostBuildScriptIT {
             invocations += 1;
             return result;
         }
+    }
+
+    private static class TestAbortingBuildStep extends TestBuilder {
+
+        @Override
+        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws AbortException {
+            throw new AbortException();
+        }
+
     }
 }
