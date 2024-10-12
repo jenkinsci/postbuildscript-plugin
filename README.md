@@ -53,6 +53,12 @@ the PR from the JIRA issue.
 
 ## Release Notes
 
+### Version 3.4.0
+
+* Upgraded to Jenkins Plugin POM 5.1
+* Upgraded to Jenkins 2.462.3
+* Reformatted source code with Spotless
+
 ### Version 3.3.0
 
 * Upgraded to Jenkins 2.452

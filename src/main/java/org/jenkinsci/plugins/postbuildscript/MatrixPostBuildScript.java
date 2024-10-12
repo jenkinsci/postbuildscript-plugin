@@ -11,6 +11,7 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
+import java.util.Collection;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
@@ -18,43 +19,26 @@ import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.util.Collection;
-
 public class MatrixPostBuildScript extends PostBuildScript {
 
     @DataBoundConstructor
     public MatrixPostBuildScript(
-        Collection<ScriptFile> genericScriptFiles,
-        Collection<ScriptFile> groovyScriptFiles,
-        Collection<Script> groovyScripts,
-        Collection<PostBuildStep> buildSteps,
-        boolean markBuildUnstable
-    ) {
+            Collection<ScriptFile> genericScriptFiles,
+            Collection<ScriptFile> groovyScriptFiles,
+            Collection<Script> groovyScripts,
+            Collection<PostBuildStep> buildSteps,
+            boolean markBuildUnstable) {
         super(genericScriptFiles, groovyScriptFiles, groovyScripts, buildSteps, markBuildUnstable);
     }
 
     @Override
-    public MatrixAggregator createAggregator(
-        MatrixBuild build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
         ProcessorFactory processorFactory = createProcessorFactory();
-        return new ConfigurableMatrixAggregator(
-            build,
-            launcher,
-            listener,
-            processorFactory,
-            getClass()
-        );
+        return new ConfigurableMatrixAggregator(build, launcher, listener, processorFactory, getClass());
     }
 
     @Override
-    public boolean perform(
-        AbstractBuild<?, ?> build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         ProcessorFactory processorFactory = createProcessorFactory();
         Processor processor = processorFactory.createMatrixProcessor(build, launcher, listener);
         return processor.process();
@@ -71,7 +55,7 @@ public class MatrixPostBuildScript extends PostBuildScript {
 
         @Override
         public String getHelpFile() {
-            return "/plugin/postbuildscript/help/postbuildscript.html"; //NON-NLS
+            return "/plugin/postbuildscript/help/postbuildscript.html"; // NON-NLS
         }
 
         @Override
@@ -79,5 +63,4 @@ public class MatrixPostBuildScript extends PostBuildScript {
             return MatrixProject.class.isAssignableFrom(jobType);
         }
     }
-
 }

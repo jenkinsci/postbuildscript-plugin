@@ -1,14 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript.logging;
 
+import hudson.model.AbstractBuild;
+import hudson.model.TaskListener;
+import java.io.PrintStream;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.LegacyAbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
-
-import java.io.PrintStream;
-
-import hudson.model.AbstractBuild;
-import hudson.model.TaskListener;
 
 /**
  * @author Daniel Heid
@@ -26,8 +24,8 @@ public class Logger extends LegacyAbstractLogger {
         this.listener = listener;
         try {
             verbose = Boolean.parseBoolean(
-                build.getEnvironment(listener).get("POSTBUILDSCRIPT_VERBOSE", "false") //NON-NLS
-            );
+                    build.getEnvironment(listener).get("POSTBUILDSCRIPT_VERBOSE", "false") // NON-NLS
+                    );
         } catch (Exception e) {
             throw new LoggerInitializationException(e);
         }
@@ -43,9 +41,10 @@ public class Logger extends LegacyAbstractLogger {
     }
 
     @Override
-    protected void handleNormalizedLoggingCall(Level level, Marker marker, String messagePattern, Object[] arguments, Throwable throwable) {
+    protected void handleNormalizedLoggingCall(
+            Level level, Marker marker, String messagePattern, Object[] arguments, Throwable throwable) {
         PrintStream logger = listener.getLogger();
-        logger.print("[PostBuildScript] - "); //NON-NLS
+        logger.print("[PostBuildScript] - "); // NON-NLS
         logger.print('[');
         logger.print(level.name());
         logger.print("] ");
@@ -79,5 +78,4 @@ public class Logger extends LegacyAbstractLogger {
     public boolean isWarnEnabled() {
         return true;
     }
-
 }

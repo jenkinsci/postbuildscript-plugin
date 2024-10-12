@@ -35,8 +35,8 @@ public class Configuration {
 
     public List<ScriptFile> getScriptFiles(ScriptType scriptType) {
         return scriptFiles.stream()
-            .filter(scriptFile -> scriptFile.getScriptType() == scriptType)
-            .collect(Collectors.toList());
+                .filter(scriptFile -> scriptFile.getScriptType() == scriptType)
+                .collect(Collectors.toList());
     }
 
     public int scriptFileIndexOf(ScriptFile scriptFile) {
@@ -66,5 +66,4 @@ public class Configuration {
     public void addBuildStep(PostBuildStep postBuildStep) {
         buildSteps.add(postBuildStep);
     }
-
 }

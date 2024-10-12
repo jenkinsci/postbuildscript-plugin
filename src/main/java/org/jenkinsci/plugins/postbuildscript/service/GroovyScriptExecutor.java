@@ -5,13 +5,12 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.postbuildscript.logging.Logger;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.jenkinsci.plugins.postbuildscript.logging.Logger;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 
 public class GroovyScriptExecutor {
 
@@ -36,14 +35,14 @@ public class GroovyScriptExecutor {
         if (build != null) {
             FilePath workspace = build.getWorkspace();
             if (workspace != null && workspace.getRemote() != null) {
-                binding.setVariable("workspace", new File(workspace.getRemote())); //NON-NLS
+                binding.setVariable("workspace", new File(workspace.getRemote())); // NON-NLS
             }
-            binding.setVariable("build", build); //NON-NLS
+            binding.setVariable("build", build); // NON-NLS
         }
 
-        binding.setVariable("log", log); //NON-NLS
-        binding.setVariable("out", log.getListener().getLogger()); //NON-NLS
-        binding.setVariable("args", arguments); //NON-NLS
+        binding.setVariable("log", log); // NON-NLS
+        binding.setVariable("out", log.getListener().getLogger()); // NON-NLS
+        binding.setVariable("args", arguments); // NON-NLS
 
         ClassLoader classLoader = getClass().getClassLoader();
         secureGroovyScript.evaluate(classLoader, binding, log.getListener());

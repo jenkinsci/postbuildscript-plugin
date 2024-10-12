@@ -10,19 +10,23 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
-import org.jenkinsci.plugins.postbuildscript.model.*;
+import org.jenkinsci.plugins.postbuildscript.model.Configuration;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptType;
 import org.jenkinsci.plugins.postbuildscript.processor.rules.ExecutionRule;
 import org.jenkinsci.plugins.postbuildscript.service.Command;
 import org.jenkinsci.plugins.postbuildscript.service.CommandExecutor;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptExecutorFactory;
 import org.jenkinsci.plugins.postbuildscript.service.GroovyScriptPreparer;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class Processor {
 
@@ -33,19 +37,13 @@ public class Processor {
     private final Logger logger;
     private final Collection<ExecutionRule> rules = new ArrayList<>();
 
-    public Processor(
-        AbstractBuild<?, ?> build,
-        Launcher launcher,
-        BuildListener listener,
-        Configuration config
-    ) {
+    public Processor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener, Configuration config) {
         this.build = build;
         Result result = build.getResult();
         if (result == null) {
             this.launcher = launcher;
         } else {
-            this.launcher = launcher.decorateByEnv(
-                new EnvVars("BUILD_RESULT", result.toString())); //NON-NLS
+            this.launcher = launcher.decorateByEnv(new EnvVars("BUILD_RESULT", result.toString())); // NON-NLS
         }
         this.listener = listener;
         this.config = config;
@@ -88,8 +86,8 @@ public class Processor {
     private boolean processScripts(boolean endOfMatrixBuild) throws PostBuildScriptException {
         @SuppressWarnings("NonShortCircuitBooleanExpression")
         boolean everyScriptSuccessful = processScriptFiles(endOfMatrixBuild)
-            & processGroovyScripts(endOfMatrixBuild)
-            & processBuildSteps(endOfMatrixBuild);
+                & processGroovyScripts(endOfMatrixBuild)
+                & processBuildSteps(endOfMatrixBuild);
         return everyScriptSuccessful || failOrUnstable();
     }
 
@@ -154,15 +152,13 @@ public class Processor {
                     everyStepSuccessful = false;
                 }
             }
-
         }
         return everyStepSuccessful;
     }
 
     private GroovyScriptPreparer createGroovyScriptPreparer() {
         FilePath workspace = build.getWorkspace();
-        GroovyScriptExecutorFactory executorFactory =
-            new GroovyScriptExecutorFactory(build, logger);
+        GroovyScriptExecutorFactory executorFactory = new GroovyScriptExecutorFactory(build, logger);
         return new GroovyScriptPreparer(logger, workspace, executorFactory);
     }
 
@@ -171,8 +167,7 @@ public class Processor {
         try {
             boolean everyStepSuccessful = true;
             for (PostBuildStep postBuildStep : config.getBuildSteps()) {
-                String scriptName = Messages.PostBuildScript_BuildStep(
-                    config.buildStepIndexOf(postBuildStep));
+                String scriptName = Messages.PostBuildScript_BuildStep(config.buildStepIndexOf(postBuildStep));
                 if (violatesAnyRule(postBuildStep, scriptName, endOfMatrixBuild)) {
                     continue;
                 }
@@ -200,16 +195,10 @@ public class Processor {
     private boolean violatesAnyRule(PostBuildItem item, String scriptName, boolean endOfMatrixBuild) {
         for (ExecutionRule rule : rules) {
             if (!rule.allows(item, endOfMatrixBuild)) {
-                logger.info(
-                    rule.formatViolationMessage(
-                        item,
-                        scriptName
-                    )
-                );
+                logger.info(rule.formatViolationMessage(item, scriptName));
                 return true;
             }
         }
         return false;
     }
-
 }

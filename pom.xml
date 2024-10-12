@@ -1,169 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>plugin</artifactId>
-        <version>4.88</version>
-    </parent>
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>5.1</version>
+  </parent>
 
-    <artifactId>postbuildscript</artifactId>
-    <packaging>hpi</packaging>
-    <name>Jenkins PostBuildScript Plugin</name>
-    <version>${revision}-${changelist}</version>
-    <url>https://plugins.jenkins.io/postbuildscript</url>
-    <inceptionYear>2011</inceptionYear>
-    <description>A plugin for the Jenkins CI to run several configurable actions after
-        a build, depending on the build result.
-    </description>
+  <artifactId>postbuildscript</artifactId>
+  <version>${revision}-${changelist}</version>
+  <packaging>hpi</packaging>
+  <name>Jenkins PostBuildScript Plugin</name>
+  <description>A plugin for the Jenkins CI to run several configurable actions after
+        a build, depending on the build result.</description>
+  <url>https://plugins.jenkins.io/postbuildscript</url>
+  <inceptionYear>2011</inceptionYear>
 
-    <properties>
-        <revision>3.3.0</revision>
-        <changelist>999999-SNAPSHOT</changelist>
-        <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-        <jenkins.version>2.452.2</jenkins.version>
-        <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
-    </properties>
+  <licenses>
+    <license>
+      <name>MIT license</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <comments>All source code is under the MIT license.</comments>
+    </license>
+  </licenses>
 
-    <issueManagement>
-        <system>jira</system>
-        <url>https://issues.jenkins-ci.org/browse</url>
-    </issueManagement>
+  <developers>
+    <developer>
+      <id>gbois</id>
+      <name>Gregory Boissinot</name>
+      <roles>
+        <role>Initiator and previous maintainer (until 2015)</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>dheid</id>
+      <name>Daniel Heid</name>
+      <email>mail@daniel-heid.de</email>
+      <url>https://www.daniel-heid.de/</url>
+      <roles>
+        <role>Maintainer (since 2017)</role>
+      </roles>
+    </developer>
+  </developers>
 
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/</url>
-        <notifiers>
-            <notifier>
-                <address>mail@daniel-heid.de</address>
-            </notifier>
-        </notifiers>
-    </ciManagement>
+  <contributors>
+    <contributor>
+      <name>Nicolas De loof</name>
+      <url>https://blog.loof.fr</url>
+      <organization>CloudBees</organization>
+      <organizationUrl>https://www.cloudbees.com/</organizationUrl>
+    </contributor>
+    <contributor>
+      <name>Simon Edwardsson</name>
+    </contributor>
+    <contributor>
+      <name>ChakaZulu</name>
+    </contributor>
+    <contributor>
+      <name>Rob Petti</name>
+      <url>http://robpetti.com</url>
+      <organization>OpenText</organization>
+      <organizationUrl>https://www.opentext.com/</organizationUrl>
+    </contributor>
+    <contributor>
+      <name>Markus Alexander Kuppe</name>
+      <url>https://www.lemmster.de/</url>
+    </contributor>
+    <contributor>
+      <name>Dan Clayton</name>
+    </contributor>
+  </contributors>
 
-    <distributionManagement>
-        <downloadUrl>https://updates.jenkins-ci.org/download/plugins/postbuildscript</downloadUrl>
-    </distributionManagement>
+  <scm>
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <tag>${scmTag}</tag>
+    <url>https://github.com/${gitHubRepo}</url>
+  </scm>
 
-    <licenses>
-        <license>
-            <name>MIT license</name>
-            <comments>All source code is under the MIT license.</comments>
-            <url>https://opensource.org/licenses/MIT</url>
-        </license>
-    </licenses>
+  <issueManagement>
+    <system>jira</system>
+    <url>https://issues.jenkins-ci.org/browse</url>
+  </issueManagement>
 
-    <developers>
-        <developer>
-            <id>gbois</id>
-            <name>Gregory Boissinot</name>
-            <timezone>+1</timezone>
-            <roles>
-                <role>Initiator and previous maintainer (until 2015)</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>dheid</id>
-            <name>Daniel Heid</name>
-            <email>mail@daniel-heid.de</email>
-            <url>https://www.daniel-heid.de/</url>
-            <roles>
-                <role>Maintainer (since 2017)</role>
-            </roles>
-        </developer>
-    </developers>
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://ci.jenkins.io/job/Plugins/job/postbuildscript-plugin/</url>
+    <notifiers>
+      <notifier>
+        <address>mail@daniel-heid.de</address>
+      </notifier>
+    </notifiers>
+  </ciManagement>
 
-    <contributors>
-        <contributor>
-            <name>Nicolas De loof</name>
-            <url>https://blog.loof.fr</url>
-            <organization>CloudBees</organization>
-            <organizationUrl>https://www.cloudbees.com/</organizationUrl>
-        </contributor>
-        <contributor>
-            <name>Simon Edwardsson</name>
-        </contributor>
-        <contributor>
-            <name>ChakaZulu</name>
-        </contributor>
-        <contributor>
-            <name>Rob Petti</name>
-            <url>http://robpetti.com</url>
-            <organization>OpenText</organization>
-            <organizationUrl>https://www.opentext.com/</organizationUrl>
-        </contributor>
-        <contributor>
-            <name>Markus Alexander Kuppe</name>
-            <url>https://www.lemmster.de/</url>
-        </contributor>
-        <contributor>
-            <name>Dan Clayton</name>
-        </contributor>
-    </contributors>
+  <distributionManagement>
+    <downloadUrl>https://updates.jenkins-ci.org/download/plugins/postbuildscript</downloadUrl>
+  </distributionManagement>
 
-    <scm>
-        <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
-        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-        <url>https://github.com/${gitHubRepo}</url>
-        <tag>${scmTag}</tag>
-    </scm>
+  <properties>
+    <revision>3.4.0</revision>
+    <changelist>999999-SNAPSHOT</changelist>
+    <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
+    <jenkins.version>2.462.3</jenkins.version>
+    <jenkins-test-harness.version>2228.v919b_5883c444</jenkins-test-harness.version>
+    <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
+  </properties>
 
+  <dependencyManagement>
     <dependencies>
-
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>matrix-project</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.462.x</artifactId>
+        <version>3387.v0f2773fa_3200</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
+  </dependencyManagement>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.452.x</artifactId>
-                <version>3387.v0f2773fa_3200</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+  <dependencies>
 
-    <repositories>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-        </repository>
-    </repositories>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-project</artifactId>
+    </dependency>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
-

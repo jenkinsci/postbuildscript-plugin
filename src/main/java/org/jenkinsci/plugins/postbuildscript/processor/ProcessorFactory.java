@@ -16,25 +16,16 @@ public class ProcessorFactory {
         this.config = config;
     }
 
-    public Processor createDefaultProcessor(
-        AbstractBuild<?, ?> build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public Processor createDefaultProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         Processor processor = new Processor(build, launcher, listener, config);
         processor.addRule(new RoleRule(build));
         processor.addRule(new ResultRule(build));
         return processor;
     }
 
-    public Processor createMatrixProcessor(
-        AbstractBuild<?, ?> build,
-        Launcher launcher,
-        BuildListener listener
-    ) {
+    public Processor createMatrixProcessor(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         Processor processor = createDefaultProcessor(build, launcher, listener);
         processor.addRule(new MatrixRule());
         return processor;
     }
-
 }

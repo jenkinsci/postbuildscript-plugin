@@ -1,5 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
@@ -8,14 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class PostBuildScriptTest {
@@ -41,12 +40,11 @@ public class PostBuildScriptTest {
         given(groovyScriptFile.getScriptType()).willReturn(ScriptType.GROOVY);
 
         postBuildScript = new PostBuildScript(
-            Collections.singleton(genericScriptFile),
-            Collections.singleton(groovyScriptFile),
-            Collections.singleton(script),
-            Collections.singleton(postBuildStep),
-            true
-        );
+                Collections.singleton(genericScriptFile),
+                Collections.singleton(groovyScriptFile),
+                Collections.singleton(script),
+                Collections.singleton(postBuildStep),
+                true);
 
         assertThat(postBuildScript.getGenericScriptFiles(), contains(genericScriptFile));
         assertThat(postBuildScript.getGroovyScriptFiles(), contains(groovyScriptFile));
@@ -56,7 +54,5 @@ public class PostBuildScriptTest {
 
         verify(genericScriptFile).setScriptType(ScriptType.GENERIC);
         verify(groovyScriptFile).setScriptType(ScriptType.GROOVY);
-
     }
-
 }

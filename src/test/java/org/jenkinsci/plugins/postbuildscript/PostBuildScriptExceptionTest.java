@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class PostBuildScriptExceptionTest {
@@ -22,7 +22,6 @@ public class PostBuildScriptExceptionTest {
         PostBuildScriptException exception = new PostBuildScriptException(MESSAGE);
 
         assertThat(exception.getMessage(), is(MESSAGE));
-
     }
 
     @Test
@@ -32,7 +31,6 @@ public class PostBuildScriptExceptionTest {
 
         assertThat(exception.getMessage(), is(MESSAGE));
         assertThat(exception.getCause(), is(cause));
-
     }
 
     @Test
@@ -41,7 +39,5 @@ public class PostBuildScriptExceptionTest {
         PostBuildScriptException exception = new PostBuildScriptException(cause);
 
         assertThat(exception.getCause(), is(cause));
-
     }
-
 }

@@ -1,10 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
 import hudson.Util;
+import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import java.util.Collection;
 
 public class Script extends PostBuildItem {
 
@@ -30,5 +29,4 @@ public class Script extends PostBuildItem {
     public boolean isSandboxed() {
         return sandboxed;
     }
-
 }

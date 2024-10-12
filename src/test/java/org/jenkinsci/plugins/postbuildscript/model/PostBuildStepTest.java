@@ -1,17 +1,16 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+
 import hudson.tasks.BuildStep;
+import java.util.Collections;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 
 @ExtendWith(MockitoExtension.class)
 public class PostBuildStepTest {
@@ -24,11 +23,8 @@ public class PostBuildStepTest {
     @Test
     public void containsBuildSteps() {
 
-        PostBuildStep postBuildStep = new PostBuildStep(
-            Collections.singleton(RESULT),
-            Collections.singleton(buildStep),
-            false
-        );
+        PostBuildStep postBuildStep =
+                new PostBuildStep(Collections.singleton(RESULT), Collections.singleton(buildStep), false);
 
         assertThat(postBuildStep.getBuildSteps(), contains(buildStep));
     }
@@ -37,14 +33,8 @@ public class PostBuildStepTest {
     @Test
     public void allowsEmptyBuildSteps() {
 
-        PostBuildStep postBuildStep = new PostBuildStep(
-            Collections.singleton(RESULT),
-            null,
-            false
-        );
+        PostBuildStep postBuildStep = new PostBuildStep(Collections.singleton(RESULT), null, false);
 
         assertThat(postBuildStep.getBuildSteps(), is(Matchers.emptyIterable()));
-
     }
-
 }

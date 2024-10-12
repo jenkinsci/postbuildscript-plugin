@@ -1,6 +1,18 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.verify;
+
 import hudson.FilePath;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
@@ -10,19 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class GroovyScriptPreparerTest {
@@ -49,8 +48,7 @@ public class GroovyScriptPreparerTest {
 
     private File file;
 
-    public GroovyScriptPreparerTest() {
-    }
+    public GroovyScriptPreparerTest() {}
 
     @BeforeEach
     public void initPreparer() throws URISyntaxException {
@@ -63,7 +61,6 @@ public class GroovyScriptPreparerTest {
     public void failsIfNoScriptContent() {
 
         assertThrows(IllegalArgumentException.class, () -> groovyScriptPreparer.evaluateScript(null));
-
     }
 
     @Test
@@ -74,7 +71,6 @@ public class GroovyScriptPreparerTest {
         boolean evaluated = groovyScriptPreparer.evaluateScript(script);
 
         assertThat(evaluated, is(false));
-
     }
 
     @Test
@@ -86,7 +82,6 @@ public class GroovyScriptPreparerTest {
 
         assertThat(evaluated, is(true));
         verify(executor).execute();
-
     }
 
     @Test
@@ -100,20 +95,19 @@ public class GroovyScriptPreparerTest {
 
         assertThat(evaluated, is(false));
         verify(logger).info(Messages.PostBuildScript_ProblemOccured(), exception);
-
     }
 
     @Test
     public void evaluatesFile() throws Exception {
 
-        given(executorFactory.create(any(Script.class), eq(Collections.emptyList()))).willReturn(executor);
+        given(executorFactory.create(any(Script.class), eq(Collections.emptyList())))
+                .willReturn(executor);
 
         boolean evaluated = groovyScriptPreparer.evaluateCommand(scriptFile, new Command(file.getName()));
 
         verify(executorFactory).create(any(Script.class), eq(Collections.emptyList()));
         verify(executor).execute();
         assertThat(evaluated, is(true));
-
     }
 
     @Test
@@ -124,7 +118,5 @@ public class GroovyScriptPreparerTest {
         boolean evaluated = groovyScriptPreparer.evaluateCommand(scriptFile, new Command(file.getName()));
 
         assertThat(evaluated, is(false));
-
     }
-
 }

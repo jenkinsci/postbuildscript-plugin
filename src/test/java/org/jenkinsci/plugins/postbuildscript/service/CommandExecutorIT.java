@@ -1,9 +1,13 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.Launcher.LocalLauncher;
 import hudson.model.TaskListener;
+import java.io.File;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -13,17 +17,13 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 @ExtendWith(MockitoExtension.class)
 @WithJenkins
 public class CommandExecutorIT {
 
     @Mock
     private Logger logger;
+
     private File scriptFile;
     private CommandExecutor executor;
 
@@ -37,7 +37,6 @@ public class CommandExecutorIT {
         int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
 
         assertThat(command, is(0));
-
     }
 
     @Test
@@ -50,7 +49,6 @@ public class CommandExecutorIT {
         int command = executor.executeCommand(new Command(scriptFile.getName() + " param1 param2"));
 
         assertThat(command, is(0));
-
     }
 
     private void givenExecutor(JenkinsRule jenkinsRule) {
@@ -59,5 +57,4 @@ public class CommandExecutorIT {
         TaskListener listener = jenkinsRule.createTaskListener();
         executor = new CommandExecutor(logger, listener, workspace, launcher);
     }
-
 }

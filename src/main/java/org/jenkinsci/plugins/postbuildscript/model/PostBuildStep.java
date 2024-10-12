@@ -2,13 +2,11 @@ package org.jenkinsci.plugins.postbuildscript.model;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.tasks.BuildStep;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
+import org.kohsuke.stapler.DataBoundConstructor;
 
 public class PostBuildStep extends PostBuildItem {
 
@@ -17,7 +15,8 @@ public class PostBuildStep extends PostBuildItem {
     private boolean stopOnFailure;
 
     @DataBoundConstructor
-    public PostBuildStep(@Nullable Collection<String> results, @Nullable Collection<BuildStep> buildSteps, boolean stopOnFailure) {
+    public PostBuildStep(
+            @Nullable Collection<String> results, @Nullable Collection<BuildStep> buildSteps, boolean stopOnFailure) {
         super(results);
         this.stopOnFailure = stopOnFailure;
         if (buildSteps != null) {
@@ -45,5 +44,4 @@ public class PostBuildStep extends PostBuildItem {
         }
         return this;
     }
-
 }

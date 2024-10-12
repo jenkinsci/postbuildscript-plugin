@@ -1,12 +1,11 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
-import org.junit.jupiter.api.Test;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.net.URL;
-
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
 
 public class LoadScriptContentCallableTest {
 
@@ -19,6 +18,5 @@ public class LoadScriptContentCallableTest {
         String script = callable.invoke(new File(url.toURI()), null);
 
         assertThat(script, startsWith("Hello world"));
-
     }
 }

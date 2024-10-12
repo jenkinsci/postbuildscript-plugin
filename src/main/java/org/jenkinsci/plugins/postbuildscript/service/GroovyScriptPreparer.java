@@ -1,15 +1,14 @@
 package org.jenkinsci.plugins.postbuildscript.service;
 
 import hudson.FilePath;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.PostBuildScriptException;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Gregory Boissinot
@@ -25,10 +24,7 @@ public class GroovyScriptPreparer implements Serializable {
     private final FilePath workspace;
 
     public GroovyScriptPreparer(
-        Logger logger,
-        FilePath workspace,
-        GroovyScriptExecutorFactory groovyScriptExecutorFactory
-    ) {
+            Logger logger, FilePath workspace, GroovyScriptExecutorFactory groovyScriptExecutorFactory) {
         this.logger = logger;
         this.workspace = workspace;
         this.groovyScriptExecutorFactory = groovyScriptExecutorFactory;
@@ -79,7 +75,5 @@ public class GroovyScriptPreparer implements Serializable {
         Script script = new Script(scriptFile.getResults(), scriptContent);
         script.setSandboxed(scriptFile.isSandboxed());
         return evaluateScript(script, command.getParameters());
-
     }
-
 }

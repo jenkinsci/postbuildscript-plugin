@@ -22,12 +22,10 @@ public class MatrixRule implements ExecutionRule {
         }
 
         return executeOn.axes();
-
     }
 
     @Override
     public String formatViolationMessage(PostBuildItem item, String scriptName) {
         return Messages.PostBuildScript_OnlyExecuteOn(scriptName, item.getExecuteOn());
     }
-
 }

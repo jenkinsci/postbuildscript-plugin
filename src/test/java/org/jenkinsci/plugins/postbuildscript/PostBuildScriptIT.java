@@ -1,20 +1,17 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.AbortException;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import hudson.Functions;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
 import hudson.tasks.BuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.TestBuilder;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,10 +24,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.TestBuilder;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
 public class PostBuildScriptIT {
@@ -51,14 +53,9 @@ public class PostBuildScriptIT {
         Assumptions.assumeFalse(Functions.isWindows());
 
         givenOutfile();
-        givenScriptFiles("/script.sh"); //NON-NLS
+        givenScriptFiles("/script.sh"); // NON-NLS
         postBuildScript = new PostBuildScript(
-            scriptFiles,
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            false
-        );
+                scriptFiles, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false);
 
         whenBuilt(jenkinsRule);
 
@@ -72,14 +69,9 @@ public class PostBuildScriptIT {
         Assumptions.assumeFalse(Functions.isWindows());
 
         givenOutfile();
-        givenScriptFiles("/script.groovy"); //NON-NLS
+        givenScriptFiles("/script.groovy"); // NON-NLS
         postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            scriptFiles,
-            Collections.emptyList(),
-            Collections.emptyList(),
-            false
-        );
+                Collections.emptyList(), scriptFiles, Collections.emptyList(), Collections.emptyList(), false);
 
         whenBuilt(jenkinsRule);
 
@@ -91,16 +83,13 @@ public class PostBuildScriptIT {
     public void executesGroovyScript(JenkinsRule jenkinsRule) throws Exception {
 
         givenOutfile();
-        String scriptContent = String.format("def out = new File(\"%s\")%nout << \"Hello world\"", outFile.getPath().replace("\\", "\\\\")); //NON-NLS
+        String scriptContent = String.format(
+                "def out = new File(\"%s\")%nout << \"Hello world\"",
+                outFile.getPath().replace("\\", "\\\\")); // NON-NLS
         Script script = new Script(SUCCESS_RESULTS, scriptContent);
         Collection<Script> scripts = Collections.singleton(script);
         postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            Collections.emptyList(),
-            scripts,
-            Collections.emptyList(),
-            false
-        );
+                Collections.emptyList(), Collections.emptyList(), scripts, Collections.emptyList(), false);
 
         whenBuilt(jenkinsRule);
 
@@ -118,7 +107,6 @@ public class PostBuildScriptIT {
 
         thenSuccessfulBuild();
         Assertions.assertEquals(1, firstBuildStep.getInvocations());
-
     }
 
     @Test
@@ -134,7 +122,6 @@ public class PostBuildScriptIT {
         thenFailedBuild();
         Assertions.assertEquals(1, firstBuildStep.getInvocations());
         Assertions.assertEquals(1, secondBuildStep.getInvocations());
-
     }
 
     @Test
@@ -149,7 +136,6 @@ public class PostBuildScriptIT {
         thenFailedBuild();
         Assertions.assertEquals(1, firstBuildStep.getInvocations());
         Assertions.assertEquals(0, secondBuildStep.getInvocations());
-
     }
 
     @Test
@@ -189,12 +175,7 @@ public class PostBuildScriptIT {
         PostBuildStep step = new PostBuildStep(SUCCESS_RESULTS, buildSteps, stopOnFailure);
         Collection<PostBuildStep> steps = Collections.singleton(step);
         postBuildScript = new PostBuildScript(
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            steps,
-            false
-        );
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), steps, false);
     }
 
     private void givenOutfile() throws Exception {
@@ -204,7 +185,10 @@ public class PostBuildScriptIT {
 
     private void givenScriptFiles(String scriptFileLocation) throws Exception {
         Path scriptFilePath = Files.createTempFile("script", ".groovy");
-        Files.copy(getClass().getResourceAsStream(scriptFileLocation), scriptFilePath, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+                getClass().getResourceAsStream(scriptFileLocation),
+                scriptFilePath,
+                StandardCopyOption.REPLACE_EXISTING);
         String command = '"' + scriptFilePath.toString() + "\" " + outFile.getPath();
         ScriptFile scriptFile = new ScriptFile(SUCCESS_RESULTS, command);
         scriptFiles = Collections.singleton(scriptFile);

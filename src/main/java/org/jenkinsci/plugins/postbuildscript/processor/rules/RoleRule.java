@@ -14,7 +14,8 @@ public class RoleRule implements ExecutionRule {
 
     @Override
     public boolean allows(PostBuildItem item, boolean endOfMatrixBuild) {
-        boolean runsOnMaster = build.getBuiltOnStr() == null || build.getBuiltOnStr().isEmpty();
+        boolean runsOnMaster =
+                build.getBuiltOnStr() == null || build.getBuiltOnStr().isEmpty();
         if (runsOnMaster) {
             return item.shouldRunOnMaster();
         }
@@ -25,5 +26,4 @@ public class RoleRule implements ExecutionRule {
     public String formatViolationMessage(PostBuildItem item, String scriptName) {
         return Messages.PostBuildScript_NodeDoesNotHaveRole(item.getRole(), scriptName);
     }
-
 }

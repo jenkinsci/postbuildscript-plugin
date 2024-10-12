@@ -1,9 +1,9 @@
 package org.jenkinsci.plugins.postbuildscript.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 public class ExecuteOnTest {
 
@@ -36,5 +36,4 @@ public class ExecuteOnTest {
     public void axesAxesIsTrue() {
         assertThat(ExecuteOn.AXES.axes(), is(true));
     }
-
 }

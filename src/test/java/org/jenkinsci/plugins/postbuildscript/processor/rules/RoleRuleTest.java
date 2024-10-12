@@ -1,5 +1,12 @@
 package org.jenkinsci.plugins.postbuildscript.processor.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import hudson.model.AbstractBuild;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
 import org.jenkinsci.plugins.postbuildscript.model.Role;
@@ -8,13 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class RoleRuleTest {
@@ -38,7 +38,6 @@ public class RoleRuleTest {
 
         assertThat(actual, is(true));
         verify(item, never()).shouldRunOnMaster();
-
     }
 
     @Test
@@ -51,7 +50,6 @@ public class RoleRuleTest {
 
         assertThat(actual, is(false));
         verify(item, never()).shouldRunOnMaster();
-
     }
 
     @Test
@@ -63,7 +61,6 @@ public class RoleRuleTest {
 
         assertThat(actual, is(true));
         verify(item, never()).shouldRunOnSlave();
-
     }
 
     @Test
@@ -75,7 +72,6 @@ public class RoleRuleTest {
 
         assertThat(actual, is(false));
         verify(item, never()).shouldRunOnSlave();
-
     }
 
     @Test
@@ -87,7 +83,5 @@ public class RoleRuleTest {
 
         assertThat(violationMessage, containsString("scriptName"));
         assertThat(violationMessage, containsString("MASTER"));
-
     }
-
 }

@@ -7,5 +7,4 @@ public interface ExecutionRule {
     boolean allows(PostBuildItem item, boolean endOfMatrixBuild);
 
     String formatViolationMessage(PostBuildItem item, String scriptName);
-
 }

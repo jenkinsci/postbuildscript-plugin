@@ -2,10 +2,9 @@ package org.jenkinsci.plugins.postbuildscript.processor.rules;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Result;
+import java.util.Optional;
 import org.jenkinsci.plugins.postbuildscript.Messages;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildItem;
-
-import java.util.Optional;
 
 public class ResultRule implements ExecutionRule {
 

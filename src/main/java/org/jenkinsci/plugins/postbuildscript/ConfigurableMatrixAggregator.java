@@ -5,11 +5,10 @@ import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
+import java.io.IOException;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.processor.Processor;
 import org.jenkinsci.plugins.postbuildscript.processor.ProcessorFactory;
-
-import java.io.IOException;
 
 public class ConfigurableMatrixAggregator extends MatrixAggregator {
 
@@ -19,12 +18,11 @@ public class ConfigurableMatrixAggregator extends MatrixAggregator {
     private final Logger logger;
 
     public ConfigurableMatrixAggregator(
-        MatrixBuild build,
-        Launcher launcher,
-        BuildListener listener,
-        ProcessorFactory processorFactory,
-        Class<? extends PostBuildScript> initiator
-    ) {
+            MatrixBuild build,
+            Launcher launcher,
+            BuildListener listener,
+            ProcessorFactory processorFactory,
+            Class<? extends PostBuildScript> initiator) {
         super(build, launcher, listener);
         this.initiator = initiator;
         processor = processorFactory.createMatrixProcessor(build, launcher, listener);
