@@ -5,6 +5,8 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.AbstractBuild;
+import hudson.model.Descriptor.FormException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ public class GroovyScriptExecutor {
     private final Logger log;
     private final SecureGroovyScript secureGroovyScript;
 
-    public GroovyScriptExecutor(Script script, List<String> arguments, AbstractBuild<?, ?> build, Logger log) {
+    public GroovyScriptExecutor(Script script, List<String> arguments, AbstractBuild<?, ?> build, Logger log) throws FormException {
         this.arguments = new ArrayList<>(arguments);
         this.build = build;
         this.log = log;
