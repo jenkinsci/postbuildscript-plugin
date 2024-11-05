@@ -103,7 +103,7 @@
     <revision>3.4.1</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-    <jenkins.version>2.462.3</jenkins.version>
+    <jenkins.version>2.479.1</jenkins.version>
     <jenkins-test-harness.version>2228.v919b_5883c444</jenkins-test-harness.version>
     <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
   </properties>
