@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Descriptor.FormException;
 import java.util.Collections;
 import org.jenkinsci.plugins.postbuildscript.logging.Logger;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
@@ -31,7 +32,7 @@ public class GroovyScriptExecutorFactoryTest {
     private GroovyScriptExecutorFactory executorFactory;
 
     @Test
-    public void createsExecutor() {
+    public void createsExecutor() throws FormException {
 
         given(script.getContent()).willReturn("scriptContent");
         given(script.isSandboxed()).willReturn(true);
