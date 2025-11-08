@@ -105,6 +105,7 @@
     <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
     <jenkins.version>2.479.1</jenkins.version>
     <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
+    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
   </properties>
 
   <dependencyManagement>
