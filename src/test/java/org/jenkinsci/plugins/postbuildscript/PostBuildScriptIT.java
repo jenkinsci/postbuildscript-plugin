@@ -24,13 +24,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
 import org.jenkinsci.plugins.postbuildscript.model.Script;
 import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.LoggerRule;
 import org.jvnet.hudson.test.TestBuilder;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
@@ -47,6 +50,10 @@ public class PostBuildScriptIT {
     private TestBuildStep firstBuildStep;
     private TestBuildStep secondBuildStep;
     private TestAbortingBuildStep abortingBuildStep;
+    private TestInterruptingBuildStep interruptingBuildStep;
+
+    @Rule
+    public LoggerRule loggerRule = new LoggerRule().record("org.jenkinsci.plugins.postbuildscript", Level.FINEST);
 
     @Test
     public void executesShellScriptFile(JenkinsRule jenkinsRule) throws Exception {
@@ -151,6 +158,19 @@ public class PostBuildScriptIT {
         Assertions.assertEquals(0, secondBuildStep.getInvocations());
     }
 
+    @Test
+    public void handlesInterruptedException(JenkinsRule jenkinsRule) throws Exception {
+        givenInterruptingBuildStep();
+        givenSecondBuildStep();
+        givenPostBuildStep(true);
+
+        whenBuilt(jenkinsRule);
+
+        thenNoProblemOccured(jenkinsRule);
+        thenAbortedBuild();
+        Assertions.assertEquals(0, secondBuildStep.getInvocations());
+    }
+
     private void givenSuccessfulFirstBuildStep() {
         firstBuildStep = new TestBuildStep(true);
         buildSteps.add(firstBuildStep);
@@ -169,6 +189,11 @@ public class PostBuildScriptIT {
     private void givenAbortingBuildStep() {
         abortingBuildStep = new TestAbortingBuildStep();
         buildSteps.add( abortingBuildStep );
+    }
+
+    private void givenInterruptingBuildStep() {
+        interruptingBuildStep = new TestInterruptingBuildStep();
+        buildSteps.add( interruptingBuildStep );
     }
 
     private void givenPostBuildStep(boolean stopOnFailure) {
@@ -214,6 +239,10 @@ public class PostBuildScriptIT {
         assertThat(build.getResult(), is(Result.FAILURE));
     }
 
+    private void thenAbortedBuild() {
+        assertThat(build.getResult(), is(Result.ABORTED));
+    }
+
     private void thenNoProblemOccured(JenkinsRule jenkinsRule) throws IOException {
         jenkinsRule.assertLogNotContains(Messages.PostBuildScript_ProblemOccured(), build);
     }
@@ -245,4 +274,14 @@ public class PostBuildScriptIT {
         }
 
     }
+
+    private static class TestInterruptingBuildStep extends TestBuilder {
+
+        @Override
+        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
+            throw new InterruptedException();
+        }
+
+    }
+
 }

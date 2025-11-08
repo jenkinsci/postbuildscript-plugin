@@ -85,9 +85,15 @@ public class Processor {
 
     private boolean processScripts(boolean endOfMatrixBuild) throws PostBuildScriptException {
         @SuppressWarnings("NonShortCircuitBooleanExpression")
-        boolean everyScriptSuccessful = processScriptFiles(endOfMatrixBuild)
+        boolean everyScriptSuccessful;
+        try {
+            everyScriptSuccessful = processScriptFiles(endOfMatrixBuild)
                 & processGroovyScripts(endOfMatrixBuild)
                 & processBuildSteps(endOfMatrixBuild);
+        } catch (InterruptedException e) {
+            build.setResult(Result.ABORTED);
+            return true;
+        }
         return everyScriptSuccessful || failOrUnstable();
     }
 
@@ -162,7 +168,7 @@ public class Processor {
         return new GroovyScriptPreparer(logger, workspace, executorFactory);
     }
 
-    private boolean processBuildSteps(boolean endOfMatrixBuild) throws PostBuildScriptException {
+    private boolean processBuildSteps(boolean endOfMatrixBuild) throws PostBuildScriptException, InterruptedException {
 
         try {
             boolean everyStepSuccessful = true;
@@ -178,6 +184,8 @@ public class Processor {
                         buildSucceed = buildStep.perform(build, launcher, listener);
                     } catch (AbortException e) {
                         buildSucceed = false;
+                    } catch (InterruptedException e) {
+                        throw e; // rethrow so that the project get flagged as cancelled
                     }
                     everyStepSuccessful &= buildSucceed;
 
@@ -187,7 +195,7 @@ public class Processor {
                 }
             }
             return everyStepSuccessful;
-        } catch (IOException | InterruptedException ioe) {
+        } catch (IOException ioe) {
             throw new PostBuildScriptException(ioe);
         }
     }
