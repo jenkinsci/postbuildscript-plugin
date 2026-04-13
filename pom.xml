@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>6.2108.v08c2b_01b_cf4d</version>
+    <version>6.2116.v7501b_67dc517</version>
   </parent>
 
   <artifactId>postbuildscript</artifactId>
@@ -103,16 +103,17 @@
     <revision>3.4.1</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-    <jenkins.version>2.479.1</jenkins.version>
+    <jenkins.version>2.479.3</jenkins.version>
     <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
+    <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.462.x</artifactId>
-        <version>4228.v0a_71308d905b_</version>
+        <artifactId>bom-2.479.x</artifactId>
+        <version>5054.v620b_5d2b_d5e6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
