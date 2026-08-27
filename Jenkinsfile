@@ -1,4 +1,6 @@
-buildPlugin(configurations: [
-    [platform: 'linux', jdk: 25],
-    [platform: 'windows', jdk: 21],
-])
+buildPlugin(
+    forkCount: '1C',
+    configurations: [
+        [platform: 'linux', jdk: 25],
+        [platform: 'windows', jdk: 21],
+    ])
