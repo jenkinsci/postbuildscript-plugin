@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
 
 public class Command {
 
@@ -21,7 +21,7 @@ public class Command {
     }
 
     private static Deque<String> parseLine(String command) {
-        if (StringUtils.isBlank(command)) {
+        if (command == null || command.isBlank()) {
             return new ArrayDeque<>(0);
         }
         command = command.trim();
