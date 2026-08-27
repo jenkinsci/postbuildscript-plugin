@@ -1,17 +1,21 @@
 package org.jenkinsci.plugins.postbuildscript;
 
 import hudson.AbortException;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import hudson.Functions;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.tasks.BuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
+import org.jenkinsci.plugins.postbuildscript.model.Script;
+import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.LogRecorder;
+import org.jvnet.hudson.test.TestBuilder;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -25,17 +29,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import org.jenkinsci.plugins.postbuildscript.model.PostBuildStep;
-import org.jenkinsci.plugins.postbuildscript.model.Script;
-import org.jenkinsci.plugins.postbuildscript.model.ScriptFile;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
-import org.junit.Rule;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.LoggerRule;
-import org.jvnet.hudson.test.TestBuilder;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @WithJenkins
 public class PostBuildScriptIT {
@@ -52,8 +49,8 @@ public class PostBuildScriptIT {
     private TestAbortingBuildStep abortingBuildStep;
     private TestInterruptingBuildStep interruptingBuildStep;
 
-    @Rule
-    public LoggerRule loggerRule = new LoggerRule().record("org.jenkinsci.plugins.postbuildscript", Level.FINEST);
+    public final LogRecorder logRecorder =
+            new LogRecorder().record("org.jenkinsci.plugins.postbuildscript", Level.FINEST);
 
     @Test
     public void executesShellScriptFile(JenkinsRule jenkinsRule) throws Exception {
