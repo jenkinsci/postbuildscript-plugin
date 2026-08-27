@@ -1,0 +1,18 @@
+# Code owners for the Jenkins PostBuildScript plugin.
+#
+# Listing a path here makes GitHub automatically request a review from the
+# owner whenever a pull request touches that path. The catch-all pattern
+# below covers the whole repository, so every pull request requests a review
+# from the maintainer.
+#
+# Note: this creates a review request, not an entry in the "Assignees" field,
+# and GitHub never requests a review from the author of a pull request, so
+# pull requests opened by the maintainer are not affected.
+#
+# This is advisory only. It does not block merging unless the "Require a pull
+# request before merging" rule in the "main" ruleset is additionally set to
+# require review from Code Owners.
+#
+# https://docs.github.com/articles/about-code-owners
+
+*       @dheid
