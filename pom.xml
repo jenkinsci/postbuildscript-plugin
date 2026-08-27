@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>5.23</version>
+    <version>6.2221.va_045130417c9</version>
   </parent>
 
   <artifactId>postbuildscript</artifactId>
-  <version>${revision}-${changelist}</version>
+  <version>${revision}.${changelist}</version>
   <packaging>hpi</packaging>
   <name>Jenkins PostBuildScript Plugin</name>
   <description>A plugin for the Jenkins CI to run several configurable actions after
@@ -103,17 +103,18 @@
     <revision>3.4.1</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/postbuildscript-plugin</gitHubRepo>
-    <jenkins.version>2.479.1</jenkins.version>
+    <jenkins.version>2.479.3</jenkins.version>
     <hpi.compatibleSinceVersion>3.0.0</hpi.compatibleSinceVersion>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
+    <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.462.x</artifactId>
-        <version>4228.v0a_71308d905b_</version>
+        <artifactId>bom-2.479.x</artifactId>
+        <version>5054.v620b_5d2b_d5e6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
