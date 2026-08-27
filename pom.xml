@@ -14,7 +14,7 @@
   <name>Jenkins PostBuildScript Plugin</name>
   <description>A plugin for the Jenkins CI to run several configurable actions after
         a build, depending on the build result.</description>
-  <url>https://plugins.jenkins.io/postbuildscript</url>
+  <url>https://github.com/jenkinsci/postbuildscript-plugin</url>
   <inceptionYear>2011</inceptionYear>
 
   <licenses>
