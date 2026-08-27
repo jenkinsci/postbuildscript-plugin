@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>postbuildscript</artifactId>
-  <version>${revision}-${changelist}</version>
+  <version>${revision}.${changelist}</version>
   <packaging>hpi</packaging>
   <name>Jenkins PostBuildScript Plugin</name>
   <description>A plugin for the Jenkins CI to run several configurable actions after
